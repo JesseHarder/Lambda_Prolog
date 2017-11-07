@@ -35,10 +35,12 @@ add(X,Y,S) :- S is X+Y.
 /* VVVVVVVVV TYPING BELOW VVVVVVVVV*/
 
 /* Start with derivable base types. */
+% type(X, int) :- integer(X).
+% type(X, float) :- float(X).
 type(X, number) :- number(X).
-type(X, int) :- integer(X).
-type(X, float) :- float(X).
-type(sum(_,_,_),[int,int,int]). % Now add my own types.
+% Math predicate types.
+type(add(_,_,_),[number,number,number]).
+% Boolean types.
 type(tru, bool).
 type(fls, bool).
 type(ifthenelse(A,B,C,_),[T1,T2,T2,T2]) :-
