@@ -7,28 +7,41 @@
  */
 
  /* How to declare predicate types:
-  *
-  * type(Predicate_Name, Predicate_Arity, Type).
-  *
-  * where Predicate_Name and Predicate_Arity correspond to the second and third
-  * terms in the functor/3 predicate,
-  * and Type is a list of the expected types for the Terms of the functor.
+  * type(Predicate_Name, Type).
+  * where type is a list of the types of the Terms in the predicate.
   */
 
 /* Predicate: type(Term, Type)
  * Meaning: Term "Term" has type "Type".
  */
 
+ /* Booleans */
+ % Ture -> tru.
+ % False -> fls.
+
+/* Predicate: ifthenelse(Condition, T1, T2, Result)
+* If Condition = tru, then Result = T1
+* If Condition = fls, then Result = T2
+*/
+ifthenelse(tru, T1, _, T1).
+ifthenelse(fls, _, T2, T2).
+
+/* Math */
+add(X,Y,S) :- S is X+Y.
+% sub(X,Y,D) :- D is X-Y.
+% mult(X,Y,P) :- P is X*Y.
+
+/* ^^^^^ KNOWLEDGE BASE ABOVE ^^^^^*/
+/* VVVVVVVVV TYPING BELOW VVVVVVVVV*/
+
+/* Start with derivable base types. */
 type(X, number) :- number(X).
 type(X, int) :- integer(X).
 type(X, float) :- float(X).
-
- /* Predicate: type(Term, Type)
-  * Meaning: Term "Term" has type "Type".
-  * This is determined by checking for a predefined type with the name and
-  * arity of the given predicate.
-  */
-
- % type(Predicate, Type) :-
- %     functor(Predicate, Name, Arity),
- %     type(Name, Arity, Type).
+type(sum(_,_,_),[int,int,int]). % Now add my own types.
+type(tru, bool).
+type(fls, bool).
+type(ifthenelse(A,B,C,_),[T1,T2,T2,T2]) :-
+	type(A, T1),
+	type(B, T2),
+	type(C, T2).
