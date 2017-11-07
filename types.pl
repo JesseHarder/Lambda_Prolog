@@ -28,18 +28,22 @@ ifthenelse(fls, _, T2, T2).
 
 /* Math */
 add(X,Y,S) :- S is X+Y.
-% sub(X,Y,D) :- D is X-Y.
-% mult(X,Y,P) :- P is X*Y.
+sub(X,Y,D) :- D is X-Y.
+mul(X,Y,P) :- P is X*Y.
+div(N,D,Q) :- Q is N/D.
 
 /* ^^^^^ KNOWLEDGE BASE ABOVE ^^^^^*/
 /* VVVVVVVVV TYPING BELOW VVVVVVVVV*/
 
 /* Start with derivable base types. */
-% type(X, int) :- integer(X).
-% type(X, float) :- float(X).
+type(X, int) :- integer(X).
+type(X, float) :- float(X).
 type(X, number) :- number(X).
-% Math predicate types.
+% Math types.
 type(add(_,_,_),[number,number,number]).
+type(sub(_,_,_),[number,number,number]).
+type(mul(_,_,_),[number,number,number]).
+type(div(_,_,_),[number,number,number]).
 % Boolean types.
 type(tru, bool).
 type(fls, bool).
