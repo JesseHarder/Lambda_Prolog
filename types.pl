@@ -36,18 +36,21 @@ div(N,D,Q) :- Q is N/D.
 /* VVVVVVVVV TYPING BELOW VVVVVVVVV*/
 
 /* Start with derivable base types. */
-type(X, int) :- integer(X).
-type(X, float) :- float(X).
-type(X, number) :- number(X).
+% TODO: Look into why this works, but only on first check.
+type(0, nat).
+type(X, nat) :- X > 0, Y is X-1, type(Y, nat). % Downward recursion.
+type(X, nat) :- X < 0, Y is X+1, type(Y, nat). % Upward recursion.
 % Math types.
-type(add(_,_,_),[number,number,number]).
-type(sub(_,_,_),[number,number,number]).
-type(mul(_,_,_),[number,number,number]).
-type(div(_,_,_),[number,number,number]).
+% TODO: This needs updating to not just always be valid.
+type(add(_,_,_),[nat,nat,nat]).
+type(sub(_,_,_),[nat,nat,nat]).
+type(mul(_,_,_),[nat,nat,nat]).
+type(div(_,_,_),[nat,nat,nat]).
 % Boolean types.
 type(tru, bool).
 type(fls, bool).
-type(ifthenelse(A,B,C,_),[T1,T2,T2,T2]) :-
-	type(A, T1),
+type(ifthenelse(A,B,C,D),[bool,T2,T2,T2]) :-
+	type(A, bool),
 	type(B, T2),
-	type(C, T2).
+	type(C, T2),
+	type(D, T2).
