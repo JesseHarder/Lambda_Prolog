@@ -22,14 +22,18 @@ div(N,D,Q) :- Q is N/D.
 /* ^^^^^ KNOWLEDGE BASE ABOVE ^^^^^*/
 /* VVVVVVVVV TYPING BELOW VVVVVVVVV*/
 
+/* Listing Valid Types */
+type(bool).
+type(number).
+
 /* ----- Atom and Variable Types ----- */
 % Booleans
 type(tru, bool).
 type(fls, bool).
 % Numbers - Anything instatiated to a number has type "number".
 type(X, number) :- number(X).
-% Variables - If X is unistatiated, it could potentially be of any type.
-type(X, _) :- var(X).
+% Variables - If Var is unistatiated, it could potentially be of any valid type.
+type(Var, Type) :- var(Var), type(Type).
 
 /* ----- Predicate Types ----- */
 /* -- Booleans -- */
