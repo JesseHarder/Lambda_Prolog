@@ -30,6 +30,11 @@ not(tru, fls).
 not(fls, tru).
 
 /* Math */
+%
+
+% Ternary
+succ(X,Y) :- Y is X+1.
+pred(X,Y) :- Y is X-1.
 add(X,Y,S) :- S is X+Y.
 sub(X,Y,D) :- D is X-Y.
 mul(X,Y,P) :- P is X*Y.
@@ -81,9 +86,41 @@ type(not(X,Y),[bool,bool]) :-
 	type(Y, bool).
 
 /* -- Numbers -- */
+
+/* TODO: Figure out why the following four run forever if asked to check
+ * for a second result
+ */
+% succ: [number, number]
+type(succ(X,Y),[number,number]) :-
+	type(X, T1),
+	type(Y, T1),
+	T1 = number.
+% pred: [number, number]
+type(pred(X,Y),[number,number]) :-
+	type(X, T1),
+	type(Y, T1),
+	T1 = number.
 % add: [number, number, number]
 type(add(X,Y,S),[number,number,number]) :-
 	type(X, T1),
 	type(Y, T1),
 	type(S, T1),
+	T1 = number.
+% sub: [number, number, number]
+type(sub(X,Y,D),[number,number,number]) :-
+	type(X, T1),
+	type(Y, T1),
+	type(D, T1),
+	T1 = number.
+% mul: [number, number, number]
+type(mul(X,Y,P),[number,number,number]) :-
+	type(X, T1),
+	type(Y, T1),
+	type(P, T1),
+	T1 = number.
+% div: [number, number, number]
+type(div(N,D,Q),[number,number,number]) :-
+	type(N, T1),
+	type(D, T1),
+	type(Q, T1),
 	T1 = number.
