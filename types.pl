@@ -22,25 +22,26 @@ div(N,D,Q) :- Q is N/D.
 /* ^^^^^ KNOWLEDGE BASE ABOVE ^^^^^*/
 /* VVVVVVVVV TYPING BELOW VVVVVVVVV*/
 
-/* --- Atom and Variable Types --- */
+/* ----- Atom and Variable Types ----- */
 % Booleans
 type(tru, bool).
 type(fls, bool).
-% Numbers
+% Numbers - Anything instatiated to a number has type "number".
 type(X, number) :- number(X).
-% Variables - If X is unistatiated, it could be any type.
+% Variables - If X is unistatiated, it could potentially be of any type.
 type(X, _) :- var(X).
 
-/* --- Predicate Types --- */
-% Booleans
+/* ----- Predicate Types ----- */
+/* -- Booleans -- */
+% ifthenelse: [bool, T, T, T]
 type(ifthenelse(A,B,C,D),[bool,T2,T2,T2]) :-
 	type(A, bool),
 	type(B, T2),
 	type(C, T2),
 	type(D, T2).
-% Math types.
-% TODO: This needs updating to not just always be valid.
-type(add(X,Y,S),[T1,T1,T1]) :-
+/* -- Numbers -- */
+% add: [number, number, number]
+type(add(X,Y,S),[number,number,number]) :-
 	type(X, T1),
 	type(Y, T1),
 	type(S, T1),
