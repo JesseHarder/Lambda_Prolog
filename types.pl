@@ -41,6 +41,7 @@ mul(X,Y,P) :- P is X*Y.
 div(N,D,Q) :- Q is N/D.
 
 /* ^^^^^ KNOWLEDGE BASE ABOVE ^^^^^*/
+/* ||||||||||||||||||||||||||||||||*/
 /* VVVVVVVVV TYPING BELOW VVVVVVVVV*/
 
 /* Listing Valid Types */
