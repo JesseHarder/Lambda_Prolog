@@ -13,6 +13,22 @@
 ifthenelse(tru, T1, _, T1).
 ifthenelse(fls, _, T2, T2).
 
+and(tru, tru, tru).
+and(fls, _, fls).
+and(_, fls, fls).
+
+or(fls, fls, fls).
+or(tru, _, tru).
+or(_, tru, tru).
+
+xor(fls, fls, fls).
+xor(tru, fls, tru).
+xor(fls, tru, tru).
+xor(tru, tru, fls).
+
+not(tru, fls).
+not(fls, tru).
+
 /* Math */
 add(X,Y,S) :- S is X+Y.
 sub(X,Y,D) :- D is X-Y.
@@ -43,6 +59,27 @@ type(ifthenelse(A,B,C,D),[bool,T2,T2,T2]) :-
 	type(B, T2),
 	type(C, T2),
 	type(D, T2).
+
+% and: [bool, bool, bool]
+type(and(X,Y,Z),[bool,bool,bool]) :-
+	type(X, bool),
+	type(Y, bool),
+	type(Z, bool).
+% or: [bool, bool, bool]
+type(or(X,Y,Z),[bool,bool,bool]) :-
+	type(X, bool),
+	type(Y, bool),
+	type(Z, bool).
+% xor: [bool, bool, bool]
+type(xor(X,Y,Z),[bool,bool,bool]) :-
+	type(X, bool),
+	type(Y, bool),
+	type(Z, bool).
+% not: [bool, bool]
+type(not(X,Y),[bool,bool]) :-
+	type(X, bool),
+	type(Y, bool).
+
 /* -- Numbers -- */
 % add: [number, number, number]
 type(add(X,Y,S),[number,number,number]) :-
