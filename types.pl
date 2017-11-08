@@ -6,19 +6,6 @@
  *
  */
 
- /* How to declare predicate types:
-  * type(Predicate_Name, Type).
-  * where type is a list of the types of the Terms in the predicate.
-  */
-
-/* Predicate: type(Term, Type)
- * Meaning: Term "Term" has type "Type".
- */
-
- /* Booleans */
- % Ture -> tru.
- % False -> fls.
-
 /* Predicate: ifthenelse(Condition, T1, T2, Result)
 * If Condition = tru, then Result = T1
 * If Condition = fls, then Result = T2
@@ -35,22 +22,26 @@ div(N,D,Q) :- Q is N/D.
 /* ^^^^^ KNOWLEDGE BASE ABOVE ^^^^^*/
 /* VVVVVVVVV TYPING BELOW VVVVVVVVV*/
 
-/* Start with derivable base types. */
-% TODO: Look into why this works, but only on first check.
-type(0, nat).
-type(X, nat) :- X > 0, Y is X-1, type(Y, nat). % Downward recursion.
-type(X, nat) :- X < 0, Y is X+1, type(Y, nat). % Upward recursion.
-% Math types.
-% TODO: This needs updating to not just always be valid.
-type(add(_,_,_),[nat,nat,nat]).
-type(sub(_,_,_),[nat,nat,nat]).
-type(mul(_,_,_),[nat,nat,nat]).
-type(div(_,_,_),[nat,nat,nat]).
-% Boolean types.
+/* --- Atom and Variable Types --- */
+% Booleans
 type(tru, bool).
 type(fls, bool).
+% Numbers
+type(X, number) :- number(X).
+% Variables - If X is unistatiated, it could be any type.
+type(X, _) :- var(X).
+
+/* --- Predicate Types --- */
+% Booleans
 type(ifthenelse(A,B,C,D),[bool,T2,T2,T2]) :-
 	type(A, bool),
 	type(B, T2),
 	type(C, T2),
 	type(D, T2).
+% Math types.
+% TODO: This needs updating to not just always be valid.
+type(add(X,Y,S),[T1,T1,T1]) :-
+	type(X, T1),
+	type(Y, T1),
+	type(S, T1),
+	T1 = number.
