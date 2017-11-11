@@ -1,4 +1,4 @@
-:- [booleans].
+:- [types].
 
 % to give me screen clearing.
 cls :- write('\e[H\e[2J').
