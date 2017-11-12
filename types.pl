@@ -25,6 +25,9 @@
  type('Unit').
  type('Bool').
  type('Number').
+ % Function Type: where [T1, T2, T3] is T1 -> T2 -> T3.
+ type([T]) :- type(T).
+ type([Head|Tail]) :- type(Head),type(Tail).
 
  /* ----- Atom and Variable Types ----- */
  % Unit type
