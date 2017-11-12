@@ -10,6 +10,7 @@
   *     Booleans
   *     Numbers
   *     Unit
+  *     Lists (using built in list type.)
   *
   * Derived featurs:
   *     Let - this is basically just Prolog's = operator. If I write something
@@ -25,6 +26,7 @@
  type('Unit').
  type('Bool').
  type('Number').
+ type(list(T)) :- type(T).
  % Function Type: where [T1, T2, T3] is T1 -> T2 -> T3.
  type([T]) :- type(T).
  type([Head|Tail]) :- type(Head),type(Tail).
@@ -37,6 +39,11 @@
  type(fls, 'Bool').
  % Numbers - Anything instatiated to a number has type 'Number'.
  type(X, 'Number') :- number(X).
+ % Lists
+ type([],list(T)) :- type(T). % Empty list can be list of any type.
+ type([Head|Tail],list(T)) :-   % A list has type list of T's if
+     type(Head, T),             % the fisrt element has type T and
+     type(Tail, list(T)).       % the tail is a list of T's.
 
 /* Ascriptions - Add ascription below this comment of the form:
  *      type(X, <NewTypeName>) :- type(X, <OldTypeRepresentation>).
