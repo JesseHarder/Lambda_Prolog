@@ -2,6 +2,8 @@
 % Binary
 succ(X,Y) :- Y is X+1.
 pred(X,Y) :- Y is X-1.
+iszero(0,tru) :- !.
+iszero(X,fls) :- number(X).
 
 % Ternary
 add(X,Y,S) :- S is X+Y.

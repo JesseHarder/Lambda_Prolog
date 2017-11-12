@@ -62,40 +62,39 @@
 % succ: number -> number
 type(succ(X,Y),[number,number]) :-
     succ(X,Y),
-	type(X, T1),
-	type(Y, T1),
-	T1 = number.
+	type(X, number),
+	type(Y, number).
 % pred: number -> number
 type(pred(X,Y),[number,number]) :-
     pred(X,Y),
-	type(X, T1),
-	type(Y, T1),
-	T1 = number.
+	type(X, number),
+	type(Y, number).
+% pred: number -> bool
+type(iszero(X,Y),[number,bool]) :-
+    iszero(X,Y),
+    type(X, number),
+	type(Y, bool).
 % add: number -> number -> number
 type(add(X,Y,S),[number,number,number]) :-
     add(X,Y,S),
-	type(X, T1),
-	type(Y, T1),
-	type(S, T1),
-	T1 = number.
+    type(X, number),
+	type(Y, number),
+    type(S, number).
 % sub: number -> number -> number
 type(sub(X,Y,D),[number,number,number]) :-
     sub(X,Y,D),
-	type(X, T1),
-	type(Y, T1),
-	type(D, T1),
-	T1 = number.
+    type(X, number),
+	type(Y, number),
+    type(D, number).
 % mul: number -> number -> number
 type(mul(X,Y,P),[number,number,number]) :-
     mul(X,Y,P),
-	type(X, T1),
-	type(Y, T1),
-	type(P, T1),
-	T1 = number.
+    type(X, number),
+	type(Y, number),
+    type(P, number).
 % div: number -> number -> number
 type(div(N,D,Q),[number,number,number]) :-
     div(N,D,Q),
-	type(N, T1),
-	type(D, T1),
-	type(Q, T1),
-	T1 = number.
+    type(N, number),
+	type(D, number),
+    type(Q, number).
