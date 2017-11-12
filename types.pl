@@ -22,30 +22,44 @@
 
 :- [numbers, booleans].
 
- /* Listing Valid Types */
- type('Unit').
- type('Bool').
- type('Number').
- type('List'(T)) :- type(T).
- type('Tuple'([Head|Tail])) :- type(Head), type('Tuple'(Tail)).
- % Function Type: where [T1, T2, T3] is T1 -> T2 -> T3.
- type([T]) :- type(T).
- type([Head|Tail]) :- type(Head),type(Tail).
+/* Helper Rules */
+types_in_list([Head], [Type]) :- type(Head,Type).
+types_in_list([Head|Tail], [T_Head|T_Tail]) :-
+    type(Head, T_Head),
+    types_in_list(Tail, T_Tail).
 
- /* ----- Atom and Variable Types ----- */
- % Unit type
- type(unit, 'Unit').
- % Booleans
- type(tru, 'Bool').
- type(fls, 'Bool').
- % Numbers - Anything instatiated to a number has type 'Number'.
- type(X, 'Number') :- number(X).
- % Lists
- type([],'List'(T)) :- type(T). % Empty list can be list of any type.
- type([Head|Tail],'List'(T)) :-   % A list has type list of T's if
+/* Listing Valid Types */
+type('Unit').
+type('Bool').
+type('Number').
+type('List'(T)) :- type(T).
+type('Tuple'([H])) :- type(H).
+type('Tuple'([H|T])) :- type(H), type('Tuple'(T)).
+% Function Type: where [T1, T2, T3] is T1 -> T2 -> T3.
+type([T]) :- type(T).
+type([H|T]) :- type(H),type(T).
+
+
+
+
+/* ----- Non-Predicate Types ----- */
+% Unit type
+type(unit, 'Unit').
+% Booleans
+type(tru, 'Bool').
+type(fls, 'Bool').
+% Numbers - Anything instatiated to a number has type 'Number'.
+type(X, 'Number') :- number(X).
+% Lists
+type([],'List'(T)) :- type(T). % Empty list can be list of any type.
+type([Head|Tail],'List'(T)) :-   % A list has type list of T's if
      type(Head, T),             % the fisrt element has type T and
      type(Tail, 'List'(T)).       % the tail is a list of T's.
 % Tuples
+type(tuple([Val]), 'Tuple'([T])) :- type(Val,T).
+type(tuple(List), 'Tuple'(Types)) :-
+    is_list(List), length(List, L), L > 0, % "Lists" is a non-empty list.
+    types_in_list(List,Types).
 
 /* Ascriptions - Add ascription below this comment of the form:
  *      type(X, <NewTypeName>) :- type(X, <OldTypeRepresentation>).
@@ -53,41 +67,41 @@
  *      type(X, 'NNN') :- type(X, ['Number','Number','Number']).
  */
 
- /* Variables - can be of any type. */
- type(Var, Type) :- var(Var), type(Type).
+/* Variables - can be of any type. */
+type(Var, Type) :- var(Var), type(Type).
 
 
 
 
- /* ----- Predicate Types ----- */
- /* -- Booleans -- */
- % ifthenelse: 'Bool' -> T -> T -> T
- type(ifthenelse(A,B,C,D),['Bool',T2,T2,T2]) :-
+/* ----- Predicate Types ----- */
+/* -- Booleans -- */
+% ifthenelse: 'Bool' -> T -> T -> T
+type(ifthenelse(A,B,C,D),['Bool',T2,T2,T2]) :-
     ifthenelse(A,B,C,D),
     type(A, 'Bool'),
   	type(B, T2),
   	type(C, T2),
   	type(D, T2).
- % and: 'Bool' -> 'Bool' -> 'Bool'
- type(and(X,Y,Z),['Bool','Bool','Bool']) :-
+% and: 'Bool' -> 'Bool' -> 'Bool'
+type(and(X,Y,Z),['Bool','Bool','Bool']) :-
     and(X,Y,Z),
     type(X, 'Bool'),
  	type(Y, 'Bool'),
  	type(Z, 'Bool').
- % or: 'Bool' -> 'Bool' -> 'Bool'
- type(or(X,Y,Z),['Bool','Bool','Bool']) :-
+% or: 'Bool' -> 'Bool' -> 'Bool'
+type(or(X,Y,Z),['Bool','Bool','Bool']) :-
     or(X,Y,Z),
  	type(X, 'Bool'),
  	type(Y, 'Bool'),
  	type(Z, 'Bool').
- % xor: 'Bool' -> 'Bool' -> 'Bool'
- type(xor(X,Y,Z),['Bool','Bool','Bool']) :-
+% xor: 'Bool' -> 'Bool' -> 'Bool'
+type(xor(X,Y,Z),['Bool','Bool','Bool']) :-
     xor(X,Y,Z),
  	type(X, 'Bool'),
  	type(Y, 'Bool'),
  	type(Z, 'Bool').
- % not: 'Bool' -> 'Bool'
- type(not(X,Y),['Bool','Bool']) :-
+% not: 'Bool' -> 'Bool'
+type(not(X,Y),['Bool','Bool']) :-
     not(X,Y),
  	type(X, 'Bool'),
  	type(Y, 'Bool').
