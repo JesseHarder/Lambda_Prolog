@@ -6,6 +6,8 @@
  *
  */
 
+:- [numbers, booleans].
+
  /* Listing Valid Types */
  type(bool).
  type(number).
