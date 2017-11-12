@@ -25,10 +25,11 @@
  /* -- Booleans -- */
  % ifthenelse: [bool, T, T, T]
  type(ifthenelse(A,B,C,D),[bool,T2,T2,T2]) :-
- 	type(A, bool),
- 	type(B, T2),
- 	type(C, T2),
- 	type(D, T2).
+    ifthenelse(A,B,C,D),
+    type(A, bool),
+  	type(B, T2),
+  	type(C, T2),
+  	type(D, T2).
 
  % and: [bool, bool, bool]
  type(and(X,Y,Z),[bool,bool,bool]) :-
