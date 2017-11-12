@@ -11,7 +11,7 @@
  /* Listing Valid Types */
  type('Unit').
  type('Bool').
- type(number).
+ type('Number').
 
  /* ----- Atom and Variable Types ----- */
  % Unit type
@@ -19,8 +19,8 @@
  % Booleans
  type(tru, 'Bool').
  type(fls, 'Bool').
- % Numbers - Anything instatiated to a number has type "number".
- type(X, number) :- number(X).
+ % Numbers - Anything instatiated to a number has type 'Number'.
+ type(X, 'Number') :- number(X).
  /* Variables - can be of any type. */
  type(Var, Type) :- var(Var), type(Type).
 
@@ -58,42 +58,42 @@
  	type(Y, 'Bool').
 
 /* -- Numbers -- */
-% succ: number -> number
-type(succ(X,Y),[number,number]) :-
+% succ: 'Number' -> 'Number'
+type(succ(X,Y),['Number','Number']) :-
     succ(X,Y),
-	type(X, number),
-	type(Y, number).
-% pred: number -> number
-type(pred(X,Y),[number,number]) :-
+	type(X, 'Number'),
+	type(Y, 'Number').
+% pred: 'Number' -> 'Number'
+type(pred(X,Y),['Number','Number']) :-
     pred(X,Y),
-	type(X, number),
-	type(Y, number).
-% pred: number -> 'Bool'
-type(iszero(X,Y),[number,'Bool']) :-
+	type(X, 'Number'),
+	type(Y, 'Number').
+% pred: 'Number' -> 'Bool'
+type(iszero(X,Y),['Number','Bool']) :-
     iszero(X,Y),
-    type(X, number),
+    type(X, 'Number'),
 	type(Y, 'Bool').
-% add: number -> number -> number
-type(add(X,Y,S),[number,number,number]) :-
+% add: 'Number' -> 'Number' -> 'Number'
+type(add(X,Y,S),['Number','Number','Number']) :-
     add(X,Y,S),
-    type(X, number),
-	type(Y, number),
-    type(S, number).
-% sub: number -> number -> number
-type(sub(X,Y,D),[number,number,number]) :-
+    type(X, 'Number'),
+	type(Y, 'Number'),
+    type(S, 'Number').
+% sub: 'Number' -> 'Number' -> 'Number'
+type(sub(X,Y,D),['Number','Number','Number']) :-
     sub(X,Y,D),
-    type(X, number),
-	type(Y, number),
-    type(D, number).
-% mul: number -> number -> number
-type(mul(X,Y,P),[number,number,number]) :-
+    type(X, 'Number'),
+	type(Y, 'Number'),
+    type(D, 'Number').
+% mul: 'Number' -> 'Number' -> 'Number'
+type(mul(X,Y,P),['Number','Number','Number']) :-
     mul(X,Y,P),
-    type(X, number),
-	type(Y, number),
-    type(P, number).
-% div: number -> number -> number
-type(div(N,D,Q),[number,number,number]) :-
+    type(X, 'Number'),
+	type(Y, 'Number'),
+    type(P, 'Number').
+% div: 'Number' -> 'Number' -> 'Number'
+type(div(N,D,Q),['Number','Number','Number']) :-
     div(N,D,Q),
-    type(N, number),
-	type(D, number),
-    type(Q, number).
+    type(N, 'Number'),
+	type(D, 'Number'),
+    type(Q, 'Number').
