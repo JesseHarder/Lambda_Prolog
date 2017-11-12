@@ -6,6 +6,19 @@
  *
  */
 
+ /* Included Labda calculus features:
+  *     Booleans
+  *     Numbers
+  *     Unit
+  *
+  * Derived featurs:
+  *     Let - this is basically just Prolog's = operator. If I write something
+  *         like X = A+B*C, X is not the same thing as A+B*C, unevevaluated.
+  *     Ascription - this is basically just adding a note of a new type. See
+  *         the Ascription comment below for where these should go and how
+  *         they should look.
+  */
+
 :- [numbers, booleans].
 
  /* Listing Valid Types */
@@ -21,8 +34,18 @@
  type(fls, 'Bool').
  % Numbers - Anything instatiated to a number has type 'Number'.
  type(X, 'Number') :- number(X).
+
+/* Ascriptions - Add ascription below this comment of the form:
+ *      type(X, <NewTypeName>) :- type(X, <OldTypeRepresentation>).
+ *  Example:
+ *      type(X, 'NNN') :- type(X, ['Number','Number','Number']).
+ */
+
  /* Variables - can be of any type. */
  type(Var, Type) :- var(Var), type(Type).
+
+
+
 
  /* ----- Predicate Types ----- */
  /* -- Booleans -- */
