@@ -27,6 +27,7 @@
  type('Bool').
  type('Number').
  type('List'(T)) :- type(T).
+ type('Tuple'([Head|Tail])) :- type(Head), type('Tuple'(Tail)).
  % Function Type: where [T1, T2, T3] is T1 -> T2 -> T3.
  type([T]) :- type(T).
  type([Head|Tail]) :- type(Head),type(Tail).
@@ -44,6 +45,7 @@
  type([Head|Tail],'List'(T)) :-   % A list has type list of T's if
      type(Head, T),             % the fisrt element has type T and
      type(Tail, 'List'(T)).       % the tail is a list of T's.
+% Tuples
 
 /* Ascriptions - Add ascription below this comment of the form:
  *      type(X, <NewTypeName>) :- type(X, <OldTypeRepresentation>).
