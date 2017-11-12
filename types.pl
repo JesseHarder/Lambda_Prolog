@@ -9,13 +9,16 @@
 :- [numbers, booleans].
 
  /* Listing Valid Types */
- type(bool).
+ type('Unit').
+ type('Bool').
  type(number).
 
  /* ----- Atom and Variable Types ----- */
+ % Unit type
+ type(unit, 'Unit').
  % Booleans
- type(tru, bool).
- type(fls, bool).
+ type(tru, 'Bool').
+ type(fls, 'Bool').
  % Numbers - Anything instatiated to a number has type "number".
  type(X, number) :- number(X).
  /* Variables - can be of any type. */
@@ -23,42 +26,38 @@
 
  /* ----- Predicate Types ----- */
  /* -- Booleans -- */
- % ifthenelse: bool -> T -> T -> T
- type(ifthenelse(A,B,C,D),[bool,T2,T2,T2]) :-
+ % ifthenelse: 'Bool' -> T -> T -> T
+ type(ifthenelse(A,B,C,D),['Bool',T2,T2,T2]) :-
     ifthenelse(A,B,C,D),
-    type(A, bool),
+    type(A, 'Bool'),
   	type(B, T2),
   	type(C, T2),
   	type(D, T2).
- % and: bool -> bool -> bool
- type(and(X,Y,Z),[bool,bool,bool]) :-
+ % and: 'Bool' -> 'Bool' -> 'Bool'
+ type(and(X,Y,Z),['Bool','Bool','Bool']) :-
     and(X,Y,Z),
-    type(X, bool),
- 	type(Y, bool),
- 	type(Z, bool).
- % or: bool -> bool -> bool
- type(or(X,Y,Z),[bool,bool,bool]) :-
+    type(X, 'Bool'),
+ 	type(Y, 'Bool'),
+ 	type(Z, 'Bool').
+ % or: 'Bool' -> 'Bool' -> 'Bool'
+ type(or(X,Y,Z),['Bool','Bool','Bool']) :-
     or(X,Y,Z),
- 	type(X, bool),
- 	type(Y, bool),
- 	type(Z, bool).
- % xor: bool -> bool -> bool
- type(xor(X,Y,Z),[bool,bool,bool]) :-
+ 	type(X, 'Bool'),
+ 	type(Y, 'Bool'),
+ 	type(Z, 'Bool').
+ % xor: 'Bool' -> 'Bool' -> 'Bool'
+ type(xor(X,Y,Z),['Bool','Bool','Bool']) :-
     xor(X,Y,Z),
- 	type(X, bool),
- 	type(Y, bool),
- 	type(Z, bool).
- % not: bool -> bool
- type(not(X,Y),[bool,bool]) :-
+ 	type(X, 'Bool'),
+ 	type(Y, 'Bool'),
+ 	type(Z, 'Bool').
+ % not: 'Bool' -> 'Bool'
+ type(not(X,Y),['Bool','Bool']) :-
     not(X,Y),
- 	type(X, bool),
- 	type(Y, bool).
+ 	type(X, 'Bool'),
+ 	type(Y, 'Bool').
 
 /* -- Numbers -- */
-
-/* TODO: Figure out why the following four run forever if asked to check
- * for a second result
- */
 % succ: number -> number
 type(succ(X,Y),[number,number]) :-
     succ(X,Y),
@@ -69,11 +68,11 @@ type(pred(X,Y),[number,number]) :-
     pred(X,Y),
 	type(X, number),
 	type(Y, number).
-% pred: number -> bool
-type(iszero(X,Y),[number,bool]) :-
+% pred: number -> 'Bool'
+type(iszero(X,Y),[number,'Bool']) :-
     iszero(X,Y),
     type(X, number),
-	type(Y, bool).
+	type(Y, 'Bool').
 % add: number -> number -> number
 type(add(X,Y,S),[number,number,number]) :-
     add(X,Y,S),
