@@ -19,6 +19,9 @@
   *     Ascription - this is basically just adding a note of a new type. See
   *         the Ascription comment below for where these should go and how
   *         they should look.
+  *     Sums and Variants - Already built in? Just write same predicate to
+  *         work for different type inputs?
+  *     Fix - Not needed? Prolog is already recursive.
   */
 
 :- [plists,
