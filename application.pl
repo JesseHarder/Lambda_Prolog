@@ -23,3 +23,6 @@
  *										be included if application should
  *										also perform an evaluation.
  */
+
+ :- [plists,
+     numbers, booleans, tuples].

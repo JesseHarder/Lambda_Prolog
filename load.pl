@@ -1,4 +1,4 @@
-:- [types,
+:- [types, application,
 	numbers,
 	booleans,
 	tuples].
