@@ -20,7 +20,8 @@
   *         they should look.
   */
 
-:- [numbers, booleans].
+:- [plists,
+    numbers, booleans, tuples].
 
 /* Helper Rules */
 types_in_list([Head], [Type]) :- type(Head,Type).
@@ -146,3 +147,12 @@ type(div(N,D,Q),['Number','Number','Number']) :-
     type(N, 'Number'),
 	type(D, 'Number'),
     type(Q, 'Number').
+
+/* -- Tuples (and thus Pairs) -- */
+% tuple: {Ti^1...n} -> j:'Number' -> Tj
+type(project(tuple(TList), Index, Val), ['Tuple'(TypeList), 'Number', ValType]) :-
+    project(tuple(TList), Index, Val),
+    type(tuple(TList), 'Tuple'(TypeList)),
+        ith_elm(TypeList, Index, ValType),
+    type(Index, 'Number'),
+    type(Val, ValType).
