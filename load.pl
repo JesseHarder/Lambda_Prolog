@@ -1,6 +1,7 @@
 :- [types,
 	numbers,
-	booleans].
+	booleans,
+	tuples].
 
 % to give me screen clearing.
 cls :- write('\e[H\e[2J').
