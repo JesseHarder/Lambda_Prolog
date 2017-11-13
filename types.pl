@@ -14,6 +14,8 @@
   *     Lists (using built in list type.)
   *
   * Derived featurs:
+  *     Application! - Turns out this is already in Prolog. See application.txt
+  *         for a more detailed description.
   *     Let - this is basically just Prolog's = operator. If I write something
   *         like X = A+B*C, X is not the same thing as A+B*C, unevevaluated.
   *     Ascription - this is basically just adding a note of a new type. See
