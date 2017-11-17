@@ -8,6 +8,12 @@
 :- [values,
 	lambda/lambdas].
 
+/* --- Helper Predicates --- */
+eval_if_not_value(Term,Result) :-
+	(is_value(Term) ->
+		Result = Term;
+		eval(Term,Result)).
+
 /* --- Booelean Evaluation --- */
 
 /* --- Basic Lambda Calculus Evaluation --- */
