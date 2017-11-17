@@ -29,6 +29,33 @@ eval(ifte(Term1, Term2, Term3),Result) :-
 	eval(Term1, New1),
 	eval(ifte(New1, Term2, Term3),Result),!.
 
+/* --- Natural Numbers --- */
+% E-PredZero
+eval(pred(0),0) :- !.
+% E-PredSucc
+eval(pred(succ(X)),X) :-
+	is_natural_value(X),!.
+% E-Succ
+eval(succ(Term),Result) :-
+	eval(Term,NewTerm),
+	(is_value(succ(NewTerm)) ->
+		Result = succ(NewTerm);
+		eval(succ(NewTerm),Result)).
+% E-Pred
+eval(pred(Term),Result) :-
+	eval(Term,NewTerm),
+	(is_value(pred(NewTerm)) ->
+		Result = pred(NewTerm);
+		eval(pred(NewTerm),Result)).
+
+% eval(succ(Term),Result) :-
+% 	eval(Term,NewTerm),
+% 	is_value(succ(NewTerm)),
+% 	Result = succ(NewTerm),!.
+%
+% eval(succ(Term),Result) :-
+% 	eval(Term,NewTerm),
+% 	eval(succ(NewTerm),Result),!.
 /* --- Basic Lambda Calculus Evaluation --- */
 % E-AppAbs
 eval([Abs,Val],Result) :-
