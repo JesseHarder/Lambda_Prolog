@@ -38,15 +38,11 @@ eval(pred(succ(X)),X) :-
 % E-Succ
 eval(succ(Term),Result) :-
 	eval(Term,NewTerm),
-	(is_value(succ(NewTerm)) ->
-		Result = succ(NewTerm);
-		eval(succ(NewTerm),Result)).
+	eval_if_not_value(succ(NewTerm),Result),!.
 % E-Pred
 eval(pred(Term),Result) :-
 	eval(Term,NewTerm),
-	(is_value(pred(NewTerm)) ->
-		Result = pred(NewTerm);
-		eval(pred(NewTerm),Result)).
+	eval_if_not_value(pred(NewTerm),Result),!.
 
 % eval(succ(Term),Result) :-
 % 	eval(Term,NewTerm),
