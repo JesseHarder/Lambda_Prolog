@@ -13,7 +13,7 @@ eval(X,X) :- atom(X).
 
 % Application Evaluation
 eval([Term1,Term2],Result) :-
-	apply(Term1,Term2,Result).
+	apply(Term1,Term2,Result),!.
 
 eval([Term1,Term2|OtherTerms],Result) :-
 	apply(Term1,Term2,NewTerm),
