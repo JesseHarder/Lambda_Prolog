@@ -8,3 +8,6 @@
 is_value(X) :- atom(X).
 % Abstractions are values.
 is_value(X) :- is_lambda(X).
+/* Booleans */
+is_value(tru).
+is_value(fls).
