@@ -8,8 +8,9 @@
 :- [values,
 	lambda/lambdas].
 
+/* --- Booelean Evaluation --- */
+
 /* --- Basic Lambda Calculus Evaluation --- */
-/* Basic Lambda Evaluation */
 % E-AppAbs
 eval([Abs,Val],Result) :-
 	is_lambda(Abs),
