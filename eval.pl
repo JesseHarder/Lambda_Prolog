@@ -5,16 +5,49 @@
  *		where Y is the result of evaulating X.
  */
 
-:- [lambda/lambdas].
+:- [values,
+	lambda/lambdas].
 
-/* Basic Lambda Calculus Evaluation*/
-% Variables - evalute to themselves. (This might cause infinite loop.)
-eval(X,X) :- atom(X).
+/* --- Basic Lambda Calculus Evaluation --- */
+/* Basic Lambda Evaluation */
+% E-AppAbs
+eval([Abs,Val],Result) :-
+	is_lambda(Abs),
+	is_value(Val),
+	apply(Abs,Val,Result),
+	% If app result is a value, you're done.
+	is_value(Result).
 
-% Application Evaluation
-eval([Term1,Term2],Result) :-
-	apply(Term1,Term2,Result),!.
+eval([Abs,Val],Result) :-
+	is_lambda(Abs),
+	is_value(Val),
+	apply(Abs,Val,MidResult),
+	% If app result not a value, continue eval.
+	eval(MidResult,Result).
 
-eval([Term1,Term2|OtherTerms],Result) :-
-	apply(Term1,Term2,NewTerm),
-	eval([NewTerm|OtherTerms],Result).
+eval([Abs,Val|OtherTerms],Result) :-
+	is_lambda(Abs),
+	is_value(Val),
+	eval([Abs,Val],NewTerm),
+	eval([NewTerm|OtherTerms],Result),
+	% If second eval result is a value, you're done.
+	is_value(Result),!.
+
+eval([Abs,Val|OtherTerms],Result) :-
+	is_lambda(Abs),
+	is_value(Val),
+	eval([Abs,Val],NewTerm),
+	eval([NewTerm|OtherTerms],MidResult),
+	% If second eval result not a value, continue eval.
+	eval(MidResult,Result),!.
+
+% E-APP2
+eval([Val,Term], Result) :-
+	is_value(Val),
+	eval(Term,NewTerm),
+	eval([Val,NewTerm], Result).
+
+% E-APP1
+eval([Term1,Term2], Result) :-
+	eval(Term1,New1),
+	eval([New1,Term2], Result).
