@@ -9,6 +9,11 @@
 	lambda/lambdas].
 
 /* --- Helper Predicates --- */
+
+% eval_if_not_value/1
+% If the term to be evaluated is already a value, the result is the term.
+% If the term to be evaluated is not a value, the result is the evaluation of
+%	the term.
 eval_if_not_value(Term,Result) :-
 	(is_value(Term) ->
 		Result = Term;
