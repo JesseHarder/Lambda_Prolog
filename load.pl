@@ -1,5 +1,6 @@
-:- [lambda/types,
-	lambda/eval,
+:- [types,
+	eval,
+	values,
 	lambda/lambdas].
 
 % to give me screen clearing.
