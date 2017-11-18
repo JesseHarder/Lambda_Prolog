@@ -8,6 +8,8 @@
 % Natural Numbers
 is_natural_value(0).
 is_natural_value(succ(X)) :- is_natural_value(X).
+% Is Not Value.
+is_not_value(X) :- not(is_value(X)).
 
 /* --- is_value/1 --- */
 % Temporary. Remove eventually.

@@ -16,7 +16,9 @@
 %	the term.
 eval_if_not_value(Term,Result) :-
 	(is_value(Term) ->
+		% If Term is a value, it is the result.
 		Result = Term;
+		% If not, the result of evaluating it is the result.
 		eval(Term,Result)).
 
 /* --- Booelean Evaluation --- */
@@ -62,44 +64,29 @@ eval(iszero(Term),Result) :-
 % 	eval(Term,NewTerm),
 % 	eval(succ(NewTerm),Result),!.
 /* --- Basic Lambda Calculus Evaluation --- */
-% E-AppAbs
-eval([Abs,Val],Result) :-
-	is_lambda(Abs),
-	is_value(Val),
-	apply(Abs,Val,Result),
-	% If app result is a value, you're done.
-	is_value(Result).
-
-eval([Abs,Val],Result) :-
-	is_lambda(Abs),
-	is_value(Val),
-	apply(Abs,Val,MidResult),
-	% If app result not a value, continue eval.
-	eval(MidResult,Result).
-
-eval([Abs,Val|OtherTerms],Result) :-
-	is_lambda(Abs),
-	is_value(Val),
-	eval([Abs,Val],NewTerm),
-	eval([NewTerm|OtherTerms],Result),
-	% If second eval result is a value, you're done.
-	is_value(Result),!.
-
-eval([Abs,Val|OtherTerms],Result) :-
-	is_lambda(Abs),
-	is_value(Val),
-	eval([Abs,Val],NewTerm),
-	eval([NewTerm|OtherTerms],MidResult),
-	% If second eval result not a value, continue eval.
-	eval(MidResult,Result),!.
+% E-APP1
+eval([Term1,Term2], Result) :-
+	is_not_value(Term1),
+	is_not_value(Term2),
+	eval(Term1,New1),
+	eval([New1,Term2], Result).
 
 % E-APP2
 eval([Val,Term], Result) :-
 	is_value(Val),
+	is_not_value(Term),
 	eval(Term,NewTerm),
 	eval([Val,NewTerm], Result).
 
-% E-APP1
-eval([Term1,Term2], Result) :-
-	eval(Term1,New1),
-	eval([New1,Term2], Result).
+% E-AppAbs
+eval([Abs,Val],Result) :-
+	is_lambda(Abs),
+	is_value(Val),
+	apply(Abs,Val,ApResult),
+	eval_if_not_value(ApResult,Result),!.
+
+eval([Abs,Val|OtherTerms],Result) :-
+	length([Abs,Val|OtherTerms],Len), Len > 2,
+	eval([Abs,Val],NewTerm),
+	eval([NewTerm|OtherTerms],MidResult),
+	eval_if_not_value(MidResult,Result),!.
