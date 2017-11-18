@@ -51,17 +51,26 @@ type([H|T]) :- type(H),type(T).
 
 
 
-/* ----- Non-Predicate Types ----- */
+
+/* ----- Typing Rules ----- */
 % Unit type
 typeof(unit, 'Unit').
+
 % Booleans
 typeof(tru, 'Bool'). % T-True
 typeof(fls, 'Bool'). % T-False
+% T-If
+typeof(ifte(Term1,Term2,Term3), Type) :-
+    typeof(Term1, 'Bool'),
+    typeof(Term2,Type),
+    typeof(Term3,Type).
+
 % Numbers
 typeof(0, 'Natural').   % T-Zero
 typeof(succ(X), 'Natural') :- typeof(X, 'Natural'). % T-Succ
 typeof(pred(X), 'Natural') :- typeof(X, 'Natural'). % T-Succ
 typeof(iszero(X), 'Bool') :- typeof(X, 'Natural'). % T-IsZero
+
 % Lists
 typeof([],'List'(T)) :- type(T). % Empty list can be list of any type.
 typeof([Head|Tail],'List'(T)) :-   % A list has type list of T's if
@@ -81,11 +90,3 @@ typeof(tuple(List), 'Tuple'(Types)) :-
 
 /* Variables - can be of any type. */
 typeof(Var, Type) :- var(Var), type(Type).
-
-/* ----- Predicate Types ----- */
-/* --- Booleans --- */
-% T-If
-typeof(ifte(Term1,Term2,Term3), Type) :-
-    typeof(Term1, 'Bool'),
-    typeof(Term2,Type),
-    typeof(Term3,Type).
