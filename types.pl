@@ -79,4 +79,7 @@ typeof(Var, Type) :- var(Var), type(Type).
 /* ----- Predicate Types ----- */
 /* --- Booleans --- */
 % T-If
-typeof(ifte(Term1,Term2,Term3), Type).
+typeof(ifte(Term1,Term2,Term3), Type) :-
+    typeof(Term1, 'Bool'),
+    typeof(Term2,Type),
+    typeof(Term3,Type).
