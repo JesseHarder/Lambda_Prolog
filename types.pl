@@ -52,7 +52,7 @@ typeof(ifte(Term1,Term2,Term3), Type) :-
     typeof(Term3,Type).
 
 /***** Numbers *****/
-typeof(0, 'Natural').   % T-Zero
+typeof(0, 'Natural').
 typeof(succ(X), 'Natural') :- typeof(X, 'Natural'). % T-Succ
 typeof(pred(X), 'Natural') :- typeof(X, 'Natural'). % T-Succ
 typeof(iszero(X), 'Bool') :- typeof(X, 'Natural'). % T-IsZero
@@ -80,19 +80,28 @@ typeof(iszero(X), 'Bool') :- typeof(X, 'Natural'). % T-IsZero
 typeof(Var, Type) :- var(Var), type(Type).
 % T-AbsProlog
 %   In Prolog, It suffices to just say that the type of a lambda is
-%   VarType -> TermType, where VarType is the type of the variable and
-%   TermType is the type of the term. Prolog unification will force a
+%   VarType -> SubtermType, where VarType is the type of the variable and
+%   SubtermType is the type of the subterm. Prolog unification will force a
 %   type environment in which this is always true.
-typeof(lam(Var,Term),Type) :-
+typeof(lam(Var,Subterm),Type) :-
+    is_list(Subterm),   % Sanity Check
     typeof(Var,VarType),
-    typeof(Term,TermType),
-    Type = [VarType,TermType].
+    (Subterm = [InnerTerm] ->           % If the lambda has just one subterm,
+        typeof(InnerTerm,SubtermType);  % its type the type of the subterm.
+        typeof(Subterm,SubtermType)),   % Else, the subterm type is that of the application.
+    Type = [VarType,SubtermType].
 % T-AppProlog
 %   An application returns the return type of the first term, which should be
 %   an abstraction, if the second term has the abstractions parameter type.
 typeof([Term1,Term2],ReturnType) :-
-    typeof(Term1,[ParamType,ReturnType]),
-    typeof(Term2,ParamType).
+    % This is a cheat.
+    write("Solved with a cheat."),
+    eval([Term1,Term2],Result),
+    typeof(Result, ReturnType).
+    % TODO: Figure out problem the method below where
+    %       typeof([lam(X,[X]),tru],Type) will loop forever.
+    % typeof(Term2,ParamType),
+    % typeof(Term1,[ParamType,ReturnType]).
 
 /* Ascriptions - Add ascription below this comment of the form:
  *      typeof(X, <NewTypeName>) :- typeof(X, <OldTypeRepresentation>).
