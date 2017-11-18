@@ -55,14 +55,6 @@ eval(iszero(Term),Result) :-
 	eval(Term,NewTerm),
 	eval(iszero(NewTerm),Result).
 
-% eval(succ(Term),Result) :-
-% 	eval(Term,NewTerm),
-% 	is_value(succ(NewTerm)),
-% 	Result = succ(NewTerm),!.
-%
-% eval(succ(Term),Result) :-
-% 	eval(Term,NewTerm),
-% 	eval(succ(NewTerm),Result),!.
 /* --- Basic Lambda Calculus Evaluation --- */
 % E-APP1
 eval([Term1,Term2], Result) :-

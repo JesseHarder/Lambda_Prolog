@@ -22,7 +22,7 @@ types_in_list([Head|Tail], [T_Head|T_Tail]) :-
  * This section is like the "T::=..." section of our syntax.
  */
 
-type('Unit').
+% type('Unit').
 type('Bool').
 type('Natural').
 % type('List'(T)) :- type(T).
@@ -38,7 +38,7 @@ type([H|T]) :- type(H),type(T).
 
 /* ---------- Typing Rules ---------- */
 /***** Unit type *****/
-typeof(unit, 'Unit').
+% typeof(unit, 'Unit').
 
 /***** Booleans *****/
 typeof(tru, 'Bool'). % T-True
