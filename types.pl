@@ -50,30 +50,30 @@ type([H|T]) :- type(H),type(T).
 
 /* ----- Non-Predicate Types ----- */
 % Unit type
-type(unit, 'Unit').
+typeof(unit, 'Unit').
 % Booleans
-type(tru, 'Bool').
-type(fls, 'Bool').
+typeof(tru, 'Bool').
+typeof(fls, 'Bool').
 % Numbers - Anything instatiated to a number has type 'Number'.
-type(X, 'Number') :- number(X).
+typeof(X, 'Number') :- number(X).
 % Lists
-type([],'List'(T)) :- type(T). % Empty list can be list of any type.
-type([Head|Tail],'List'(T)) :-   % A list has type list of T's if
-     type(Head, T),             % the fisrt element has type T and
-     type(Tail, 'List'(T)).       % the tail is a list of T's.
+typeof([],'List'(T)) :- type(T). % Empty list can be list of any type.
+typeof([Head|Tail],'List'(T)) :-   % A list has type list of T's if
+     typeof(Head, T),             % the fisrt element has type T and
+     typeof(Tail, 'List'(T)).       % the tail is a list of T's.
 % Tuples
-type(tuple([Val]), 'Tuple'([T])) :- type(Val,T).
-type(tuple(List), 'Tuple'(Types)) :-
+typeof(tuple([Val]), 'Tuple'([T])) :- typeof(Val,T).
+typeof(tuple(List), 'Tuple'(Types)) :-
     is_list(List), length(List, L), L > 0, % "Lists" is a non-empty list.
     types_in_list(List,Types).
 
 /* Ascriptions - Add ascription below this comment of the form:
- *      type(X, <NewTypeName>) :- type(X, <OldTypeRepresentation>).
+ *      typeof(X, <NewTypeName>) :- typeof(X, <OldTypeRepresentation>).
  *  Example:
- *      type(X, 'NNN') :- type(X, ['Number','Number','Number']).
+ *      typeof(X, 'NNN') :- typeof(X, ['Number','Number','Number']).
  */
 
 /* Variables - can be of any type. */
-type(Var, Type) :- var(Var), type(Type).
+typeof(Var, Type) :- var(Var), type(Type).
 
 /* ----- Predicate Types ----- */
