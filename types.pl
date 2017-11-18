@@ -28,9 +28,11 @@ type('Natural').
 % type('List'(T)) :- type(T).
 % type('Tuple'([H])) :- type(H).
 % type('Tuple'([H|T])) :- type(H), type('Tuple'(T)).
-% Function Type: where [T1, T2, T3] is T1 -> T2 -> T3.
-type([T]) :- type(T).
-type([H|T]) :- type(H),type(T).
+% Function Type:
+%   [T1, T2] is T1 -> T2.
+%   [[T1, T2], T3] is (T1 -> T2) -> T3.
+%   [T1, [T2,T3]] is T1 -> (T2 -> T3).
+type([T1,T2]) :- type(T1),type(T2).
 
 
 
@@ -68,9 +70,29 @@ typeof(iszero(X), 'Bool') :- typeof(X, 'Natural'). % T-IsZero
 %     types_in_list(List,Types).
 
 /***** Variables *****
- * Variables can be of any type.
+ * In Prolog, the type environment is constructed by the unification
+ * of all typing information. The following rules work based on that.
  */
+
+% T-VarProlog
+%   It suffices to allow variables to be resolved to any type
+%   that will unify with all other typing restrictions.
 typeof(Var, Type) :- var(Var), type(Type).
+% T-AbsProlog
+%   In Prolog, It suffices to just say that the type of a lambda is
+%   VarType -> TermType, where VarType is the type of the variable and
+%   TermType is the type of the term. Prolog unification will force a
+%   type environment in which this is always true.
+typeof(lam(Var,Term),Type) :-
+    typeof(Var,VarType),
+    typeof(Term,TermType),
+    Type = [VarType,TermType].
+% T-AppProlog
+%   An application returns the return type of the first term, which should be
+%   an abstraction, if the second term has the abstractions parameter type.
+typeof([Term1,Term2],ReturnType) :-
+    typeof(Term1,[ParamType,ReturnType]),
+    typeof(Term2,ParamType).
 
 /* Ascriptions - Add ascription below this comment of the form:
  *      typeof(X, <NewTypeName>) :- typeof(X, <OldTypeRepresentation>).
