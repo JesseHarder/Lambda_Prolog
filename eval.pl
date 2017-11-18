@@ -1,7 +1,7 @@
 /* This file contains all of the lambda calculus evaluation rules as
  * implemented in Prolog. The predicate evaluate/2 is used for these
  * rules. They take the form:
- * evaluate(X,Y)
+ * eval(X,Y)
  *		where Y is the result of evaulating X.
  */
 
@@ -21,15 +21,16 @@ eval_if_not_value(Term,Result) :-
 
 /* --- Booelean Evaluation --- */
 %E-IfTrue
-eval(ifte(tru,Term1,_),Term1) :- !.
+eval(ifte(tru,Term1,_),Result) :- eval_if_not_value(Term1,Result).
 %E-IfFalse
-eval(ifte(fls,_,Term2),Term2) :- !.
+eval(ifte(fls,_,Term2),Result) :- eval_if_not_value(Term2,Result).
 %E-If
 eval(ifte(Term1, Term2, Term3),Result) :-
 	eval(Term1, New1),
-	eval(ifte(New1, Term2, Term3),Result),!.
+	eval_if_not_value(ifte(New1, Term2, Term3),Result).
+	% eval(ifte(New1, Term2, Term3),Result).
 
-/* --- Natural Numbers --- */
+/* --- Natural Number Evaluation --- */
 % E-PredZero
 eval(pred(0),0) :- !.
 % E-PredSucc
@@ -43,6 +44,14 @@ eval(succ(Term),Result) :-
 eval(pred(Term),Result) :-
 	eval(Term,NewTerm),
 	eval_if_not_value(pred(NewTerm),Result),!.
+% E-IsZeroZero
+eval(iszero(0),tru).
+% E-IsZeroSucc
+eval(iszero(succ(X)),fls) :- is_natural_value(X).
+% E-IsZero
+eval(iszero(Term),Result) :-
+	eval(Term,NewTerm),
+	eval(iszero(NewTerm),Result).
 
 % eval(succ(Term),Result) :-
 % 	eval(Term,NewTerm),
