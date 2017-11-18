@@ -52,8 +52,8 @@ type([H|T]) :- type(H),type(T).
 % Unit type
 typeof(unit, 'Unit').
 % Booleans
-typeof(tru, 'Bool').
-typeof(fls, 'Bool').
+typeof(tru, 'Bool'). % T-True
+typeof(fls, 'Bool'). % T-False
 % Numbers - Anything instatiated to a number has type 'Number'.
 typeof(X, 'Number') :- number(X).
 % Lists
@@ -77,3 +77,6 @@ typeof(tuple(List), 'Tuple'(Types)) :-
 typeof(Var, Type) :- var(Var), type(Type).
 
 /* ----- Predicate Types ----- */
+/* --- Booleans --- */
+% T-If
+typeof(ifte(Term1,Term2,Term3), Type).
