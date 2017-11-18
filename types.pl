@@ -1,4 +1,4 @@
-/*
+'Natural'/*
  * Prolog code to be used to write type-checkable prolog code.
  *
  * Note, existing type checking predicates in prolog are listed here:
@@ -34,10 +34,13 @@ types_in_list([Head|Tail], [T_Head|T_Tail]) :-
     type(Head, T_Head),
     types_in_list(Tail, T_Tail).
 
-/* Listing Valid Types */
+/* ----- Listing Valid Types -----
+ * This section is like the "T::=..." section of our syntax.
+ */
+
 type('Unit').
 type('Bool').
-type('Number').
+type('Natural').
 type('List'(T)) :- type(T).
 type('Tuple'([H])) :- type(H).
 type('Tuple'([H|T])) :- type(H), type('Tuple'(T)).
@@ -54,8 +57,11 @@ typeof(unit, 'Unit').
 % Booleans
 typeof(tru, 'Bool'). % T-True
 typeof(fls, 'Bool'). % T-False
-% Numbers - Anything instatiated to a number has type 'Number'.
-typeof(X, 'Number') :- number(X).
+% Numbers
+typeof(0, 'Natural').   % T-Zero
+typeof(succ(X), 'Natural') :- typeof(X, 'Natural'). % T-Succ
+typeof(pred(X), 'Natural') :- typeof(X, 'Natural'). % T-Succ
+typeof(iszero(X), 'Bool') :- typeof(X, 'Natural'). % T-IsZero
 % Lists
 typeof([],'List'(T)) :- type(T). % Empty list can be list of any type.
 typeof([Head|Tail],'List'(T)) :-   % A list has type list of T's if
@@ -70,7 +76,7 @@ typeof(tuple(List), 'Tuple'(Types)) :-
 /* Ascriptions - Add ascription below this comment of the form:
  *      typeof(X, <NewTypeName>) :- typeof(X, <OldTypeRepresentation>).
  *  Example:
- *      typeof(X, 'NNN') :- typeof(X, ['Number','Number','Number']).
+ *      typeof(X, 'NNN') :- typeof(X, ['Natural','Natural','Natural']).
  */
 
 /* Variables - can be of any type. */
