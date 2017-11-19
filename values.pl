@@ -24,3 +24,5 @@ is_value(tru).
 is_value(fls).
 % Natural numbers are values.
 is_value(X) :- is_natural_value(X).
+% Unit
+is_value(unit).
