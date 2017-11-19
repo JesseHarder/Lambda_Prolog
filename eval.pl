@@ -55,6 +55,17 @@ eval(iszero(Term),Result) :-
 	eval(Term,NewTerm),
 	eval(iszero(NewTerm),Result).
 
+/* --- Let --- */
+% let X=Term1 in Term2
+eval(let(X,Val,Term2),Result) :-
+	is_value(Val),
+	X=Val,
+	eval(Term2,Result).
+eval(let(X,Term1,Term2),Result) :-
+	is_not_value(Term1),
+	eval(Term1,New1),
+	eval(let(X,New1,Term2),Result).
+
 /* --- Basic Lambda Calculus Evaluation --- */
 % E-APP1
 eval([Term1,Term2], Result) :-
