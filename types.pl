@@ -55,6 +55,11 @@ typeof(succ(X), 'Natural') :- typeof(X, 'Natural'). % T-Succ
 typeof(pred(X), 'Natural') :- typeof(X, 'Natural'). % T-Succ
 typeof(iszero(X), 'Bool') :- typeof(X, 'Natural'). % T-IsZero
 
+/***** Let *****/
+typeof(let(X,Term1,Term2), Type2) :-
+    var(X), X=Term1,
+    typeof(Term2, Type2).
+
 /***** Lists *****/
 % typeof([],'List'(T)) :- type(T). % Empty list can be list of any type.
 % typeof([Head|Tail],'List'(T)) :-   % A list has type list of T's if
