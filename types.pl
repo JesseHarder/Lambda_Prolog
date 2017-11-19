@@ -94,14 +94,10 @@ typeof(lam(Var,Subterm),Type) :-
 %   An application returns the return type of the first term, which should be
 %   an abstraction, if the second term has the abstractions parameter type.
 typeof([Term1,Term2],ReturnType) :-
-    % This is a cheat.
-    write("Solved with a cheat."),
-    eval([Term1,Term2],Result),
-    typeof(Result, ReturnType).
-    % TODO: Figure out problem the method below where
-    %       typeof([lam(X,[X]),tru],Type) will loop forever.
-    % typeof(Term2,ParamType),
-    % typeof(Term1,[ParamType,ReturnType]).
+    % First line needed to prevent infinite option search for Term1.
+    Term1 = lam(Term2, _),
+    typeof(Term2,ParamType),
+    typeof(Term1,[ParamType,ReturnType]).
 
 /* Ascriptions - Add ascription below this comment of the form:
  *      typeof(X, <NewTypeName>) :- typeof(X, <OldTypeRepresentation>).
