@@ -60,9 +60,9 @@ eval(iszero(Term),Result) :-
 % TODO: Check this with Cormac.
 eval(seq([Term]),Result) :-
 	eval(Term,Result).
-eval(seq([Head|Tail]),Result) :-
-	eval(Head,_),
-	eval(Tail,Result).
+eval(seq([FirstTerm|OtherTerms]),Result) :-
+	eval(FirstTerm,_),
+	eval(seq(OtherTerms),Result).
 
 /* --- Basic Lambda Calculus Evaluation --- */
 % E-APP1
