@@ -1,5 +1,8 @@
 /* This file is for tracking the valid form of a value in Prolog Lambda.
  * It does so through the predicate is_value(X).
+ *
+ * This section of the code corresponds to the v::=... section of the
+ * semantic rules.
  */
 
 :- [lambda/lambdas].
