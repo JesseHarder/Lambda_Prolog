@@ -55,6 +55,15 @@ eval(iszero(Term),Result) :-
 	eval(Term,NewTerm),
 	eval(iszero(NewTerm),Result).
 
+/* --- Sequences with Unit type ---*/
+% This doesn't currently use lambda to perform the eval sequence.
+% TODO: Check this with Cormac.
+eval(seq([Term]),Result) :-
+	eval(Term,Result).
+eval(seq([Head|Tail]),Result) :-
+	eval(Head,_),
+	eval(Tail,Result).
+
 /* --- Basic Lambda Calculus Evaluation --- */
 % E-APP1
 eval([Term1,Term2], Result) :-
