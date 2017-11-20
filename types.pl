@@ -26,8 +26,8 @@ types_in_list([Head|Tail], [T_Head|T_Tail]) :-
 type('Bool').
 type('Natural').
 % type('List'(T)) :- type(T).
-% type('Tuple'([H])) :- type(H).
-% type('Tuple'([H|T])) :- type(H), type('Tuple'(T)).
+type('Tuple'([H])) :- type(H).
+type('Tuple'([H|T])) :- type(H), type('Tuple'(T)).
 % Function Type: where [T1, T2, T3] is T1 -> T2 -> T3.
 type([T]) :- type(T).
 type([H|T]) :- type(H),type(T).
@@ -62,10 +62,9 @@ typeof(iszero(X), 'Bool') :- typeof(X, 'Natural'). % T-IsZero
 %      typeof(Tail, 'List'(T)).       % the tail is a list of T's.
 
 /***** Tuples *****/
-% typeof(tuple([Val]), 'Tuple'([T])) :- typeof(Val,T).
-% typeof(tuple(List), 'Tuple'(Types)) :-
-%     is_list(List), length(List, L), L > 0, % "Lists" is a non-empty list.
-%     types_in_list(List,Types).
+typeof(tuple(List), 'Tuple'(Types)) :-
+    is_list(List), length(List, L), L > 0, % "Lists" is a non-empty list.
+    types_in_list(List,Types).
 
 /***** Variables *****
  * Variables can be of any type.
