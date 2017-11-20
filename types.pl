@@ -62,6 +62,7 @@ typeof(iszero(X), 'Bool') :- typeof(X, 'Natural'). % T-IsZero
 %      typeof(Tail, 'List'(T)).       % the tail is a list of T's.
 
 /***** Tuples *****/
+% T-Tuple
 typeof(tuple(List), 'Tuple'(Types)) :-
     is_list(List), length(List, L), L > 0, % "Lists" is a non-empty list.
     types_in_list(List,Types).
