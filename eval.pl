@@ -6,7 +6,8 @@
  */
 
 :- [values,
-	lambda/lambdas].
+	lambda/lambdas,
+	util/plists].
 
 /* --- Helper Predicates --- */
 
@@ -54,6 +55,14 @@ eval(iszero(succ(X)),fls) :- is_natural_value(X).
 eval(iszero(Term),Result) :-
 	eval(Term,NewTerm),
 	eval(iszero(NewTerm),Result).
+
+/* --- Tuples --- */
+% E-ProjTuple
+eval(proj(tuple(List),Index),Result) :-
+	is_list(List), length(List,Len), Index >= 1, Index =< Len, % Sanity Check
+	ith_elm(List,Index,Result).
+% E-Proj
+% E-Tuple
 
 /* --- Basic Lambda Calculus Evaluation --- */
 % E-APP1
