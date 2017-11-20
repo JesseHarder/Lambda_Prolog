@@ -38,7 +38,7 @@ type([H|T]) :- type(H),type(T).
 
 /* ---------- Typing Rules ---------- */
 /***** Unit type *****/
-typeof(unit, 'Unit').
+typeof(unit, 'Unit'). % T-Unit
 
 /***** Booleans *****/
 typeof(tru, 'Bool'). % T-True
