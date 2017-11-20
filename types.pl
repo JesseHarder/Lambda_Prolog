@@ -56,6 +56,7 @@ typeof(pred(X), 'Natural') :- typeof(X, 'Natural'). % T-Succ
 typeof(iszero(X), 'Bool') :- typeof(X, 'Natural'). % T-IsZero
 
 /***** Let *****/
+% T-LetProlog
 typeof(let(X,Term1,Term2), Type2) :-
     var(X), X=Term1,
     typeof(Term2, Type2).
