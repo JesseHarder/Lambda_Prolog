@@ -21,7 +21,9 @@ type('Bool').
 type('Natural').
 % type('List'(T)) :- type(T).
 type('Tuple'([H])) :- type(H).
-type('Tuple'([H|T])) :- type(H), type('Tuple'(T)).
+type('Tuple'([H|T])) :-
+    type(H),
+    type('Tuple'(T)).
 % Function Type: where [T1, T2, T3] is T1 -> T2 -> T3.
 type([T]) :- type(T).
 type([H|T]) :- type(H),type(T).
