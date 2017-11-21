@@ -4,10 +4,10 @@
  */
 
 /* Function for getting the ith element of a list, with starting index of 1. */
-ith_elm([Head|_], 1, Head).
-ith_elm([_|Tail], I, Elm) :-
+ith_elm(1, [Head|_], Head).
+ith_elm(I, [_|Tail], Elm) :-
 	I > 1, J is I-1,
- 	ith_elm(Tail, J, Elm).
+	ith_elm(J, Tail, Elm).
 
 /* Resolves if X is an element in the list given as second term. */
 is_in(X, [X|_]).
