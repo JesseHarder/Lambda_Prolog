@@ -63,6 +63,11 @@ typeof(iszero(X), 'Bool') :- typeof(X, 'Natural'). % T-IsZero
 typeof(tuple(List), 'Tuple'(Types)) :-
     is_list(List), length(List, L), L > 0, % "Lists" is a non-empty list.
     maplist(typeof,List,Types).
+% T-Proj
+typeof(proj(tuple(List), Index), Type) :-
+    typeof(tuple(List), 'Tuple'(_)),
+    ith_elm(Index, List, Elm),
+    typeof(Elm, Type).
 
 /***** Variables *****
  * Variables can be of any type.
