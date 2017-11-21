@@ -71,6 +71,9 @@ eval(tuple(List), tuple(Vals)) :-
 	is_not_value(tuple(List)),
 	maplist(eval_if_not_value,List,Vals).
 
+/* --- Records --- */
+
+
 /* --- Basic Lambda Calculus Evaluation --- */
 % E-APP1
 eval([Term1,Term2], Result) :-
