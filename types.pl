@@ -12,12 +12,6 @@
 
 :- [util/plists].
 
-/* Helper Rules */
-types_in_list([Head], [Type]) :- type(Head,Type).
-types_in_list([Head|Tail], [T_Head|T_Tail]) :-
-    type(Head, T_Head),
-    types_in_list(Tail, T_Tail).
-
 /* ---------- Listing Valid Types ----------
  * This section is like the "T::=..." section of our syntax.
  */
@@ -63,9 +57,12 @@ typeof(iszero(X), 'Bool') :- typeof(X, 'Natural'). % T-IsZero
 
 /***** Tuples *****/
 % T-Tuple
+% The Types list in 'Tuple'() is the corresponding list of calling
+%   typeof on each of the elements in the List inside of tuple().
+%   maplist does exactly that.
 typeof(tuple(List), 'Tuple'(Types)) :-
     is_list(List), length(List, L), L > 0, % "Lists" is a non-empty list.
-    types_in_list(List,Types).
+    maplist(typeof,List,Types).
 
 /***** Variables *****
  * Variables can be of any type.
