@@ -95,7 +95,7 @@ typeof(lam(Var,Subterm),Type) :-
 %   an abstraction, if the second term has the abstractions parameter type.
 typeof([Term1,Term2],ReturnType) :-
     % First line needed to prevent infinite option search for Term1.
-    Term1 = lam(Term2, _),
+    Term1 = lam(_,_),
     typeof(Term2,ParamType),
     typeof(Term1,[ParamType,ReturnType]).
 
