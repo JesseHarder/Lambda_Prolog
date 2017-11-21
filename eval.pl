@@ -72,7 +72,13 @@ eval(tuple(List), tuple(Vals)) :-
 	maplist(eval_if_not_value,List,Vals).
 
 /* --- Records --- */
-
+% E-ProjRecord
+eval(proj(record(List),Label),Result) :-
+	is_value(record(List)),
+	is_list(List), string(Label), % Sanity Check
+	member(Label=Result,List).
+% E-Proj
+% E-Rcd
 
 /* --- Basic Lambda Calculus Evaluation --- */
 % E-APP1
