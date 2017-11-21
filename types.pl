@@ -98,6 +98,8 @@ typeof([Term1,Term2],ReturnType) :-
     Term1 = lam(_,_),
     typeof(Term2,ParamType),
     typeof(Term1,[ParamType,ReturnType]).
+% TODO: Recursive version:
+% typeof([Term1, Term2 | OtherTerms], Type) :- ...
 
 /* Ascriptions - Add ascription below this comment of the form:
  *      typeof(X, <NewTypeName>) :- typeof(X, <OldTypeRepresentation>).
