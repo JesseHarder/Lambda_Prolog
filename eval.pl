@@ -59,10 +59,17 @@ eval(iszero(Term),Result) :-
 /* --- Tuples --- */
 % E-ProjTuple
 eval(proj(tuple(List),Index),Result) :-
+	is_value(tuple(List)),
 	is_list(List), length(List,Len), Index >= 1, Index =< Len, % Sanity Check
 	ith_elm(Index,List,Result).
 % E-Proj
-% E-Tuple
+eval(proj(tuple(List),Index), Result) :-
+	eval(tuple(List), NewTuple),
+	eval(proj(NewTuple,Index), Result).
+% E-Tuple - This is sort of the Big-Step version of this.
+eval(tuple(List), tuple(Vals)) :-
+	is_not_value(tuple(List)),
+	maplist(eval_if_not_value,List,Vals).
 
 /* --- Basic Lambda Calculus Evaluation --- */
 % E-APP1
