@@ -87,10 +87,10 @@ typeof(record(List), 'Record'(Types)) :-
     maplist(typeof,Vals,ValTypes),
     record_parts(record(Types), Labels, ValTypes).
 % T-ProjRcd
-% typeof(proj(tuple(List), Index), Type) :-
-%     typeof(tuple(List), 'Tuple'(_)),
-%     ith_elm(Index, List, Elm),
-%     typeof(Elm, Type).
+typeof(proj(record(List), Label), Type) :-
+    typeof(record(List), 'Record'(_)),
+    member(Label=Term, List),
+    typeof(Term, Type).
 
 /***** Variables *****
  * Variables can be of any type.
