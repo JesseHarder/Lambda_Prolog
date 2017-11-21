@@ -60,7 +60,7 @@ eval(iszero(Term),Result) :-
 % E-ProjTuple
 eval(proj(tuple(List),Index),Result) :-
 	is_list(List), length(List,Len), Index >= 1, Index =< Len, % Sanity Check
-	ith_elm(List,Index,Result).
+	ith_elm(Index,List,Result).
 % E-Proj
 % E-Tuple
 
