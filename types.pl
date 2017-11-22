@@ -18,21 +18,25 @@
  */
 
 % type('Unit').
+% Booleans
 type('Bool').
+% Natural Numbers
 type('Natural').
-% type('List'(T)) :- type(T).
+% Tuples
 type('Tuple'([H])) :- type(H).
 type('Tuple'([H|T])) :-
     type(H),
     type('Tuple'(T)).
+% Records
 type('Record'([Label=Type])) :- string(Label), type(Type).
 type('Record'([Label=Type|Tail])) :-
     type('Record'([Label=Type])),
     type('Record'(Tail)).
-% Function Type: where [T1, T2, T3] is T1 -> T2 -> T3.
+% Abrstractions - where [T1, T2, T3] is T1 -> T2 -> T3.
 type([T]) :- type(T).
 type([H|T]) :- type(H),type(T).
-
+% Lists
+% type('List'(T)) :- type(T).
 
 
 
