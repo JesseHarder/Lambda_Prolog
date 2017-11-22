@@ -61,7 +61,7 @@ typeof(iszero(X), 'Bool') :- typeof(X, 'Natural'). % T-IsZero
 %   VarType -> SubtermType, where VarType is the type of the variable and
 %   SubtermType is the type of the subterm. Prolog unification will force a
 %   type environment in which this is always true.
-typeof(lam(Var,Subterm),Type) :-
+typeof(lam(Var:VarType,Subterm),Type) :-
     is_list(Subterm),   % Sanity Check
     typeof(Var,VarType),
     (Subterm = [InnerTerm] ->           % If the lambda has just one subterm,
@@ -74,7 +74,7 @@ typeof(lam(Var,Subterm),Type) :-
 typeof([Term1,Term2],ReturnType) :-
     % First line needed to prevent infinite option search for Term1.
     % TODO: Possibly cheating? Consider alternate methods.
-    Term1 = lam(Term2,_),
+    Term1 = lam(Term2:ParamType,_),
     typeof(Term2,ParamType),
     typeof(Term1,[ParamType,ReturnType]).
 % TODO: Recursive version:
