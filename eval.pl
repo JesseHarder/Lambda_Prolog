@@ -22,6 +22,7 @@ eval_if_not_value(Term,Result) :-
 		% If not, the result of evaluating it is the result.
 		eval(Term,Result)).
 
+
 /* --- Booelean Evaluation --- */
 %E-IfTrue
 eval(ifte(tru,Term1,_),Result) :- eval_if_not_value(Term1,Result).
@@ -32,6 +33,7 @@ eval(ifte(Term1, Term2, Term3),Result) :-
 	eval(Term1, New1),
 	eval_if_not_value(ifte(New1, Term2, Term3),Result).
 	% eval(ifte(New1, Term2, Term3),Result).
+
 
 /* --- Natural Number Evaluation --- */
 % E-PredZero
@@ -56,6 +58,7 @@ eval(iszero(Term),Result) :-
 	eval(Term,NewTerm),
 	eval(iszero(NewTerm),Result).
 
+
 /* --- Tuples --- */
 % E-ProjTuple
 eval(proj(tuple(List),Index),Result) :-
@@ -70,6 +73,7 @@ eval(proj(tuple(List),Index), Result) :-
 eval(tuple(List), tuple(Vals)) :-
 	is_not_value(tuple(List)),
 	maplist(eval_if_not_value,List,Vals).
+
 
 /* --- Records --- */
 % E-ProjRecord
@@ -88,6 +92,7 @@ eval(record(List), record(NewList)) :-
 	record_parts(record(List),Labels,Terms),
 	maplist(eval_if_not_value,Terms,Vals),
 	record_parts(record(NewList),Labels,Vals).
+
 
 /* --- Basic Lambda Calculus Evaluation --- */
 % E-APP1
