@@ -6,7 +6,7 @@
  */
 
 :- [values,
-	lambda/lambdas, lambda/records,
+	lambda/lambdas, lambda/rec_var,
 	util/plists].
 
 /* --- Helper Predicates --- */
@@ -193,6 +193,10 @@ eval(raise(raise(Val)), raise(Val)) :- is_value(Val).
 eval(try(raise(Val), TryTerm), Result) :-
 	is_value(Val),
 	eval([TryTerm, Val], Result).
+
+/* --- Variant Types: Case --- */
+% eval(case(Label=Term, Conditions), Result) :-
+% 	member(CondLabel=CondTerm).
 
 /* --- Basic Lambda Calculus Evaluation --- */
 % E-APP1
