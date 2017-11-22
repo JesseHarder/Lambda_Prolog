@@ -6,7 +6,8 @@
  */
 
 :- [values,
-	lambda/lambdas].
+	lambda/lambdas, lambda/records,
+	util/plists].
 
 /* --- Helper Predicates --- */
 
@@ -54,6 +55,39 @@ eval(iszero(succ(X)),fls) :- is_natural_value(X).
 eval(iszero(Term),Result) :-
 	eval(Term,NewTerm),
 	eval(iszero(NewTerm),Result).
+
+/* --- Tuples --- */
+% E-ProjTuple
+eval(proj(tuple(List),Index),Result) :-
+	is_value(tuple(List)),
+	is_list(List), length(List,Len), Index >= 1, Index =< Len, % Sanity Check
+	ith_elm(Index,List,Result).
+% E-Proj
+eval(proj(tuple(List),Index), Result) :-
+	eval(tuple(List), NewTuple),
+	eval(proj(NewTuple,Index), Result).
+% E-Tuple - This is sort of the Big-Step version of this.
+eval(tuple(List), tuple(Vals)) :-
+	is_not_value(tuple(List)),
+	maplist(eval_if_not_value,List,Vals).
+
+/* --- Records --- */
+% E-ProjRecord
+eval(proj(record(List),Label),Result) :-
+	is_value(record(List)),
+	is_list(List), string(Label), % Sanity Check
+	member(Label=Result,List).
+% E-Proj
+eval(proj(record(List),Label), Result) :-
+	is_not_value(record(List)),	% Sanity check.
+	eval(record(List), NewRecord),
+	eval(proj(NewRecord,Label), Result).
+% E-Rcd
+eval(record(List), record(NewList)) :-
+	is_not_value(record(List)),
+	record_parts(record(List),Labels,Terms),
+	maplist(eval_if_not_value,Terms,Vals),
+	record_parts(record(NewList),Labels,Vals).
 
 /* --- Basic Lambda Calculus Evaluation --- */
 % E-APP1

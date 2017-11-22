@@ -10,13 +10,8 @@
   *     Numbers
   */
 
-:- [util/plists].
-
-/* Helper Rules */
-types_in_list([Head], [Type]) :- type(Head,Type).
-types_in_list([Head|Tail], [T_Head|T_Tail]) :-
-    type(Head, T_Head),
-    types_in_list(Tail, T_Tail).
+:- [util/plists,
+    lambda/records].
 
 /* ---------- Listing Valid Types ----------
  * This section is like the "T::=..." section of our syntax.
@@ -26,8 +21,14 @@ types_in_list([Head|Tail], [T_Head|T_Tail]) :-
 type('Bool').
 type('Natural').
 % type('List'(T)) :- type(T).
-% type('Tuple'([H])) :- type(H).
-% type('Tuple'([H|T])) :- type(H), type('Tuple'(T)).
+type('Tuple'([H])) :- type(H).
+type('Tuple'([H|T])) :-
+    type(H),
+    type('Tuple'(T)).
+type('Record'([Label=Type])) :- string(Label), type(Type).
+type('Record'([Label=Type|Tail])) :-
+    type('Record'([Label=Type])),
+    type('Record'(Tail)).
 % Function Type: where [T1, T2, T3] is T1 -> T2 -> T3.
 type([T]) :- type(T).
 type([H|T]) :- type(H),type(T).
@@ -62,10 +63,34 @@ typeof(iszero(X), 'Bool') :- typeof(X, 'Natural'). % T-IsZero
 %      typeof(Tail, 'List'(T)).       % the tail is a list of T's.
 
 /***** Tuples *****/
-% typeof(tuple([Val]), 'Tuple'([T])) :- typeof(Val,T).
-% typeof(tuple(List), 'Tuple'(Types)) :-
-%     is_list(List), length(List, L), L > 0, % "Lists" is a non-empty list.
-%     types_in_list(List,Types).
+% T-Tuple
+% The Types list in 'Tuple'() is the corresponding list of calling
+%   typeof on each of the elements in the List inside of tuple().
+%   maplist does exactly that.
+typeof(tuple(List), 'Tuple'(Types)) :-
+    is_list(List), length(List, L), L > 0, % "Lists" is a non-empty list.
+    maplist(typeof,List,Types).
+% T-ProjTupl
+typeof(proj(tuple(List), Index), Type) :-
+    typeof(tuple(List), 'Tuple'(_)),
+    ith_elm(Index, List, Elm),
+    typeof(Elm, Type).
+
+/***** Records *****/
+% T-Records
+% The Types list in 'Tuple'() is the corresponding list of calling
+%   typeof on each of the elements in the List inside of tuple().
+%   maplist does exactly that.
+typeof(record(List), 'Record'(Types)) :-
+    is_list(List), length(List, L), L > 0, % "Lists" is a non-empty list.
+    record_parts(record(List), Labels, Vals),
+    maplist(typeof,Vals,ValTypes),
+    record_parts(record(Types), Labels, ValTypes).
+% T-ProjRcd
+typeof(proj(record(List), Label), Type) :-
+    typeof(record(List), 'Record'(_)),
+    member(Label=Term, List),
+    typeof(Term, Type).
 
 /***** Variables *****
  * Variables can be of any type.
