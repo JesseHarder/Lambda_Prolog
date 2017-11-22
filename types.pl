@@ -74,10 +74,6 @@ typeof(iszero(X), 'Bool') :- typeof(X, 'Natural'). % T-IsZero
  * of all typing information. The following rules work based on that.
  */
 
-% T-VarProlog
-%   It suffices to allow variables to be resolved to any type
-%   that will unify with all other typing restrictions.
-typeof(Var, Type) :- var(Var), type(Type).
 % T-AbsProlog
 %   In Prolog, It suffices to just say that the type of a lambda is
 %   VarType -> SubtermType, where VarType is the type of the variable and
@@ -95,11 +91,17 @@ typeof(lam(Var,Subterm),Type) :-
 %   an abstraction, if the second term has the abstractions parameter type.
 typeof([Term1,Term2],ReturnType) :-
     % First line needed to prevent infinite option search for Term1.
-    Term1 = lam(_,_),
+    % TODO: Possibly cheating? Consider alternate methods.
+    Term1 = lam(Term2,_),
     typeof(Term2,ParamType),
     typeof(Term1,[ParamType,ReturnType]).
 % TODO: Recursive version:
-% typeof([Term1, Term2 | OtherTerms], Type) :- ...
+typeof([Term1, Term2 | OtherTerms], Type) :-
+    typeof([[Term1, Term2] | OtherTerms], Type).
+% T-VarProlog
+%   It suffices to allow variables to be resolved to any type
+%   that will unify with all other typing restrictions.
+typeof(Var, Type) :- var(Var), type(Type).
 
 /* Ascriptions - Add ascription below this comment of the form:
  *      typeof(X, <NewTypeName>) :- typeof(X, <OldTypeRepresentation>).
