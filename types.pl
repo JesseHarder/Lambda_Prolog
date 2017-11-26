@@ -34,6 +34,11 @@ type('Record'([Label=Type|Tail])) :-
     string(Label),
     type(Type),
     type('Record'(Tail)).
+% Variants
+type('Variant'([Label=Type])) :- string(Label), type(Type).
+type('Variant'([Label=Type|Tail])) :-
+    type('Variant'([Label=Type])),
+    type('Variant'(Tail)).
 % Lists
 type('List'(T)) :- type(T).
 % Function Type:
@@ -143,6 +148,19 @@ typeof(Env, proj(record(List), Label), Type) :-
     typeof(Env, record(List), 'Record'(_)),
     member(Label=Term, List),
     typeof(Env, Term, Type).
+
+/***** Variants *****
+ * NOTE: T-Vairant might cause problems if used incorrectly.
+ * This is because it could potentially generate infinite different type
+ * results for a vairant term.
+ */
+
+% T-Variant
+typeof(Env, var(Label=Term), 'Variant'(VariantList)) :-
+    typeof(Env, Term, TermType),
+    member(Label=TermType, VariantList).
+% T-Case
+
 
 /***** Lists *****/
 % TODO: Check with Cormac about why Lists needed explicit typing in the book.
