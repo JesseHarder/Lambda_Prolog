@@ -159,7 +159,14 @@ typeof(Env, proj(record(List), Label), Type) :-
 typeof(Env, var(Label=Term), 'Variant'(VariantList)) :-
     typeof(Env, Term, TermType),
     member(Label=TermType, VariantList).
-% T-Case
+% T-Case - NOTE: This is more what was needed for Prolog to work to get the
+%        correct behavior rather than a direct translation.
+typeof(Env, case(var(Label=Term), Conditions), Type) :-
+    member(var(CondLabel=CondVar)->CondTerm, Conditions),
+	Label=CondLabel,
+	CondVar=Term,
+	typeof(Env, CondTerm, Type),!.
+
 
 
 /***** Lists *****/
