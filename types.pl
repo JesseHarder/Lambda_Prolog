@@ -11,7 +11,7 @@
   */
 
 :- [util/plists,
-    lambda/records].
+    lambda/rec_var].
 
 /* ---------- typeof/1 - Listing Valid Types ----------
  * This section is like the "T::=..." section of our syntax.

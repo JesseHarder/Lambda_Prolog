@@ -5,7 +5,7 @@
  * where Label is a string and Term is some term in our language.
  */
 
-% Splits/merges list elements surrounding = into two lists.
+% Splits/merges list elements surrounding "=" into two lists.
 list_split_eq([], [], []).
 list_split_eq([Label=Term], [Label], [Term]).
 list_split_eq([Label=Term|Pairs], [Label|Labels], [Term|Terms]) :-
@@ -18,7 +18,7 @@ list_split_eq([Label=Term|Pairs], [Label|Labels], [Term|Terms]) :-
 record_parts(record(List), Labels, Terms) :- list_split_eq(List,Labels,Terms).
 
 % Variant list splitting.
-% The first term is a valid variant.
+% The first term is a valid variant type.
 % The second term is a list of the labels in the variant in the order they appear.
 % The third term is a list of the terms in the variant in the order they appear.
-record_parts('Variant'(List), Labels, Terms) :- list_split_eq(List,Labels,Terms).
+variant_parts('Variant'(List), Labels, Terms) :- list_split_eq(List,Labels,Terms).
