@@ -97,6 +97,7 @@ typeof(Env, iszero(X), 'Bool') :-
 % T-Fix
 typeof(fix(Term), Type) :-
     typeof(Term, [Type, Type]).
+% TODO: Test this once Lambda Typing is working. Make sure to rebase first.
 
 /***** Abstraction *****/
 % T-Abs
