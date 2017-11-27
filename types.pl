@@ -32,6 +32,10 @@ type('Record'([Label=Type])) :- string(Label), type(Type).
 type('Record'([Label=Type|Tail])) :-
     type('Record'([Label=Type])),
     type('Record'(Tail)).
+
+type('List'(T)) :- type(T).
+% type('Tuple'([H])) :- type(H).
+% type('Tuple'([H|T])) :- type(H), type('Tuple'(T)).
 % Abrstractions - where [T1, T2, T3] is T1 -> T2 -> T3.
 type([T]) :- type(T).
 type([H|T]) :- type(H),type(T).
@@ -61,10 +65,22 @@ typeof(pred(X), 'Natural') :- typeof(X, 'Natural'). % T-Succ
 typeof(iszero(X), 'Bool') :- typeof(X, 'Natural'). % T-IsZero
 
 /***** Lists *****/
-% typeof([],'List'(T)) :- type(T). % Empty list can be list of any type.
-% typeof([Head|Tail],'List'(T)) :-   % A list has type list of T's if
-%      typeof(Head, T),             % the fisrt element has type T and
-%      typeof(Tail, 'List'(T)).       % the tail is a list of T's.
+% TODO: Check with Cormac about why Lists needed explicit typing in the book.
+% T-Nil
+typeof(nil,'List'(T)) :- type(T). % Empty list can be list of any type.
+% T-Cons
+typeof(cons(Head, Tail), 'List'(HType)) :-
+    typeof(Head, HType),
+    typeof(Tail, 'List'(HType)).
+% T-IsNil
+typeof(isnil(Term), 'Bool') :-
+    typeof(Term, 'List'(_)).
+% T-Head
+typeof(head(Term), Type) :-
+    typeof(Term, 'List'(Type)).
+% T-Tail
+typeof(tail(Term), 'List'(Type)) :-
+    typeof(Term, 'List'(Type)).
 
 /***** Tuples *****/
 % T-Tuple
