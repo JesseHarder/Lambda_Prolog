@@ -96,12 +96,14 @@ eval(record(List), record(NewList)) :-
 
 /* --- Lists --- */
 % E-Cons1
-eval(cons(Term1, Term2), cons(New1, Term2)) :-
-	eval(Term1, New1).
+eval(cons(Term1, Term2), Result) :-
+	eval(Term1, New1),
+	eval_if_not_value(cons(New1, Term2), Result).
 % E-Cons2
-eval(cons(Val1, Term2), cons(Val1, New2)) :-
+eval(cons(Val1, Term2), Result) :-
 	is_value(Val1),
-	eval(Term2, New2).
+	eval(Term2, New2),
+	eval_if_not_value(cons(Val1, New2), Result).
 % E-IsNilNil
 eval(isnil(nil), tru).
 % E-IsNilCons
