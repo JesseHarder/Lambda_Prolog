@@ -58,6 +58,14 @@ eval(iszero(Term),Result) :-
 	eval(Term,NewTerm),
 	eval(iszero(NewTerm),Result).
 
+/* --- Sequences with Unit type ---*/
+% This doesn't currently use lambda to perform the eval sequence.
+% TODO: Check this with Cormac.
+eval(seq([Term]),Result) :-
+	eval(Term,Result).
+eval(seq([FirstTerm|OtherTerms]),Result) :-
+	eval(FirstTerm,_),
+	eval(seq(OtherTerms),Result).
 
 /* --- Tuples --- */
 % E-ProjTuple

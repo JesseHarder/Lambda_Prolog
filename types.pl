@@ -17,7 +17,7 @@
  * This section is like the "T::=..." section of our syntax.
  */
 
-% type('Unit').
+type('Unit').
 % Booleans
 type('Bool').
 % Natural Numbers
@@ -43,7 +43,7 @@ type([H|T]) :- type(H),type(T).
 
 /* ---------- Typing Rules ---------- */
 /***** Unit type *****/
-% typeof(unit, 'Unit').
+typeof(unit, 'Unit'). % T-Unit
 
 /***** Booleans *****/
 typeof(tru, 'Bool'). % T-True
