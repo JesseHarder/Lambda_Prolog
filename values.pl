@@ -19,8 +19,6 @@ is_record_value(record(List)) :-
 	forall(member(Label=_,List), string(Label)).
 
 /* --- is_value/1 --- */
-% Temporary. Remove eventually.
-is_value(X) :- atom(X).
 % Abstractions are values.
 is_value(X) :- is_lambda(X).
 % Booleans - tru and fls are values.

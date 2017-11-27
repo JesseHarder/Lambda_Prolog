@@ -156,6 +156,36 @@ eval(tail(Term), Result) :-
 	eval(tail(NewTerm), Result).
 
 
+/* --- Exceptions --- */
+/* - Errors - */
+% E-AppError1
+eval([error, _], error).
+% E-AppError2
+eval([_, error], error).
+/* - Error Handling - */
+% E-TryV
+eval(try(Val1, _), Val1) :-
+	is_value(Val1).
+% E-TryError
+eval(try(error, Term2), Result) :-
+	 eval_if_not_value(Term2, Result).
+% E-Try
+eval(try(Term1, Term2), Result) :-
+	 eval(Term1, New1),
+	 eval(try(New1, Term2), Result).
+/* - Raising Exceptions - */
+% E-AppRaise1
+eval([raise(Val1), _], raise(Val1)) :-
+	is_value(Val1).
+% E-AppRaise2
+eval([Val1, raise(Val2)], raise(Val2)) :-
+	is_value(Val1),
+	is_value(Val2).
+% E-Raise - Sort of Big Step version.
+eval(raise(Term), raise(NewTerm)) :-
+	eval(Term, NewTerm).
+
+
 /* --- Basic Lambda Calculus Evaluation --- */
 % E-APP1
 eval([Term1,Term2], Result) :-
