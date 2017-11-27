@@ -157,7 +157,7 @@ eval(tail(Term), Result) :-
 
 
 /* --- Exceptions --- */
-/* - Errors - */
+/* - Errors w/o values - */
 % E-AppError1
 eval([error, _], error).
 % E-AppError2
@@ -182,9 +182,17 @@ eval([Val1, raise(Val2)], raise(Val2)) :-
 	is_value(Val1),
 	is_value(Val2).
 % E-Raise - Sort of Big Step version.
-eval(raise(Term), raise(NewTerm)) :-
-	eval(Term, NewTerm).
-
+eval(raise(Term), Result) :-
+	eval(Term, NewTerm),
+	(is_value(NewTerm) ->
+		Result = raise(NewTerm);
+		eval(raise(NewTerm), Result)).
+% E-RaiseRaise
+eval(raise(raise(Val)), raise(Val)) :- is_value(Val).
+% E-TryRaise
+eval(try(raise(Val), TryTerm), Result) :-
+	is_value(Val),
+	eval([TryTerm, Val], Result).
 
 /* --- Basic Lambda Calculus Evaluation --- */
 % E-APP1
