@@ -159,6 +159,18 @@ typeof(Env, head(Term), Type) :-
 typeof(Env, tail(Term), 'List'(Type)) :-
     typeof(Env, Term, 'List'(Type)).
 
+/***** Exceptions *****/
+% T-Error - An error can be of any type.
+typeof(error, Type) :- type(Type).
+% T-Try (Error)
+typeof(try(Term1, Term2), Type) :-
+    typeof(Term2, Type),    % Best to check T2's type first,
+    typeof(Term1, Type).    % as T1 might be error.
+% TODO: Ask Cormac about doing the following two typing rules.
+% T-Raise
+% T-Try (Rasie)
+
+
 /* ---------- Helper Functions ---------- */
 map_typeof(Env, Vals, Types) :-
     length(Vals, Length),
