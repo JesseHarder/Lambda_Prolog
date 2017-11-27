@@ -111,22 +111,25 @@ eval(isnil(cons(V1, V2)), fls) :-
 	is_value(V1),
 	is_value(V2).
 % E-IsNil
-eval(isnil(Term), isnil(NewTerm)) :-
-	eval(Term, NewTerm).
+eval(isnil(Term), Result) :-
+	eval(Term, NewTerm),
+	eval_if_not_value(isnil(NewTerm), Result).
 % E-HeadCons
 eval(head(cons(V1, V2)), V1) :-
 	is_value(V1),
 	is_value(V2).
 % E-Head
-eval(head(Term), head(NewTerm)) :-
-	eval(Term, NewTerm).
+eval(head(Term), Result) :-
+	eval(Term, NewTerm),
+	eval(head(NewTerm), Result).
 % E-TailCons
 eval(tail(cons(V1, V2)), V2) :-
 	is_value(V1),
 	is_value(V2).
 % E-Tail
-eval(tail(Term), tail(NewTerm)) :-
-	eval(Term, NewTerm).
+eval(tail(Term), Result) :-
+	eval(Term, NewTerm),
+	eval(tail(NewTerm), Result).
 
 
 /* --- Basic Lambda Calculus Evaluation --- */
