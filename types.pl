@@ -100,9 +100,3 @@ typeof(proj(record(List), Label), Type) :-
  * Variables can be of any type.
  */
 typeof(Var, Type) :- var(Var), type(Type).
-
-/* Ascriptions - Add ascription below this comment of the form:
- *      typeof(X, <NewTypeName>) :- typeof(X, <OldTypeRepresentation>).
- *  Example:
- *      typeof(X, 'NNN') :- typeof(X, ['Natural','Natural','Natural']).
- */
