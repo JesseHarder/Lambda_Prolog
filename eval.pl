@@ -227,6 +227,11 @@ eval(try(raise(Val), TryTerm), Result) :-
 	is_value(Val),
 	eval([TryTerm, Val], Result),!.
 
+/* --- Fix Operator --- */
+% E-FixBeta
+eval(fix(lam(X, Term)), Result) :-
+	apply(lam(X, Term), fix(lam(X, Term)), Result).
+
 /* --- Basic Lambda Calculus Evaluation --- */
 % E-APP1
 eval([Term1, Term2], Result) :-
