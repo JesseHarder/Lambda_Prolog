@@ -231,6 +231,11 @@ eval(try(raise(Val), TryTerm), Result) :-
 % E-FixBeta
 eval(fix(lam(X, Term)), Result) :-
 	apply(lam(X, Term), fix(lam(X, Term)), Result).
+% E-Fix
+eval(fix(Term), Result) :-
+	eval(Term, NewTerm),
+	eval(fix(NewTerm), Result).
+
 
 /* --- Basic Lambda Calculus Evaluation --- */
 % E-APP1
