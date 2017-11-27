@@ -93,6 +93,11 @@ typeof(Env, pred(X), 'Natural') :-
 typeof(Env, iszero(X), 'Bool') :-
     typeof(Env, X, 'Natural'),!.
 
+/***** Fix Operator *****/
+% T-Fix
+typeof(fix(Term), Type) :-
+    typeof(Term, [Type, Type]).
+
 /***** Abstraction *****/
 % T-Abs
 typeof(Env, lam(Var:VarType, Subterm), Type) :-
