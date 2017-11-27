@@ -33,3 +33,8 @@ is_value(tuple(List)) :- forall(member(Val,List), is_value(Val)).
 % Records - A record is a vaule if every item in it is a value
 %	(and labels are strings).
 is_value(record(List)) :- is_record_value(record(List)).
+% Lists
+is_value(nil).
+is_value(cons(V1, V2)) :-
+	is_value(V1),
+	is_value(V2).
