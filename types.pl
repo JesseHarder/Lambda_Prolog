@@ -63,15 +63,12 @@ typeof(succ(X), 'Natural') :- typeof(X, 'Natural'). % T-Succ
 typeof(pred(X), 'Natural') :- typeof(X, 'Natural'). % T-Succ
 typeof(iszero(X), 'Bool') :- typeof(X, 'Natural'). % T-IsZero
 
-<<<<<<< HEAD
 /***** Let *****/
 % T-LetProlog
 typeof(let(X,Term1,Term2), Type2) :-
     var(X), X=Term1,
     typeof(Term2, Type2).
 
-=======
->>>>>>> lists
 /***** Tuples *****/
 % T-Tuple
 % The Types list in 'Tuple'() is the corresponding list of calling
