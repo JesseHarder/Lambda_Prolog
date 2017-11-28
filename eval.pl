@@ -118,6 +118,44 @@ eval(record(List), record(NewList)) :-
 	record_parts(record(NewList),Labels,Vals).
 
 
+/* --- Lists --- */
+% E-Cons1
+eval(cons(Term1, Term2), Result) :-
+	eval(Term1, New1),
+	eval_if_not_value(cons(New1, Term2), Result).
+% E-Cons2
+eval(cons(Val1, Term2), Result) :-
+	is_value(Val1),
+	eval(Term2, New2),
+	eval_if_not_value(cons(Val1, New2), Result).
+% E-IsNilNil
+eval(isnil(nil), tru).
+% E-IsNilCons
+eval(isnil(cons(V1, V2)), fls) :-
+	is_value(V1),
+	is_value(V2).
+% E-IsNil
+eval(isnil(Term), Result) :-
+	eval(Term, NewTerm),
+	eval_if_not_value(isnil(NewTerm), Result).
+% E-HeadCons
+eval(head(cons(V1, V2)), V1) :-
+	is_value(V1),
+	is_value(V2).
+% E-Head
+eval(head(Term), Result) :-
+	eval(Term, NewTerm),
+	eval(head(NewTerm), Result).
+% E-TailCons
+eval(tail(cons(V1, V2)), V2) :-
+	is_value(V1),
+	is_value(V2).
+% E-Tail
+eval(tail(Term), Result) :-
+	eval(Term, NewTerm),
+	eval(tail(NewTerm), Result).
+
+
 /* --- Basic Lambda Calculus Evaluation --- */
 % E-APP1
 eval([Term1,Term2], Result) :-

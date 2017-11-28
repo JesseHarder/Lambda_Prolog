@@ -32,6 +32,9 @@ type('Record'([Label=Type])) :- string(Label), type(Type).
 type('Record'([Label=Type|Tail])) :-
     type('Record'([Label=Type])),
     type('Record'(Tail)).
+type('List'(T)) :- type(T).
+% type('Tuple'([H])) :- type(H).
+% type('Tuple'([H|T])) :- type(H), type('Tuple'(T)).
 % Abrstractions - where [T1, T2, T3] is T1 -> T2 -> T3.
 type([T]) :- type(T).
 type([H|T]) :- type(H),type(T).
@@ -60,12 +63,15 @@ typeof(succ(X), 'Natural') :- typeof(X, 'Natural'). % T-Succ
 typeof(pred(X), 'Natural') :- typeof(X, 'Natural'). % T-Succ
 typeof(iszero(X), 'Bool') :- typeof(X, 'Natural'). % T-IsZero
 
+<<<<<<< HEAD
 /***** Let *****/
 % T-LetProlog
 typeof(let(X,Term1,Term2), Type2) :-
     var(X), X=Term1,
     typeof(Term2, Type2).
 
+=======
+>>>>>>> lists
 /***** Tuples *****/
 % T-Tuple
 % The Types list in 'Tuple'() is the corresponding list of calling
@@ -95,6 +101,24 @@ typeof(proj(record(List), Label), Type) :-
     typeof(record(List), 'Record'(_)),
     member(Label=Term, List),
     typeof(Term, Type).
+
+/***** Lists *****/
+% TODO: Check with Cormac about why Lists needed explicit typing in the book.
+% T-Nil
+typeof(nil,'List'(T)) :- type(T). % Empty list can be list of any type.
+% T-Cons
+typeof(cons(Head, Tail), 'List'(HType)) :-
+    typeof(Head, HType),
+    typeof(Tail, 'List'(HType)).
+% T-IsNil
+typeof(isnil(Term), 'Bool') :-
+    typeof(Term, 'List'(_)).
+% T-Head
+typeof(head(Term), Type) :-
+    typeof(Term, 'List'(Type)).
+% T-Tail
+typeof(tail(Term), 'List'(Type)) :-
+    typeof(Term, 'List'(Type)).
 
 /***** Variables *****
  * Variables can be of any type.
