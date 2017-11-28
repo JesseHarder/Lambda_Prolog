@@ -60,11 +60,11 @@ typeof(succ(X), 'Natural') :- typeof(X, 'Natural'). % T-Succ
 typeof(pred(X), 'Natural') :- typeof(X, 'Natural'). % T-Succ
 typeof(iszero(X), 'Bool') :- typeof(X, 'Natural'). % T-IsZero
 
-/***** Lists *****/
-% typeof([],'List'(T)) :- type(T). % Empty list can be list of any type.
-% typeof([Head|Tail],'List'(T)) :-   % A list has type list of T's if
-%      typeof(Head, T),             % the fisrt element has type T and
-%      typeof(Tail, 'List'(T)).       % the tail is a list of T's.
+/***** Let *****/
+% T-LetProlog
+typeof(let(X,Term1,Term2), Type2) :-
+    var(X), X=Term1,
+    typeof(Term2, Type2).
 
 /***** Tuples *****/
 % T-Tuple
