@@ -68,18 +68,25 @@ typeof(lam(Var:VarType,Subterm),Type) :-
         typeof(InnerTerm,SubtermType);  % its type the type of the subterm.
         typeof(Subterm,SubtermType)),   % Else, the subterm type is that of the application.
     Type = [VarType,SubtermType].
+% TODO: Currently the above version infinite loops if given any type beneath
+% the first recursive typeof (currently ifte). This might be fixable with a
+% restructuring of the early typeofs to put all non-recursive typeofs on top,
+% but I'm not sure.
+
 % T-AppProlog
 %   An application returns the return type of the first term, which should be
 %   an abstraction, if the second term has the abstractions parameter type.
 typeof([Term1,Term2],ReturnType) :-
     % First line needed to prevent infinite option search for Term1.
-    % TODO: Possibly cheating? Consider alternate methods.
-    Term1 = lam(Term2:ParamType,_),
+    % TODO: Possibly cheating? Consider alternate methods. Works for now.
+    Term1 = lam(Term2:ParamType,_), % TODO: Problem here for recursion.
     typeof(Term2,ParamType),
-    typeof(Term1,[ParamType,ReturnType]).
+    typeof(Term1,[ParamType,ReturnType]), !.
 % TODO: Recursive version:
-typeof([Term1, Term2 | OtherTerms], Type) :-
-    typeof([[Term1, Term2] | OtherTerms], Type).
+typeof(List, Type) :-
+    is_list(List), length(List, Len), Len > 2,
+    list_layer_left(List, LayeredList),
+    typeof(LayeredList, Type).
 % T-VarProlog
 %   It suffices to allow variables to be resolved to any type
 %   that will unify with all other typing restrictions.
