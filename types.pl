@@ -34,9 +34,10 @@ type('Tuple'([H|T])) :-
     type(H),
     type('Tuple'(T)).
 % Records
-type('Record'([Label=Type])) :- string(Label), type(Type).
+type('Record'([])).
 type('Record'([Label=Type|Tail])) :-
-    type('Record'([Label=Type])),
+    string(Label),
+    type(Type),
     type('Record'(Tail)).
 % Lists
 type('List'(T)) :- type(T).
@@ -130,7 +131,7 @@ typeof(Env, proj(tuple(List), Index), Type) :-
 %   typeof on each of the elements in the List inside of tuple().
 %   maplist does exactly that.
 typeof(Env, record(List), 'Record'(Types)) :-
-    is_list(List), length(List, L), L > 0, % "Lists" is a non-empty list.
+    is_list(List), length(List, L), L >= 0, % "Lists" is a non-empty list.
     record_parts(record(List), Labels, Vals),
     map_typeof(Env,Vals,ValTypes),
     record_parts(record(Types), Labels, ValTypes).
