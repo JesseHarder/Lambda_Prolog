@@ -37,24 +37,37 @@ abstest3 :- typeof(
 	lam(X:('Natural'->'Bool'), [lam(Y:'Natural',[X, Y])]),
 	(('Natural'->'Bool')->'Natural'->'Bool')),!.
 % Application
-apptest1 :- typeof([lam(X:'Bool', [X]), tru], 'Bool').
+apptest1 :- typeof([lam(X:'Bool', [X]), tru], 'Bool'),!.
 apptest2 :- typeof(
 	[lam(X:('Natural'->'Bool'), [X]),
 	lam(Y:'Natural', [iszero(Y)])],
-	('Natural'->'Bool')).
+	('Natural'->'Bool')),!.
 apptest3 :- typeof(
 	[	lam(X:('Bool'->'Bool'), [lam(Z:'Bool',[X, Z])]),
 		lam(Y:'Bool', [Y]),
 		tru],
-	'Bool').
+	'Bool'),!.
 
 all_lambda_type_tests_pass :-
 	abstest1, abstest2, abstest3,
 	apptest1,apptest2,apptest3,!.
 /* ----- End Lambda Tests ----- */
+/* ----- Tuple Tests ----- */
+tpltest1 :- typeof(tuple([tru,0]), 'Tuple'(['Bool', 'Natural'])),!.
+tpltest2 :- typeof(
+	tuple([tru,0,iszero(pred(succ(0))),ifte(tru, succ(0), 0)]),
+	'Tuple'(['Bool', 'Natural','Bool','Natural'])),!.
+tpltest3 :- typeof(
+	tuple([]),
+	'Tuple'([])),!.
+
+all_tuple_type_tests_pass :-
+	tpltest1, tpltest2, tpltest3.
+/* ----- End Tuple Tests ----- */
 
 all_type_tests_pass :-
 	utest,
 	all_bool_type_tests_pass,
 	all_nat_type_tests_pass,
-	all_lambda_type_tests_pass,!.
+	all_lambda_type_tests_pass,
+	all_tuple_type_tests_pass,!.
