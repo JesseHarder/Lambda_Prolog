@@ -128,4 +128,5 @@ all_type_tests_pass :-
 	all_nat_type_tests_pass,
 	all_lambda_type_tests_pass,
 	all_tuple_type_tests_pass,
-	all_record_type_tests_pass,!.
+	all_record_type_tests_pass,
+	all_list_type_tests_pass,!.
