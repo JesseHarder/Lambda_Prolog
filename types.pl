@@ -22,12 +22,8 @@ types_in_list([Head|Tail], [T_Head|T_Tail]) :-
  * This section is like the "T::=..." section of our syntax.
  */
 
-% type('Unit').
 type('Bool').
 type('Natural').
-% type('List'(T)) :- type(T).
-% type('Tuple'([H])) :- type(H).
-% type('Tuple'([H|T])) :- type(H), type('Tuple'(T)).
 % Function Type:
 %   [T1, T2] is T1 -> T2.
 %   [[T1, T2], T3] is (T1 -> T2) -> T3.
@@ -39,8 +35,6 @@ type([T1,T2]) :- type(T1),type(T2).
 
 
 /* ---------- Typing Rules ---------- */
-/***** Unit type *****/
-% typeof(unit, 'Unit').
 
 /***** Booleans *****/
 typeof(tru, 'Bool'). % T-True
@@ -56,18 +50,6 @@ typeof(0, 'Natural').
 typeof(succ(X), 'Natural') :- typeof(X, 'Natural'). % T-Succ
 typeof(pred(X), 'Natural') :- typeof(X, 'Natural'). % T-Succ
 typeof(iszero(X), 'Bool') :- typeof(X, 'Natural'). % T-IsZero
-
-/***** Lists *****/
-% typeof([],'List'(T)) :- type(T). % Empty list can be list of any type.
-% typeof([Head|Tail],'List'(T)) :-   % A list has type list of T's if
-%      typeof(Head, T),             % the fisrt element has type T and
-%      typeof(Tail, 'List'(T)).       % the tail is a list of T's.
-
-/***** Tuples *****/
-% typeof(tuple([Val]), 'Tuple'([T])) :- typeof(Val,T).
-% typeof(tuple(List), 'Tuple'(Types)) :-
-%     is_list(List), length(List, L), L > 0, % "Lists" is a non-empty list.
-%     types_in_list(List,Types).
 
 /***** Variables *****
  * In Prolog, the type environment is constructed by the unification
@@ -102,9 +84,3 @@ typeof([Term1, Term2 | OtherTerms], Type) :-
 %   It suffices to allow variables to be resolved to any type
 %   that will unify with all other typing restrictions.
 typeof(Var, Type) :- var(Var), type(Type).
-
-/* Ascriptions - Add ascription below this comment of the form:
- *      typeof(X, <NewTypeName>) :- typeof(X, <OldTypeRepresentation>).
- *  Example:
- *      typeof(X, 'NNN') :- typeof(X, ['Natural','Natural','Natural']).
- */
