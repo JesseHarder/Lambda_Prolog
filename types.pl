@@ -68,17 +68,17 @@ typeof(lam(Var:VarType,Subterm),Type) :-
     (Subterm = [InnerTerm] ->           % If the lambda has just one subterm,
         typeof(InnerTerm,SubtermType);  % its type the type of the subterm.
         typeof(Subterm,SubtermType)),   % Else, the subterm type is that of the application.
-    Type = [VarType,SubtermType].
+    Type = [VarType,SubtermType], !.
 
 % T-AppProlog
 %   An application returns the return type of the first term, which should be
 %   an abstraction, if the second term has the abstractions parameter type.
-typeof([Term1,Term2],ReturnType) :-
+typeof([lam(X:ParamType,List),Term2],ReturnType) :-
     % First line needed to prevent infinite option search for Term1.
     % TODO: Possibly cheating? Consider alternate methods. Works for now.
-    Term1 = lam(Term2:ParamType,_), % TODO: Problem here for recursion.
+    var(X), X = Term2,
     typeof(Term2,ParamType),
-    typeof(Term1,[ParamType,ReturnType]),!.
+    typeof(lam(X:ParamType,List),[ParamType,ReturnType]),!.
 % TODO: Recursive version:
 typeof(List, Type) :-
     is_list(List), length(List, Len), Len > 2,
