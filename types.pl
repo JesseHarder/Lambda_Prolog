@@ -29,7 +29,7 @@ type('Bool').
 % Natural Numbers
 type('Natural').
 % Tuples
-type('Tuple'([H])) :- type(H).
+type('Tuple'([])).
 type('Tuple'([H|T])) :-
     type(H),
     type('Tuple'(T)).
