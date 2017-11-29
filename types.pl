@@ -82,13 +82,11 @@ typeof(Env, lam(Var:VarType,Subterm), Type) :-
 % T-AppBase
 %   An application returns the return type of the first term, which should be
 %   an abstraction, if the second term has the abstractions parameter type.
-typeof(Env, [lam(X:ParamType,List),Term2],ReturnType) :-
-    % First line needed to prevent infinite option search for Term1.
-    % TODO: Possibly cheating? Consider alternate methods. Works for now.
-    typeof(Env, lam(X:ParamType,List), (ParamType->ReturnType)),
-    typeof(Env, Term2,ParamType), !.
+typeof(Env, [Term1,Term2],ReturnType) :-
+    typeof(Env, Term1, (ParamType->ReturnType)),
+    typeof(Env, Term2, ParamType), !.
 % T-AppRecurse
 typeof(Env, List, Type) :-
     is_list(List), length(List, Len), Len > 2,
     list_layer_left(List, LayeredList),
-    typeof(Env, LayeredList, Type).
+    typeof(Env, LayeredList, Type), !.
