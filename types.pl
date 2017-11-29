@@ -116,7 +116,7 @@ typeof(Env, let(X,Term1,Term2), Type2) :-
 %   typeof on each of the elements in the List inside of tuple().
 %   maplist does exactly that.
 typeof(Env, tuple(List), 'Tuple'(Types)) :-
-    is_list(List), length(List, L), L > 0, % "Lists" is a non-empty list.
+    is_list(List), length(List, L), L >= 0, % "Lists" is a non-empty list.
     map_typeof(Env,List,Types).
 % T-ProjTupl
 typeof(Env, proj(tuple(List), Index), Type) :-

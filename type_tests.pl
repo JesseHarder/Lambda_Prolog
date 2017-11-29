@@ -60,9 +60,12 @@ tpltest2 :- typeof(
 tpltest3 :- typeof(
 	tuple([]),
 	'Tuple'([])),!.
+tpltest4 :- typeof(
+	tuple([lam(X:('Natural'->'Bool'), [lam(Y:'Natural',[X, Y])])]),
+	'Tuple'([(('Natural'->'Bool')->'Natural'->'Bool')])),!.
 
 all_tuple_type_tests_pass :-
-	tpltest1, tpltest2, tpltest3.
+	tpltest1, tpltest2, tpltest3, tpltest4.
 /* ----- End Tuple Tests ----- */
 
 all_type_tests_pass :-
