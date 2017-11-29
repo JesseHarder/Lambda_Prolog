@@ -31,11 +31,6 @@ type('Natural').
 type([T1,T2]) :- type(T1),type(T2).
 
 /* ---------- Typing Rules ---------- */
-/***** Unbound Variables *****/
-% T-VarProlog
-%   It suffices to allow variables to be resolved to any type
-%   that will unify with all other typing restrictions.
-typeof(Var, Type) :- var(Var), type(Type).
 
 /***** Booleans *****/
 typeof(tru, 'Bool'). % T-True
@@ -84,3 +79,13 @@ typeof(List, Type) :-
     is_list(List), length(List, Len), Len > 2,
     list_layer_left(List, LayeredList),
     typeof(LayeredList, Type).
+
+typeof(_, Term, Type) :- typeof(Term, Type).
+
+/***** Unbound Variables *****/
+% T-VarProlog
+%   It suffices to allow variables to be resolved to any type
+%   that will unify with all other typing restrictions.
+typeof(Env, Var, Type) :-
+    var(Var),
+    member(Var:Type, Env).
