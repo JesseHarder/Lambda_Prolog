@@ -17,7 +17,6 @@
  * This section is like the "T::=..." section of our syntax.
  */
 
-
 % Function Type:
 %   (T1 -> T2) is T1 -> T2.
 %   ((T1 -> T2) -> T3) is (T1 -> T2) -> T3.
@@ -104,61 +103,63 @@ typeof(Env, List, Type) :-
     is_list(List), length(List, Len), Len > 2,
     list_layer_left(List, LayeredList),
     typeof(Env, LayeredList, Type), !.
-typeof(0, 'Natural').   % T-Zero
-typeof(succ(X), 'Natural') :- typeof(X, 'Natural'). % T-Succ
-typeof(pred(X), 'Natural') :- typeof(X, 'Natural'). % T-Succ
-typeof(iszero(X), 'Bool') :- typeof(X, 'Natural'). % T-IsZero
 
 /***** Let *****/
 % T-LetProlog
-typeof(let(X,Term1,Term2), Type2) :-
+typeof(Env, let(X,Term1,Term2), Type2) :-
     var(X), X=Term1,
-    typeof(Term2, Type2).
+    typeof(Env, Term2, Type2).
 
 /***** Tuples *****/
 % T-Tuple
 % The Types list in 'Tuple'() is the corresponding list of calling
 %   typeof on each of the elements in the List inside of tuple().
 %   maplist does exactly that.
-typeof(tuple(List), 'Tuple'(Types)) :-
+typeof(Env, tuple(List), 'Tuple'(Types)) :-
     is_list(List), length(List, L), L > 0, % "Lists" is a non-empty list.
-    maplist(typeof,List,Types).
+    map_typeof(Env,List,Types).
 % T-ProjTupl
-typeof(proj(tuple(List), Index), Type) :-
-    typeof(tuple(List), 'Tuple'(_)),
+typeof(Env, proj(tuple(List), Index), Type) :-
+    typeof(Env, tuple(List), 'Tuple'(_)),
     ith_elm(Index, List, Elm),
-    typeof(Elm, Type).
+    typeof(Env, Elm, Type).
 
 /***** Records *****/
 % T-Records
 % The Types list in 'Tuple'() is the corresponding list of calling
 %   typeof on each of the elements in the List inside of tuple().
 %   maplist does exactly that.
-typeof(record(List), 'Record'(Types)) :-
+typeof(Env, record(List), 'Record'(Types)) :-
     is_list(List), length(List, L), L > 0, % "Lists" is a non-empty list.
     record_parts(record(List), Labels, Vals),
-    maplist(typeof,Vals,ValTypes),
+    map_typeof(Env,Vals,ValTypes),
     record_parts(record(Types), Labels, ValTypes).
 % T-ProjRcd
-typeof(proj(record(List), Label), Type) :-
-    typeof(record(List), 'Record'(_)),
+typeof(Env, proj(record(List), Label), Type) :-
+    typeof(Env, record(List), 'Record'(_)),
     member(Label=Term, List),
-    typeof(Term, Type).
+    typeof(Env, Term, Type).
 
 /***** Lists *****/
 % TODO: Check with Cormac about why Lists needed explicit typing in the book.
 % T-Nil
-typeof(nil,'List'(T)) :- type(T). % Empty list can be list of any type.
+typeof(_, nil,'List'(T)) :- type(T). % Empty list can be list of any type.
 % T-Cons
-typeof(cons(Head, Tail), 'List'(HType)) :-
-    typeof(Head, HType),
-    typeof(Tail, 'List'(HType)).
+typeof(Env, cons(Head, Tail), 'List'(HType)) :-
+    typeof(Env, Head, HType),
+    typeof(Env, Tail, 'List'(HType)).
 % T-IsNil
-typeof(isnil(Term), 'Bool') :-
-    typeof(Term, 'List'(_)).
+typeof(Env, isnil(Term), 'Bool') :-
+    typeof(Env, Term, 'List'(_)).
 % T-Head
-typeof(head(Term), Type) :-
-    typeof(Term, 'List'(Type)).
+typeof(Env, head(Term), Type) :-
+    typeof(Env, Term, 'List'(Type)).
 % T-Tail
-typeof(tail(Term), 'List'(Type)) :-
-    typeof(Term, 'List'(Type)).
+typeof(Env, tail(Term), 'List'(Type)) :-
+    typeof(Env, Term, 'List'(Type)).
+
+/* ---------- Helper Functions ---------- */
+map_typeof(Env, Vals, Types) :-
+    length(Vals, Length),
+    env_list_len(Env, EnvList, Length),
+    maplist(typeof, EnvList, Vals,Types).

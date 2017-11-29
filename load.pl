@@ -1,4 +1,4 @@
-:- [types, eval, values,
+:- [types, eval, values, tests,
 	lambda/lambdas, lambda/records].
 
 % to give me screen clearing.

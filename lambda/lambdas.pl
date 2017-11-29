@@ -22,3 +22,9 @@ apply(lam(X,SubTerms),Y,Result) :-	% Performing an application requires that
 % Simply Typed Lambda Calculus
 apply(lam(X:T,SubTerms),Y,Result) :-
 	type(T), apply(lam(X,SubTerms),Y,Result).
+
+/* --- environment list generation for mapping --- */
+env_list_len(_,[],0).
+env_list_len(Env,[Env|Tail],Len) :-
+	LenMin is Len-1,
+	env_list_len(Env, Tail, LenMin).
