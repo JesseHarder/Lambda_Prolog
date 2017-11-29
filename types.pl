@@ -10,26 +10,37 @@
   *     Numbers
   */
 
-:- [util/plists].
-
-/* Helper Rules */
-types_in_list([Head], [Type]) :- type(Head,Type).
-types_in_list([Head|Tail], [T_Head|T_Tail]) :-
-    type(Head, T_Head),
-    types_in_list(Tail, T_Tail).
+:- [util/plists,
+    lambda/records].
 
 /* ---------- typeof/1 - Listing Valid Types ----------
  * This section is like the "T::=..." section of our syntax.
  */
 
-type('Bool').
-type('Natural').
+
 % Function Type:
 %   (T1 -> T2) is T1 -> T2.
 %   ((T1 -> T2) -> T3) is (T1 -> T2) -> T3.
 %   (T1 -> (T2 -> T3)) is T1 -> (T2 -> T3).
 type((T1->T2)) :- type(T1),type(T2).
-
+% Unit Type
+type('Unit').
+% Booleans
+type('Bool').
+% Natural Numbers
+type('Natural').
+% Tuples
+type('Tuple'([H])) :- type(H).
+type('Tuple'([H|T])) :-
+    type(H),
+    type('Tuple'(T)).
+% Records
+type('Record'([Label=Type])) :- string(Label), type(Type).
+type('Record'([Label=Type|Tail])) :-
+    type('Record'([Label=Type])),
+    type('Record'(Tail)).
+% Lists
+type('List'(T)) :- type(T).
 
 /* ---------- typeof/2 ---------- */
 /* This is now used only to kickstart the process, allowing the user to note
@@ -50,9 +61,12 @@ typeof(Env, Var, Type) :-
  var(Var),
  member(Var:Type, Env).
 
+/***** Unit type *****/
+typeof(_, unit, 'Unit'). % T-Unit
+
 /***** Booleans *****/
-typeof(_,tru, 'Bool'). % T-True
-typeof(_,fls, 'Bool'). % T-False
+typeof(_, tru, 'Bool'). % T-True
+typeof(_, fls, 'Bool'). % T-False
 % T-If
 typeof(Env, ifte(Term1,Term2,Term3), Type) :-
     typeof(Env,Term1, 'Bool'),
@@ -90,3 +104,61 @@ typeof(Env, List, Type) :-
     is_list(List), length(List, Len), Len > 2,
     list_layer_left(List, LayeredList),
     typeof(Env, LayeredList, Type), !.
+typeof(0, 'Natural').   % T-Zero
+typeof(succ(X), 'Natural') :- typeof(X, 'Natural'). % T-Succ
+typeof(pred(X), 'Natural') :- typeof(X, 'Natural'). % T-Succ
+typeof(iszero(X), 'Bool') :- typeof(X, 'Natural'). % T-IsZero
+
+/***** Let *****/
+% T-LetProlog
+typeof(let(X,Term1,Term2), Type2) :-
+    var(X), X=Term1,
+    typeof(Term2, Type2).
+
+/***** Tuples *****/
+% T-Tuple
+% The Types list in 'Tuple'() is the corresponding list of calling
+%   typeof on each of the elements in the List inside of tuple().
+%   maplist does exactly that.
+typeof(tuple(List), 'Tuple'(Types)) :-
+    is_list(List), length(List, L), L > 0, % "Lists" is a non-empty list.
+    maplist(typeof,List,Types).
+% T-ProjTupl
+typeof(proj(tuple(List), Index), Type) :-
+    typeof(tuple(List), 'Tuple'(_)),
+    ith_elm(Index, List, Elm),
+    typeof(Elm, Type).
+
+/***** Records *****/
+% T-Records
+% The Types list in 'Tuple'() is the corresponding list of calling
+%   typeof on each of the elements in the List inside of tuple().
+%   maplist does exactly that.
+typeof(record(List), 'Record'(Types)) :-
+    is_list(List), length(List, L), L > 0, % "Lists" is a non-empty list.
+    record_parts(record(List), Labels, Vals),
+    maplist(typeof,Vals,ValTypes),
+    record_parts(record(Types), Labels, ValTypes).
+% T-ProjRcd
+typeof(proj(record(List), Label), Type) :-
+    typeof(record(List), 'Record'(_)),
+    member(Label=Term, List),
+    typeof(Term, Type).
+
+/***** Lists *****/
+% TODO: Check with Cormac about why Lists needed explicit typing in the book.
+% T-Nil
+typeof(nil,'List'(T)) :- type(T). % Empty list can be list of any type.
+% T-Cons
+typeof(cons(Head, Tail), 'List'(HType)) :-
+    typeof(Head, HType),
+    typeof(Tail, 'List'(HType)).
+% T-IsNil
+typeof(isnil(Term), 'Bool') :-
+    typeof(Term, 'List'(_)).
+% T-Head
+typeof(head(Term), Type) :-
+    typeof(Term, 'List'(Type)).
+% T-Tail
+typeof(tail(Term), 'List'(Type)) :-
+    typeof(Term, 'List'(Type)).

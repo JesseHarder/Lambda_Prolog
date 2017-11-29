@@ -3,9 +3,9 @@
  * in any way other than that they share a representation.
  */
 
-/* Function for getting the ith element of a list. */
-ith_elm([Head|_], 1, Head).
-ith_elm([_|Tail], I, Elm) :-
+/* Function for getting the ith element of a list, with starting index of 1. */
+ith_elm(1, [Head|_], Head).
+ith_elm(I, [_|Tail], Elm) :-
 	I > 1, J is I-1,
 	ith_elm(Tail, J, Elm).
 
@@ -17,3 +17,7 @@ ith_elm([_|Tail], I, Elm) :-
 list_layer_left([A,B], [A,B]).
 list_layer_left([A,B|Tail], Result) :-
     list_layer_left([[A,B]|Tail], Result).
+
+/* Resolves if X is an element in the list given as second term. */
+is_in(X, [X|_]).
+is_in(X, [_|Tail]) :- is_in(X,Tail).

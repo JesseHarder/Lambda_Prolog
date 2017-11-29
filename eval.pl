@@ -6,7 +6,8 @@
  */
 
 :- [values,
-	lambda/lambdas].
+	lambda/lambdas, lambda/records,
+	util/plists].
 
 /* --- Helper Predicates --- */
 
@@ -21,6 +22,7 @@ eval_if_not_value(Term,Result) :-
 		% If not, the result of evaluating it is the result.
 		eval(Term,Result)).
 
+
 /* --- Booelean Evaluation --- */
 %E-IfTrue
 eval(ifte(tru,Term1,_),Result) :- eval_if_not_value(Term1,Result).
@@ -31,6 +33,7 @@ eval(ifte(Term1, Term2, Term3),Result) :-
 	eval(Term1, New1),
 	eval_if_not_value(ifte(New1, Term2, Term3),Result).
 	% eval(ifte(New1, Term2, Term3),Result).
+
 
 /* --- Natural Number Evaluation --- */
 % E-PredZero
@@ -54,6 +57,104 @@ eval(iszero(succ(X)),fls) :- is_natural_value(X).
 eval(iszero(Term),Result) :-
 	eval(Term,NewTerm),
 	eval(iszero(NewTerm),Result).
+
+
+/* --- Sequences with Unit type ---*/
+% This doesn't currently use lambda to perform the eval sequence.
+% TODO: Check this with Cormac.
+eval(seq([Term]),Result) :-
+	eval(Term,Result).
+eval(seq([FirstTerm|OtherTerms]),Result) :-
+	eval(FirstTerm,_),
+	eval(seq(OtherTerms),Result).
+
+
+/* --- Let --- */
+% let X=Term1 in Term2
+% E-LetV
+eval(let(X,Val,Term2),Result) :-
+	var(X),is_value(Val),
+	X=Val,
+	eval(Term2,Result).
+% E-Let
+eval(let(X,Term1,Term2),Result) :-
+	var(X),is_not_value(Term1),
+	eval(Term1,New1),
+	eval(let(X,New1,Term2),Result).
+
+
+/* --- Tuples --- */
+% E-ProjTuple
+eval(proj(tuple(List),Index),Result) :-
+	is_value(tuple(List)),
+	is_list(List), length(List,Len), Index >= 1, Index =< Len, % Sanity Check
+	ith_elm(Index,List,Result).
+% E-Proj
+eval(proj(tuple(List),Index), Result) :-
+	eval(tuple(List), NewTuple),
+	eval(proj(NewTuple,Index), Result).
+% E-Tuple - This is sort of the Big-Step version of this.
+eval(tuple(List), tuple(Vals)) :-
+	is_not_value(tuple(List)),
+	maplist(eval_if_not_value,List,Vals).
+
+
+/* --- Records --- */
+% E-ProjRecord
+eval(proj(record(List),Label),Result) :-
+	is_value(record(List)),
+	is_list(List), string(Label), % Sanity Check
+	member(Label=Result,List).
+% E-Proj
+eval(proj(record(List),Label), Result) :-
+	is_not_value(record(List)),	% Sanity check.
+	eval(record(List), NewRecord),
+	eval(proj(NewRecord,Label), Result).
+% E-Rcd
+eval(record(List), record(NewList)) :-
+	is_not_value(record(List)),
+	record_parts(record(List),Labels,Terms),
+	maplist(eval_if_not_value,Terms,Vals),
+	record_parts(record(NewList),Labels,Vals).
+
+
+/* --- Lists --- */
+% E-Cons1
+eval(cons(Term1, Term2), Result) :-
+	eval(Term1, New1),
+	eval_if_not_value(cons(New1, Term2), Result).
+% E-Cons2
+eval(cons(Val1, Term2), Result) :-
+	is_value(Val1),
+	eval(Term2, New2),
+	eval_if_not_value(cons(Val1, New2), Result).
+% E-IsNilNil
+eval(isnil(nil), tru).
+% E-IsNilCons
+eval(isnil(cons(V1, V2)), fls) :-
+	is_value(V1),
+	is_value(V2).
+% E-IsNil
+eval(isnil(Term), Result) :-
+	eval(Term, NewTerm),
+	eval_if_not_value(isnil(NewTerm), Result).
+% E-HeadCons
+eval(head(cons(V1, V2)), V1) :-
+	is_value(V1),
+	is_value(V2).
+% E-Head
+eval(head(Term), Result) :-
+	eval(Term, NewTerm),
+	eval(head(NewTerm), Result).
+% E-TailCons
+eval(tail(cons(V1, V2)), V2) :-
+	is_value(V1),
+	is_value(V2).
+% E-Tail
+eval(tail(Term), Result) :-
+	eval(Term, NewTerm),
+	eval(tail(NewTerm), Result).
+
 
 /* --- Basic Lambda Calculus Evaluation --- */
 % E-APP1
