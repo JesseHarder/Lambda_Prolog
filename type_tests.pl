@@ -67,10 +67,28 @@ tpltest4 :- typeof(
 all_tuple_type_tests_pass :-
 	tpltest1, tpltest2, tpltest3, tpltest4.
 /* ----- End Tuple Tests ----- */
+/* ----- Record Tests ----- */
+rcdtest1 :- typeof(
+	record(["A"=tru,"B"=0]),
+	'Record'(["A"='Bool', "B"='Natural'])),!.
+rcdtest2 :- typeof(
+	record(["A"=tru,"B"=0,"C"=iszero(pred(succ(0))),"D"=ifte(tru, succ(0), 0)]),
+	'Record'(["A"='Bool', "B"='Natural',"C"='Bool',"D"='Natural'])),!.
+rcdtest3 :- typeof(
+	record([]),
+	'Record'([])),!.
+rcdtest4 :- typeof(
+	record(["A"=lam(X:('Natural'->'Bool'), [lam(Y:'Natural',[X, Y])])]),
+	'Record'(["A"=(('Natural'->'Bool')->'Natural'->'Bool')])),!.
+
+all_record_type_tests_pass :-
+	rcdtest1, rcdtest2, rcdtest3, rcdtest4.
+/* ----- End Tuple Tests ----- */
 
 all_type_tests_pass :-
 	utest,
 	all_bool_type_tests_pass,
 	all_nat_type_tests_pass,
 	all_lambda_type_tests_pass,
-	all_tuple_type_tests_pass,!.
+	all_tuple_type_tests_pass,
+	all_record_type_tests_pass,!.
