@@ -84,6 +84,43 @@ rcdtest4 :- typeof(
 all_record_type_tests_pass :-
 	rcdtest1, rcdtest2, rcdtest3, rcdtest4.
 /* ----- End Tuple Tests ----- */
+/* ----- List Tests ----- */
+niltest :- typeof(nil, 'List'(_)),!.
+constest1 :- typeof(cons(tru, nil), 'List'('Bool')),!.
+constest2 :- typeof(cons(0, nil), 'List'('Natural')),!.
+constest3 :- typeof(
+	cons(succ(succ(0)), cons( succ(0), cons(0, nil))),
+	'List'('Natural')),!.
+constest4 :- \+ typeof(
+	cons(succ(succ(0)), cons( fls, cons(0, nil))),
+	'List'(_)),!.
+isniltest1 :- typeof(isnil(nil), 'Bool').
+isniltest2 :- typeof(isnil(cons(0, nil)), 'Bool').
+isniltest3 :- \+ typeof(isnil(5), _).
+headtest1 :- typeof(head(nil), _).
+headtest2 :- typeof(head(cons(0, nil)), 'Natural').
+headtest3 :- typeof(head(cons(fls, nil)), 'Bool').
+headtest4 :- \+ typeof(
+	head(cons(succ(succ(0)), cons( fls, cons(0, nil)))),
+	_),!.
+tailtest1 :- typeof(tail(nil), 'List'(_)).
+tailtest2 :-
+	typeof(tail(cons(0, nil)), 'List'('Natural')).
+tailtest3 :-
+	typeof(tail(cons(fls, nil)), 'List'('Bool')).
+tailtest4 :-
+	typeof(tail(cons(tru, (cons(fls, nil)))), 'List'('Bool')).
+tailtest5 :- \+ typeof(
+	tail(cons(succ(succ(0)), cons( fls, cons(0, nil)))),
+	'List'(_)),!.
+
+all_list_type_tests_pass :-
+	niltest,
+	constest1,constest2,constest3,constest4,
+	isniltest1,isniltest2,isniltest3,
+	headtest1,headtest2,headtest3,headtest4,
+	tailtest1,tailtest2,tailtest3,tailtest4,tailtest5,!.
+/* ----- End List Tests ----- */
 
 all_type_tests_pass :-
 	utest,

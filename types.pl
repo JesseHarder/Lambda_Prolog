@@ -17,11 +17,6 @@
  * This section is like the "T::=..." section of our syntax.
  */
 
-% Function Type:
-%   (T1 -> T2) is T1 -> T2.
-%   ((T1 -> T2) -> T3) is (T1 -> T2) -> T3.
-%   (T1 -> (T2 -> T3)) is T1 -> (T2 -> T3).
-type((T1->T2)) :- type(T1),type(T2).
 % Unit Type
 type('Unit').
 % Booleans
@@ -41,6 +36,11 @@ type('Record'([Label=Type|Tail])) :-
     type('Record'(Tail)).
 % Lists
 type('List'(T)) :- type(T).
+% Function Type:
+%   (T1 -> T2) is T1 -> T2.
+%   ((T1 -> T2) -> T3) is (T1 -> T2) -> T3.
+%   (T1 -> (T2 -> T3)) is T1 -> (T2 -> T3).
+type((T1->T2)) :- type(T1),type(T2).
 
 /* ---------- typeof/2 ---------- */
 /* This is now used only to kickstart the process, allowing the user to note
