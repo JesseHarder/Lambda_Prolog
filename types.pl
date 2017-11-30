@@ -13,111 +13,154 @@
 :- [util/plists,
     lambda/records].
 
-/* ---------- Listing Valid Types ----------
+/* ---------- typeof/1 - Listing Valid Types ----------
  * This section is like the "T::=..." section of our syntax.
  */
 
+% Unit Type
 type('Unit').
 % Booleans
 type('Bool').
 % Natural Numbers
 type('Natural').
 % Tuples
-type('Tuple'([H])) :- type(H).
+type('Tuple'([])).
 type('Tuple'([H|T])) :-
     type(H),
     type('Tuple'(T)).
 % Records
-type('Record'([Label=Type])) :- string(Label), type(Type).
+type('Record'([])).
 type('Record'([Label=Type|Tail])) :-
-    type('Record'([Label=Type])),
+    string(Label),
+    type(Type),
     type('Record'(Tail)).
-type('List'(T)) :- type(T).
-% type('Tuple'([H])) :- type(H).
-% type('Tuple'([H|T])) :- type(H), type('Tuple'(T)).
-% Abrstractions - where [T1, T2, T3] is T1 -> T2 -> T3.
-type([T]) :- type(T).
-type([H|T]) :- type(H),type(T).
 % Lists
-% type('List'(T)) :- type(T).
+type('List'(T)) :- type(T).
+% Function Type:
+%   (T1 -> T2) is T1 -> T2.
+%   ((T1 -> T2) -> T3) is (T1 -> T2) -> T3.
+%   (T1 -> (T2 -> T3)) is T1 -> (T2 -> T3).
+type((T1->T2)) :- type(T1),type(T2).
+
+/* ---------- typeof/2 ---------- */
+/* This is now used only to kickstart the process, allowing the user to note
+ * need to explicitly write the ([], at the start of typeof/3.
+ */
+typeof(Term, Type) :- typeof([], Term, Type).
 
 
+/* ---------- typeof/3 - The Typing Rules ---------- */
 
+/***** Unbound Variables *****/
+% T-VarProlog
+%   It suffices to allow variables to be resolved to any type
+%   that will unify with all other typing restrictions.
+% IMPORTANT: The placement of this rule above all other typeof/3
+%   rules is key to preventing infinite loops when guessing variable types.
+typeof(Env, Var, Type) :-
+ var(Var),
+ member(Var:Type, Env).
 
-/* ---------- Typing Rules ---------- */
 /***** Unit type *****/
-typeof(unit, 'Unit'). % T-Unit
+typeof(_, unit, 'Unit'). % T-Unit
 
 /***** Booleans *****/
-typeof(tru, 'Bool'). % T-True
-typeof(fls, 'Bool'). % T-False
+typeof(_, tru, 'Bool'). % T-True
+typeof(_, fls, 'Bool'). % T-False
 % T-If
-typeof(ifte(Term1,Term2,Term3), Type) :-
-    typeof(Term1, 'Bool'),
-    typeof(Term2,Type),
-    typeof(Term3,Type).
+typeof(Env, ifte(Term1,Term2,Term3), Type) :-
+    typeof(Env,Term1, 'Bool'),
+    typeof(Env,Term2,Type),
+    typeof(Env,Term3,Type).
 
 /***** Numbers *****/
-typeof(0, 'Natural').   % T-Zero
-typeof(succ(X), 'Natural') :- typeof(X, 'Natural'). % T-Succ
-typeof(pred(X), 'Natural') :- typeof(X, 'Natural'). % T-Succ
-typeof(iszero(X), 'Bool') :- typeof(X, 'Natural'). % T-IsZero
+typeof(_, 0, 'Natural').
+typeof(Env, succ(X), 'Natural') :- typeof(Env, X, 'Natural'). % T-Succ
+typeof(Env, pred(X), 'Natural') :- typeof(Env, X, 'Natural'). % T-Succ
+typeof(Env, iszero(X), 'Bool') :- typeof(Env, X, 'Natural'). % T-IsZero
+
+/***** Abstraction *****/
+% T-AbsProlog
+%   In Prolog, It suffices to just say that the type of a lambda is
+%   VarType -> SubtermType, where VarType is the type of the variable and
+%   SubtermType is the type of the subterm. Prolog unification will force a
+%   type environment in which this is always true.
+typeof(Env, lam(Var:VarType,Subterm), Type) :-
+    is_list(Subterm),   % Sanity Check
+    NewEnv = [Var:VarType|Env],
+    (Subterm = [InnerTerm] ->           % If the lambda has just one subterm,
+        typeof(NewEnv,InnerTerm,SubtermType);  % its type the type of the subterm.
+        typeof(NewEnv,Subterm,SubtermType)),   % Else, the subterm type is that of the application.
+    Type = (VarType->SubtermType), !.
+
+% T-AppBase
+%   An application returns the return type of the first term, which should be
+%   an abstraction, if the second term has the abstractions parameter type.
+typeof(Env, [Term1,Term2],ReturnType) :-
+    typeof(Env, Term1, (ParamType->ReturnType)),
+    typeof(Env, Term2, ParamType), !.
+% T-AppRecurse
+typeof(Env, List, Type) :-
+    is_list(List), length(List, Len), Len > 2,
+    list_layer_left(List, LayeredList),
+    typeof(Env, LayeredList, Type), !.
 
 /***** Let *****/
 % T-LetProlog
-typeof(let(X,Term1,Term2), Type2) :-
+typeof(Env, let(X,Term1,Term2), Type2) :-
     var(X), X=Term1,
-    typeof(Term2, Type2).
+    typeof(Env, Term2, Type2).
 
 /***** Tuples *****/
 % T-Tuple
 % The Types list in 'Tuple'() is the corresponding list of calling
 %   typeof on each of the elements in the List inside of tuple().
 %   maplist does exactly that.
-typeof(tuple(List), 'Tuple'(Types)) :-
-    is_list(List), length(List, L), L > 0, % "Lists" is a non-empty list.
-    maplist(typeof,List,Types).
+typeof(Env, tuple(List), 'Tuple'(Types)) :-
+    is_list(List), length(List, L), L >= 0, % "Lists" is a non-empty list.
+    map_typeof(Env,List,Types).
 % T-ProjTupl
-typeof(proj(tuple(List), Index), Type) :-
-    typeof(tuple(List), 'Tuple'(_)),
+typeof(Env, proj(tuple(List), Index), Type) :-
+    typeof(Env, tuple(List), 'Tuple'(_)),
     ith_elm(Index, List, Elm),
-    typeof(Elm, Type).
+    typeof(Env, Elm, Type).
 
 /***** Records *****/
 % T-Records
 % The Types list in 'Tuple'() is the corresponding list of calling
 %   typeof on each of the elements in the List inside of tuple().
 %   maplist does exactly that.
-typeof(record(List), 'Record'(Types)) :-
-    is_list(List), length(List, L), L > 0, % "Lists" is a non-empty list.
+typeof(Env, record(List), 'Record'(Types)) :-
+    is_list(List), length(List, L), L >= 0, % "Lists" is a non-empty list.
     record_parts(record(List), Labels, Vals),
-    maplist(typeof,Vals,ValTypes),
+    map_typeof(Env,Vals,ValTypes),
     record_parts(record(Types), Labels, ValTypes).
 % T-ProjRcd
-typeof(proj(record(List), Label), Type) :-
-    typeof(record(List), 'Record'(_)),
+typeof(Env, proj(record(List), Label), Type) :-
+    typeof(Env, record(List), 'Record'(_)),
     member(Label=Term, List),
-    typeof(Term, Type).
+    typeof(Env, Term, Type).
 
 /***** Lists *****/
 % TODO: Check with Cormac about why Lists needed explicit typing in the book.
 % T-Nil
-typeof(nil,'List'(T)) :- type(T). % Empty list can be list of any type.
+typeof(_, nil,'List'(T)) :- type(T). % Empty list can be list of any type.
 % T-Cons
-typeof(cons(Head, Tail), 'List'(HType)) :-
-    typeof(Head, HType),
-    typeof(Tail, 'List'(HType)).
+typeof(Env, cons(Head, Tail), 'List'(HType)) :-
+    typeof(Env, Head, HType),
+    typeof(Env, Tail, 'List'(HType)).
 % T-IsNil
-typeof(isnil(Term), 'Bool') :-
-    typeof(Term, 'List'(_)).
+typeof(Env, isnil(Term), 'Bool') :-
+    typeof(Env, Term, 'List'(_)).
 % T-Head
-typeof(head(Term), Type) :-
-    typeof(Term, 'List'(Type)).
+typeof(Env, head(Term), Type) :-
+    typeof(Env, Term, 'List'(Type)).
 % T-Tail
-typeof(tail(Term), 'List'(Type)) :-
-    typeof(Term, 'List'(Type)).
+typeof(Env, tail(Term), 'List'(Type)) :-
+    typeof(Env, Term, 'List'(Type)).
 
-/***** Variables *****
- * Variables can be of any type.
- */
-typeof(Var, Type) :- var(Var), type(Type).
+/* ---------- Helper Functions ---------- */
+map_typeof(Env, Vals, Types) :-
+    length(Vals, Length),
+    env_list_len(Env, EnvList, Length),
+    maplist(typeof, EnvList, Vals,Types).
