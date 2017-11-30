@@ -1,0 +1,8 @@
+In Prolog
+> Improve documentation.
+> Add more "!" add end of predicates.
+> Add printing to type checking so you can see derivations.
+> Add error printing to type checking to explain why things fail.
+
+In Addtion to Prolog
+> Create Lexer/Parser to generate Prolog runnable checkable syntax.
