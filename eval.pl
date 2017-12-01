@@ -19,7 +19,7 @@ eval_if_not_value(Term, Result) :-
 		% If Term is a value, it is the result.
 		Result = Term;
 		% If not, the result of evaluating it is the result.
-		eval(Term, Result)),!.
+		eval(Term, Result)),!. 
 
 
 /* --- Booelean Evaluation --- */
