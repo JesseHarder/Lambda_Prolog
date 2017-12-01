@@ -96,7 +96,7 @@ typeof(Env, iszero(X), 'Bool') :-
 /***** Fix Operator *****/
 % T-Fix
 typeof(Env, fix(Term), Type) :-
-    typeof(Env, Term, [Type, Type]).
+    typeof(Env, Term, (Type->Type)).
 
 /***** Abstraction *****/
 % T-Abs
