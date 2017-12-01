@@ -130,6 +130,37 @@ all_record_type_tests_pass :-
 	rcdtest1_t, rcdtest2_t, rcdtest3_t, rcdtest4_t,
 	write_btt("--- All Record Type Tests Pass. ---\n"),!.
 /* ----- End Records Tests ----- */
+/* ----- Variant Tests ----- */
+vrnttest1_t :-  typeof(vrnt("Hi"=0), 'Variant'(["Hi"='Natural'|_])),
+	write_bt("vrnttest1_t passed.\n"),!.
+vrnttest2_t :-
+	typeof(vrnt("Hi"=record(["A"=tru,"B"=0])),
+		'Variant'(["Hi"='Record'(["A"='Bool', "B"='Natural'])|_])),
+	write_bt("vrnttest2_t passed.\n"),!.
+vrnttest3_t :-
+	typeof(case(var("A"=tru),
+				[var("A"=X)->ifte(X,0,succ(0)),
+				 var("B"=Y)->lam(Y,[iszero(Y)])]),
+			'Natural'),
+	write_bt("vrnttest3_t passed.\n"),!.
+vrnttest4_t :-
+	\+ typeof(case(var("B"=tru),
+				[var("A"=X)->ifte(X,0,succ(0)),
+				 var("B"=Y)->lam(Y:'Bool',[iszero(Y)])]),
+			_),
+	write_bt("vrnttest4_t passed.\n"),!.
+vrnttest5_t :-
+	typeof(case(var("B"=0),
+				[var("A"=X)->ifte(X,0,succ(0)),
+				 var("B"=Y)->lam(Y:'Natural',[iszero(Y)])]),
+			_),
+	write_bt("vrnttest5_t passed.\n"),!.
+
+all_vrntiant_type_tests_pass :-
+	write_btt("--- Checking Variant Type Tests. ---\n"),
+	vrnttest1_t, vrnttest2_t, vrnttest3_t, vrnttest4_t, vrnttest5_t,
+	write_btt("--- All Variant Type Tests Pass. ---\n"),!.
+/* ----- End Variant Tests ----- */
 /* ----- List Tests ----- */
 niltest_t :-  typeof(nil, 'List'(_)),
 	write_bt("niltest_t passed.\n"),!.

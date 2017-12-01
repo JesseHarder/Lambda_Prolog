@@ -162,6 +162,7 @@ typeof(Env, var(Label=Term), 'Variant'(VariantList)) :-
 % T-Case - NOTE: This is more what was needed for Prolog to work to get the
 %        correct behavior rather than a direct translation.
 typeof(Env, case(var(Label=Term), Conditions), Type) :-
+    is_list(Conditions),
     member(var(CondLabel=CondVar)->CondTerm, Conditions),
 	Label=CondLabel,
 	CondVar=Term,
