@@ -28,7 +28,7 @@ eval(ifte(tru, Term1, _),Result) :-
 	eval_if_not_value(Term1,Result),!.
 %E-IfFalse
 eval(ifte(fls, _, Term2),Result) :-
-	eval_if_not_value(Term2,Result),!.
+	eval_if_not_value(Term2, Result),!.
 %E-If
 eval(ifte(Term1, Term2, Term3),Result) :-
 	eval(Term1, New1),
@@ -42,54 +42,55 @@ eval(pred(0), 0) :- !.
 eval(pred(succ(X)), X) :-
 	is_natural_value(X),!.
 % E-Succ
-eval(succ(Term),Result) :-
-	eval(Term,NewTerm),
-	eval_if_not_value(succ(NewTerm),Result),!.
+eval(succ(Term), Result) :-
+	eval(Term, NewTerm),
+	eval_if_not_value(succ(NewTerm), Result),!.
 % E-Pred
 eval(pred(Term), Result) :-
 	eval(Term, NewTerm),
-	eval_if_not_value(pred(NewTerm), Result),!.
+	eval(pred(NewTerm), Result),!.
 % E-IsZeroZero
-eval(iszero(0),tru).
+eval(iszero(0), tru).
 % E-IsZeroSucc
-eval(iszero(succ(X)),fls) :-
+eval(iszero(succ(X)), fls) :-
 	is_natural_value(X),!.
 % E-IsZero
-eval(iszero(Term),Result) :-
-	eval(Term,NewTerm),
+eval(iszero(Term), Result) :-
+	eval(Term, NewTerm),
 	eval(iszero(NewTerm),Result),!.
 
 
 /* --- Sequences with Unit type ---*/
 % This doesn't currently use lambda to perform the eval sequence.
 % TODO: Check this with Cormac.
-eval(seq([Term]),Result) :-
-	eval(Term,Result),!.
-eval(seq([FirstTerm|OtherTerms]),Result) :-
-	eval(FirstTerm,_),
-	eval(seq(OtherTerms),Result),!.
+eval(seq([Term]), Result) :-
+	eval(Term, Result),!.
+eval(seq([FirstTerm|OtherTerms]), Result) :-
+	eval(FirstTerm, _),
+	eval(seq(OtherTerms), Result),!.
 
 
 /* --- Let --- */
 % let X=Term1 in Term2
 % E-LetV
-eval(let(X,Val,Term2),Result) :-
-	var(X),is_value(Val),
+eval(let(X, Val, Term2), Result) :-
+	var(X), is_value(Val),
 	X=Val,
-	eval(Term2,Result),!.
+	eval(Term2, Result),!.
 % E-Let
-eval(let(X,Term1,Term2),Result) :-
-	var(X),is_not_value(Term1),
-	eval(Term1,New1),
-	eval(let(X,New1,Term2),Result),!.
+eval(let(X, Term1, Term2), Result) :-
+	var(X), is_not_value(Term1),
+	eval(Term1, New1),
+	eval(let(X, New1, Term2), Result),!.
 
 
 /* --- Tuples --- */
 % E-ProjTuple
-eval(proj(tuple(List),Index),Result) :-
+eval(proj(tuple(List), Index), Result) :-
 	is_value(tuple(List)),
-	is_list(List), length(List,Len), Index >= 1, Index =< Len, % Sanity Check
-	ith_elm(Index,List,Result),!.
+	% Check that List is a non-empty list.
+	is_list(List), length(List, Len), Index >= 1, Index =< Len,
+	ith_elm(Index, List, Result),!.
 % E-Proj
 eval(proj(tuple(List),Index), Result) :-
 	eval(tuple(List), NewTuple),
