@@ -129,7 +129,7 @@ all_record_type_tests_pass :-
 	write_btt("--- Checking Record Type Tests. ---\n"),
 	rcdtest1_t, rcdtest2_t, rcdtest3_t, rcdtest4_t,
 	write_btt("--- All Record Type Tests Pass. ---\n"),!.
-/* ----- End Tuple Tests ----- */
+/* ----- End Records Tests ----- */
 /* ----- List Tests ----- */
 niltest_t :-  typeof(nil, 'List'(_)),
 	write_bt("niltest_t passed.\n"),!.
