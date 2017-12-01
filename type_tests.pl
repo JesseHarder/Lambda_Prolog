@@ -236,6 +236,10 @@ all_list_type_tests_pass :-
 	tailtest1_t,tailtest2_t,tailtest3_t,tailtest4_t,tailtest5_t,
 	write_btt("--- All List Type Tests Pass. ---\n"),!.
 /* ----- End List Tests ----- */
+/* ----- Fix Tests ----- */
+
+all_fix_type_tests_pass :- write("No fix type tests written.").
+/* ----- End Fix Tests ----- */
 /* ----- Exception Tests ----- */
 exntest1_t :- typeof(raise(0), _),
 	write_bt("exntest1_t passed.\n"),!.
@@ -264,4 +268,5 @@ all_type_tests_pass :-
 	all_tuple_type_tests_pass,
 	all_record_type_tests_pass,
 	all_list_type_tests_pass,
+	all_fix_type_tests_pass,
 	all_exception_type_tests_pass,!.
