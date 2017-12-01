@@ -62,7 +62,7 @@ typeof(Term, Type) :- typeof([], Term, Type).
 %   rules is key to preventing infinite loops when guessing variable types.
 typeof(Env, Var, Type) :-
     var(Var),
-    member(Var:Type, Env).
+    member(Var:Type, Env),!.
 
 /***** Unit type *****/
 typeof(_, unit, 'Unit'). % T-Unit
@@ -92,8 +92,8 @@ typeof(Env, lam(Var:VarType,Subterm), Type) :-
     is_list(Subterm),   % Sanity Check
     NewEnv = [Var:VarType|Env],
     (Subterm = [InnerTerm] ->           % If the lambda has just one subterm,
-        typeof(NewEnv,InnerTerm,SubtermType);  % its type the type of the subterm.
-        typeof(NewEnv,Subterm,SubtermType)),   % Else, the subterm type is that of the application.
+        typeof(NewEnv,InnerTerm,SubtermType),!;  % its type the type of the subterm.
+        typeof(NewEnv,Subterm,SubtermType)),!,   % Else, the subterm type is that of the application.
     Type = (VarType->SubtermType), !.
 
 % T-AppBase
@@ -165,21 +165,21 @@ typeof(Env, tail(Term), 'List'(Type)) :-
 /***** Exceptions *****/
 % -- The following is completmented out because you can't have it and
 %       the raise() version at the same time.
-% % T-Error - An error can be of any type.
+% T-Error - An error can be of any type.
 % typeof(_, error, Type) :- type(Type),!.
 % % T-Try (Error)
 % typeof(Env, try(Term1, Term2), Type) :-
 %     typeof(Env, Term2, Type),    % Best to check T2's type first,
 %     typeof(Env, Term1, Type).    % as T1 might be error.
 % T-Raise
-typeof(Env, rasie(Term1), Type) :-
+typeof(Env, raise(Term1), Type) :-
     type_exn(T_Exn), typeof(Env, Term1, T_Exn),
     type(Type),!.
 % T-Try (Rasie)
 typeof(Env, try(Term1, Term2), Type) :-
     type_exn(T_Exn),
     typeof(Env, Term2, (T_Exn->Type)),    % Best to check T2's type first,
-    typeof(Env, Term1, Type).            % as T1 might be error.
+    typeof(Env, Term1, Type).               % as T1 might be raise.
 
 
 /* ---------- Helper Functions ---------- */

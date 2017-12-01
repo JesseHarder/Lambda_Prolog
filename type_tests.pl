@@ -187,7 +187,6 @@ all_list_type_tests_pass :-
 	write_btt("--- All List Type Tests Pass. ---\n"),!.
 /* ----- End List Tests ----- */
 /* ----- Exception Tests ----- */
-
 exntest1_t :- typeof(raise(0), _),
 	write_bt("exntest1_t passed.\n"),!.
 exntest2_t :- \+ typeof(raise(tru), _),
@@ -196,11 +195,13 @@ exntest3_t :- typeof(try(raise(0), lam(X:'Natural',[X])), 'Natural'),
 	write_bt("exntest3_t passed.\n"),!.
 exntest4_t :- \+ typeof(try(raise(tru), lam(X:'Natural',[X])), _),
 	write_bt("exntest4_t passed.\n"),!.
+exntest5_t :- \+ typeof(try(raise(tru), lam(X:'Bool',[X])), _),
+	write_bt("exntest5_t passed.\n"),!.
 
 all_exception_type_tests_pass :-
 	write_btt("--- Checking Exception Type Tests. ---\n"),
-	write_btt("--- These tests were written for when T_Exn is 'Natural'. ---\n"),
-	exntest1_t,
+	write_btt("NOTE: These tests were written for when T_Exn is 'Natural'.\n"),
+	exntest1_t, exntest2_t, exntest3_t, exntest4_t, exntest5_t,
 	write_btt("--- All Exception Type Tests Pass. ---\n"),!.
 /* ----- End Exception Tests ----- */
 
