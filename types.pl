@@ -43,7 +43,7 @@ type('List'(T)) :- type(T).
 type((T1->T2)) :- type(T1),type(T2).
 
 % Denoting what type rasie exceptions will pass.
-type_exp('Natural').
+type_exn('Natural').
 
 /* ---------- typeof/2 ---------- */
 /* This is now used only to kickstart the process, allowing the user to note
@@ -163,18 +163,23 @@ typeof(Env, tail(Term), 'List'(Type)) :-
     typeof(Env, Term, 'List'(Type)).
 
 /***** Exceptions *****/
-% T-Error - An error can be of any type.
-typeof(_, error, Type) :- type(Type).
-% T-Try (Error)
-typeof(Env, try(Term1, Term2), Type) :-
-    typeof(Env, Term2, Type),    % Best to check T2's type first,
-    typeof(Env, Term1, Type).    % as T1 might be error.
-% TODO: Ask Cormac about doing the following two typing rules.
+% -- The following is completmented out because you can't have it and
+%       the raise() version at the same time.
+% % T-Error - An error can be of any type.
+% typeof(_, error, Type) :- type(Type),!.
+% % T-Try (Error)
+% typeof(Env, try(Term1, Term2), Type) :-
+%     typeof(Env, Term2, Type),    % Best to check T2's type first,
+%     typeof(Env, Term1, Type).    % as T1 might be error.
 % T-Raise
 typeof(Env, rasie(Term1), Type) :-
-    type_exp(ExcType), typeof(Env, Term1, ExcType),
-    type(Type).
+    type_exn(T_Exn), typeof(Env, Term1, T_Exn),
+    type(Type),!.
 % T-Try (Rasie)
+typeof(Env, try(Term1, Term2), Type) :-
+    type_exn(T_Exn),
+    typeof(Env, Term2, (T_Exn->Type)),    % Best to check T2's type first,
+    typeof(Env, Term1, Type).            % as T1 might be error.
 
 
 /* ---------- Helper Functions ---------- */

@@ -186,6 +186,14 @@ all_list_type_tests_pass :-
 	tailtest1_t,tailtest2_t,tailtest3_t,tailtest4_t,tailtest5_t,
 	write_btt("--- All List Type Tests Pass. ---\n"),!.
 /* ----- End List Tests ----- */
+/* ----- Exception Tests ----- */
+exntest1_t :- true.
+
+all_exception_type_tests_pass :-
+	write_btt("--- Checking Exception Type Tests. ---\n"),
+	exntest1_t,
+	write_btt("--- All Exception Type Tests Pass. ---\n"),!.
+/* ----- End Exception Tests ----- */
 
 all_type_tests_pass :-
 	all_unit_tests_pass,
@@ -194,4 +202,5 @@ all_type_tests_pass :-
 	all_lambda_type_tests_pass,
 	all_tuple_type_tests_pass,
 	all_record_type_tests_pass,
-	all_list_type_tests_pass,!.
+	all_list_type_tests_pass,
+	all_exception_type_tests_pass,!.
