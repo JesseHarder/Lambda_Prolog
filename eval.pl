@@ -9,31 +9,30 @@
 	lambda/lambdas, lambda/rec_var,
 	util/plists].
 
-/* --- Helper/Test Predicates --- */
-mytest(A=B->C) :- format("~w\n~w\n~w\n", [A,B,C]).
 
 % eval_if_not_value/1
 % If the term to be evaluated is already a value, the result is the term.
 % If the term to be evaluated is not a value, the result is the evaluation of
 %	the term.
-eval_if_not_value(Term,Result) :-
+eval_if_not_value(Term, Result) :-
 	(is_value(Term) ->
 		% If Term is a value, it is the result.
 		Result = Term;
 		% If not, the result of evaluating it is the result.
-		eval(Term,Result)).
+		eval(Term, Result)).
 
 
 /* --- Booelean Evaluation --- */
 %E-IfTrue
-eval(ifte(tru,Term1,_),Result) :- eval_if_not_value(Term1,Result).
+eval(ifte(tru, Term1, _),Result) :-
+	eval_if_not_value(Term1,Result).
 %E-IfFalse
-eval(ifte(fls,_,Term2),Result) :- eval_if_not_value(Term2,Result).
+eval(ifte(fls, _, Term2),Result) :-
+	eval_if_not_value(Term2,Result).
 %E-If
 eval(ifte(Term1, Term2, Term3),Result) :-
 	eval(Term1, New1),
 	eval_if_not_value(ifte(New1, Term2, Term3),Result).
-	% eval(ifte(New1, Term2, Term3),Result).
 
 
 /* --- Natural Number Evaluation --- */
@@ -53,7 +52,8 @@ eval(pred(Term),Result) :-
 % E-IsZeroZero
 eval(iszero(0),tru).
 % E-IsZeroSucc
-eval(iszero(succ(X)),fls) :- is_natural_value(X).
+eval(iszero(succ(X)),fls) :-
+	is_natural_value(X).
 % E-IsZero
 eval(iszero(Term),Result) :-
 	eval(Term,NewTerm),
