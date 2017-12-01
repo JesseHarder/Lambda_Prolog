@@ -228,9 +228,14 @@ eval(try(raise(Val), TryTerm), Result) :-
 	eval([TryTerm, Val], Result),!.
 
 /* --- Fix Operator --- */
+% NOTE: The following does not work for mor than one itteration of fix. It
+%	works the first time because you can bind X to something that includes X.
+%	But once bound, you can't rebind it to something else.
+% IDEA: Change first lam(X:T, Term) in apply() to lam(_:T, Term).
 % E-FixBeta
-eval(fix(lam(X, Term)), Result) :-
-	apply(lam(X, Term), fix(lam(X, Term)), Result).
+eval(fix(lam(X:T, Term)), Result) :-
+	var(X), type(T),
+	apply(lam(X:T, Term), fix(lam(X:T, Term)), Result),!.
 % E-Fix
 eval(fix(Term), Result) :-
 	eval(Term, NewTerm),
