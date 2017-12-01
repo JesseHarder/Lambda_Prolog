@@ -1,7 +1,7 @@
 :- [types, util/plists].
 /* Print Controls */
-should_log_between_test_types :- fail.
-should_log_between_tests :- fail.
+should_log_between_test_types.
+should_log_between_tests.
 write_btt(T) :- (should_log_between_test_types -> write(T); true).
 write_bt(T) :- (should_log_between_tests -> write(T); true).
 
@@ -187,10 +187,19 @@ all_list_type_tests_pass :-
 	write_btt("--- All List Type Tests Pass. ---\n"),!.
 /* ----- End List Tests ----- */
 /* ----- Exception Tests ----- */
-exntest1_t :- true.
+
+exntest1_t :- typeof(raise(0), _),
+	write_bt("exntest1_t passed.\n"),!.
+exntest2_t :- \+ typeof(raise(tru), _),
+	write_bt("exntest2_t passed.\n"),!.
+exntest3_t :- typeof(try(raise(0), lam(X:'Natural',[X])), 'Natural'),
+	write_bt("exntest3_t passed.\n"),!.
+exntest4_t :- \+ typeof(try(raise(tru), lam(X:'Natural',[X])), _),
+	write_bt("exntest4_t passed.\n"),!.
 
 all_exception_type_tests_pass :-
 	write_btt("--- Checking Exception Type Tests. ---\n"),
+	write_btt("--- These tests were written for when T_Exn is 'Natural'. ---\n"),
 	exntest1_t,
 	write_btt("--- All Exception Type Tests Pass. ---\n"),!.
 /* ----- End Exception Tests ----- */
