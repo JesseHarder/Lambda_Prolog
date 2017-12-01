@@ -42,6 +42,9 @@ type('List'(T)) :- type(T).
 %   (T1 -> (T2 -> T3)) is T1 -> (T2 -> T3).
 type((T1->T2)) :- type(T1),type(T2).
 
+% Denoting what type rasie exceptions will pass.
+type_exp('Natural').
+
 /* ---------- typeof/2 ---------- */
 /* This is now used only to kickstart the process, allowing the user to note
  * need to explicitly write the ([], at the start of typeof/3.
@@ -168,6 +171,9 @@ typeof(Env, try(Term1, Term2), Type) :-
     typeof(Env, Term1, Type).    % as T1 might be error.
 % TODO: Ask Cormac about doing the following two typing rules.
 % T-Raise
+typeof(Env, rasie(Term1), Type) :-
+    type_exp(ExcType), typeof(Env, Term1, ExcType),
+    type(Type).
 % T-Try (Rasie)
 
 
