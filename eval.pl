@@ -19,7 +19,7 @@ eval_if_not_value(Term, Result) :-
 		% If Term is a value, it is the result.
 		Result = Term;
 		% If not, the result of evaluating it is the result.
-		eval(Term, Result)),!. 
+		eval(Term, Result)),!.
 
 
 /* --- Booelean Evaluation --- */
@@ -50,7 +50,7 @@ eval(pred(Term), Result) :-
 	eval(Term, NewTerm),
 	eval_if_not_value(pred(NewTerm), Result),!.
 % E-IsZeroZero
-eval(iszero(0),tru),!.
+eval(iszero(0),tru).
 % E-IsZeroSucc
 eval(iszero(succ(X)),fls) :-
 	is_natural_value(X),!.
@@ -130,7 +130,7 @@ eval(cons(Val1, Term2), Result) :-
 	eval(Term2, New2),
 	eval_if_not_value(cons(Val1, New2), Result),!.
 % E-IsNilNil
-eval(isnil(nil), tru),!.
+eval(isnil(nil), tru).
 % E-IsNilCons
 eval(isnil(cons(V1, V2)), fls) :-
 	is_value(V1),
@@ -197,9 +197,9 @@ eval(var(Label=Term), Result) :-
 /* --- Exceptions --- */
 /* - Errors w/o values - */
 % E-AppError1
-eval([error, _], error),!.
+eval([error, _], error).
 % E-AppError2
-eval([_, error], error),!.
+eval([_, error], error).
 /* - Error Handling - */
 % E-TryV
 eval(try(Val1, _), Val1) :-
