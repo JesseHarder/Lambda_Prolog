@@ -130,9 +130,37 @@ all_let_eval_tests_pass :-
 /* ----- End Let Tests ----- */
 
 /* ----- Fix Tests ----- */
+<<<<<<< HEAD
 % E-AppAbs-2
 fixtest1_e :- eval(fix(lam(X:'Bool',X)), _),
+=======
+fixtest1_e :- eval(fix(lam(X:'Bool',[X])), _),
+>>>>>>> Added currently failing test for fix_iseven.
 	write_bt("fixtest1_e passed.\n"),!.
+
+fix_iseven_test(Result) :-
+	eval(
+		let(FF,
+		 	lam(IE:('Natural'->'Bool'),
+		 		[lam(X:'Natural',
+					[ifte(
+						iszero(X),
+						tru,
+						ifte(
+							iszero(pred(x)),
+							fls,
+							[IE, pred(pred(x))]
+							)
+						)
+					])
+				]),
+			let(ISEVEN,
+				fix(FF),
+				[ISEVEN, 7],
+				Result)
+			),
+		Result
+		).
 
 all_fix_eval_tests_pass :-
 	write_btt("--- Checking Fix Eval Tests. ---\n"),

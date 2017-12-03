@@ -235,7 +235,7 @@ eval(try(raise(Val), TryTerm), Result) :-
 % E-FixBeta
 eval(fix(lam(X:T, Term)), Result) :-
 	var(X), type(T),
-	apply(lam(X:T, Term), fix(lam(X:T, Term)), Result),!.
+	apply(lam(_:T, Term), fix(lam(X:T, Term)), Result),!.
 % E-Fix
 eval(fix(Term), Result) :-
 	eval(Term, NewTerm),
