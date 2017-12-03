@@ -55,7 +55,6 @@ all_nat_eval_tests_pass :-
 	write_btt("--- All Natural Eval Tests Pass. ---\n"),!.
 /* ----- End Natural Tests ----- */
 
-
 /* ----- Lambda Tests ----- */
 % E-AppAbs-2
 lamtest1_e :- eval([lam(X:'Bool',[X]), tru], tru),
@@ -96,10 +95,22 @@ all_lambda_eval_tests_pass :-
 	write_btt("--- All Lambda Eval Tests Pass. ---\n"),!.
 /* ----- End Lambda Tests ----- */
 
+/* ----- Fix Tests ----- */
+% E-AppAbs-2
+fixtest1_e :- eval(fix(lam(X:'Bool',[X])), _),
+	write_bt("fixtest1_e passed.\n"),!.
+
+all_fix_eval_tests_pass :-
+	write_btt("--- Checking Fix Eval Tests. ---\n"),
+	fixtest1_e,
+	write_btt("--- All Fix Eval Tests Pass. ---\n"),!.
+/* ----- End Fix Tests ----- */
+
 all_eval_tests_pass :-
 	all_bool_eval_tests_pass,
 	all_nat_eval_tests_pass,
-	all_lambda_eval_tests_pass.
+	all_lambda_eval_tests_pass,
+	all_fix_eval_tests_pass.
 
 mytest([H|T]) :-
 	format('Head: ~w\nTail: ~w', [H,T]).
