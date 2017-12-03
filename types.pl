@@ -73,8 +73,10 @@ typeof(Env, Var, Type) :-
 typeof(_, unit, 'Unit'). % T-Unit
 
 /***** Booleans *****/
-typeof(_, tru, 'Bool'). % T-True
-typeof(_, fls, 'Bool'). % T-False
+% T-True
+typeof(_, tru, 'Bool').
+% T-False
+typeof(_, fls, 'Bool').
 % T-If
 typeof(Env, ifte(Term1,Term2,Term3), Type) :-
     typeof(Env,Term1, 'Bool'),
@@ -82,10 +84,17 @@ typeof(Env, ifte(Term1,Term2,Term3), Type) :-
     typeof(Env,Term3,Type).
 
 /***** Numbers *****/
+ % T-Zero
 typeof(_, 0, 'Natural').
-typeof(Env, succ(X), 'Natural') :- typeof(Env, X, 'Natural'). % T-Succ
-typeof(Env, pred(X), 'Natural') :- typeof(Env, X, 'Natural'). % T-Succ
-typeof(Env, iszero(X), 'Bool') :- typeof(Env, X, 'Natural'). % T-IsZero
+% T-Succ
+typeof(Env, succ(X), 'Natural') :-
+    typeof(Env, X, 'Natural').
+% T-Pred
+typeof(Env, pred(X), 'Natural') :-
+    typeof(Env, X, 'Natural').
+% T-IsZero
+typeof(Env, iszero(X), 'Bool') :-
+    typeof(Env, X, 'Natural').
 
 /***** Abstraction *****/
 % T-AbsProlog

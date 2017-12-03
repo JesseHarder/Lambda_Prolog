@@ -100,3 +100,6 @@ all_eval_tests_pass :-
 	all_bool_eval_tests_pass,
 	all_nat_eval_tests_pass,
 	all_lambda_eval_tests_pass.
+
+mytest([H|T]) :-
+	format('Head: ~w\nTail: ~w', [H,T]).

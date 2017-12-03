@@ -12,12 +12,12 @@ is_lambda(lam(X:T,SubTerms)) :-
 apply(lam(X,[SubTerm]),Y,Result) :-	% Performing an application requires that
 	var(X),
 	is_lambda(lam(X,[SubTerm])), 	% the first term be a valid abstraction
-	X = Y,						% the unbound variable be equal the second term.
+	X = Y,							% the unbound variable be equal the second term.
 	Result = SubTerm,!.
 apply(lam(X,SubTerms),Y,Result) :-	% Performing an application requires that
 	var(X),
 	is_lambda(lam(X,SubTerms)), 	% the first term be a valid abstraction
-	X = Y,						% the unbound variable be equal the second term.
+	X = Y,							% the unbound variable be equal the second term.
 	Result = SubTerms,!.
 % Simply Typed Lambda Calculus
 apply(lam(X:T,SubTerms),Y,Result) :-
