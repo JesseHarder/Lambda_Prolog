@@ -86,6 +86,26 @@ all_lambda_type_tests_pass :-
 	apptest1_t, apptest2_t, apptest3_t,
 	write_btt("--- All Lambda Type Tests Pass. ---\n"),!.
 /* ----- End Lambda Tests ----- */
+/* ----- Let Tests ----- */
+% Abstraction
+lettest1_t :- typeof(
+	let(X,lam(Y:'Bool',[Y]),X),
+	('Bool'->'Bool')),
+	write_bt("lettest1_t passed.\n"),!.
+lettest2_t :- typeof(
+	let(X,lam(Y:'Bool',[Y]),[X,tru]),
+	'Bool'),
+	write_bt("lettest2_t passed.\n"),!.
+lettest3_t :- typeof(
+	let(X,lam(Y:'Natural',[iszero(Y)]),[X,0]),
+	'Bool'),
+	write_bt("lettest3_t passed.\n"),!.
+
+all_let_type_tests_pass :-
+	write_btt("--- Checking Let Type Tests. ---\n"),
+	lettest1_t,
+	write_btt("--- All Let Type Tests Pass. ---\n"),!.
+/* ----- End Let Tests ----- */
 /* ----- Tuple Tests ----- */
 tpltest1_t :-  typeof(tuple([tru,0]), 'Tuple'(['Bool', 'Natural'])),
 	write_bt("tpltest1_t passed.\n"),!.
