@@ -100,10 +100,14 @@ lettest3_t :- typeof(
 	let(X,lam(Y:'Natural',[iszero(Y)]),[X,0]),
 	'Bool'),
 	write_bt("lettest3_t passed.\n"),!.
+lettest4_t :- typeof(
+	let(X, tru, ifte(X,0, succ(0))),
+	'Natural'),
+	write_bt("lettest4_t passed.\n"),!.
 
 all_let_type_tests_pass :-
 	write_btt("--- Checking Let Type Tests. ---\n"),
-	lettest1_t,
+	lettest1_t, lettest2_t, lettest3_t, lettest4_t,
 	write_btt("--- All Let Type Tests Pass. ---\n"),!.
 /* ----- End Let Tests ----- */
 /* ----- Tuple Tests ----- */
