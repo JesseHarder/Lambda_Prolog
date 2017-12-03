@@ -127,6 +127,43 @@ eval(record(List), record(NewList)) :-
 	record_parts(record(NewList), Labels, Vals),!.
 
 
+/* --- Variant Types: Case ---
+ *	Variant elements are represented as var(X=Y) where:
+ * 		X is some string serving as the label.
+ * 		Y is some term.
+ *	The Conditions variable appearing within variant cases should be a list of
+ *	elements of the form var(A=B)->C where:
+ *		A is a string serving as the label.
+ *		B is the variable appearing in C to be replaced.
+ *		C is the term in which B will be replaced by the case statement.
+ */
+% E-CaseVariant
+eval(case(var(Label=Val), Conditions), Result) :-
+	string(Label),	% Sanity check.
+	is_value(Val),
+	member(var(CondLabel=CondVar)->CondTerm,
+		Conditions),
+	Label=CondLabel,
+	CondVar=Val,
+	eval_if_not_value(CondTerm, Result),!.
+% E-Case
+eval(case(var(Label=Term), Conditions), Result) :-
+	eval(var(Label=Term), NewLabelTerm),
+	eval(case(NewLabelTerm, Conditions), Result),!.
+% E-Variant
+% The Small Step version.
+% eval(var(Label=Term), Result) :-
+% 	(is_value(Term) ->
+% 		% If Term is a value, var(Label=Term) is the result.
+% 		Result = var(Label=Term);
+% 		% If not, do another level of evaluation.
+% 		eval(Term, NewTerm),
+% 		eval(var(Label=NewTerm),Result)),!.
+% The Big Step Version.
+eval(var(Label=Term), var(Label=Val)) :-
+	eval_if_not_value(Term,Val),!.
+
+
 /* --- Lists --- */
 % E-Cons1
 eval(cons(Term1, Term2), Result) :-
@@ -163,43 +200,6 @@ eval(tail(cons(V1, V2)), V2) :-
 eval(tail(Term), Result) :-
 	eval(Term, NewTerm),
 	eval(tail(NewTerm), Result),!.
-
-
-/* --- Variant Types: Case ---
- *	Variant elements are represented as var(X=Y) where:
- * 		X is some string serving as the label.
- * 		Y is some term.
- *	The Conditions variable appearing within variant cases should be a list of
- *	elements of the form var(A=B)->C where:
- *		A is a string serving as the label.
- *		B is the variable appearing in C to be replaced.
- *		C is the term in which B will be replaced by the case statement.
- */
-% E-CaseVariant
-eval(case(var(Label=Val), Conditions), Result) :-
-	string(Label),	% Sanity check.
-	is_value(Val),
-	member(var(CondLabel=CondVar)->CondTerm,
-		Conditions),
-	Label=CondLabel,
-	CondVar=Val,
-	eval_if_not_value(CondTerm, Result),!.
-% E-Case
-eval(case(var(Label=Term), Conditions), Result) :-
-	eval(var(Label=Term), NewLabelTerm),
-	eval(case(NewLabelTerm, Conditions), Result),!.
-% E-Variant
-% The Small Step version.
-% eval(var(Label=Term), Result) :-
-% 	(is_value(Term) ->
-% 		% If Term is a value, var(Label=Term) is the result.
-% 		Result = var(Label=Term);
-% 		% If not, do another level of evaluation.
-% 		eval(Term, NewTerm),
-% 		eval(var(Label=NewTerm),Result)),!.
-% The Big Step Version.
-eval(var(Label=Term), var(Label=Val)) :-
-	eval_if_not_value(Term,Val),!.
 
 
 /* --- Exceptions --- */
