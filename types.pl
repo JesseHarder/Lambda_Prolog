@@ -60,7 +60,7 @@ typeof(Term, Type) :- typeof([], Term, Type).
 /* ---------- typeof/3 - The Typing Rules ---------- */
 
 /***** Unbound Variables *****/
-% T-VarProlog
+% T-Var
 %   It suffices to allow variables to be resolved to any type
 %   that will unify with all other typing restrictions.
 % IMPORTANT: The placement of this rule above all other typeof/3
