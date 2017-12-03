@@ -61,8 +61,6 @@ typeof(Term, Type) :- typeof([], Term, Type).
 
 /***** Unbound Variables *****/
 % T-Var
-%   It suffices to allow variables to be resolved to any type
-%   that will unify with all other typing restrictions.
 % IMPORTANT: The placement of this rule above all other typeof/3
 %   rules is key to preventing infinite loops when guessing variable types.
 typeof(Env, Var, Type) :-
