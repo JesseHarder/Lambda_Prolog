@@ -61,13 +61,20 @@ eval(iszero(Term), Result) :-
 
 
 /* --- Sequences with Unit type ---*/
-% This doesn't currently use lambda to perform the eval sequence.
-% TODO: Check this with Cormac.
-eval(seq([Term]), Result) :-
-	eval(Term, Result),!.
-eval(seq([FirstTerm|OtherTerms]), Result) :-
-	eval(FirstTerm, _),
-	eval(seq(OtherTerms), Result),!.
+% Sequence using lambda calculus.
+eval(seq([Term1, Term2]), Result) :-
+	apply(lam(_:'Unit', [Term2]), Term1, MidResult),
+	eval_if_not_value(MidResult, Result),!.
+eval(seq([Term1, Term2 | OtherTerms]), Result) :-
+	length([Term1, Term2 | OtherTerms], Len), Len > 2,
+	eval(seq([Term1, Term2]), MidResult),
+	eval(seq([MidResult | OtherTerms]), Result),!.
+% The non-lambda, way.
+% eval(seq([Term]), Result) :-
+% 	eval(Term, Result),!.
+% eval(seq([FirstTerm|OtherTerms]), Result) :-
+% 	eval(FirstTerm, _),
+% 	eval(seq(OtherTerms), Result),!.
 
 
 /* --- Let --- */

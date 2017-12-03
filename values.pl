@@ -30,7 +30,7 @@ is_value(X) :- is_natural_value(X).
 is_value(unit).
 % Tuples - A tuple is a value if every item in it is a value.
 is_value(tuple(List)) :- forall(member(Val,List), is_value(Val)).
-% Records - A record is a vaule if every item in it is a value
+% Records - A record is a value if every item in it is a value
 %	(and labels are strings).
 is_value(record(List)) :- is_record_value(record(List)).
 % Lists
