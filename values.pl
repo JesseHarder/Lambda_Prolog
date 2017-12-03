@@ -13,10 +13,6 @@ is_natural_value(0).
 is_natural_value(succ(X)) :- is_natural_value(X).
 % Is Not Value.
 is_not_value(X) :- not(is_value(X)).
-% Records
-is_record_value(record(List)) :-
-	forall(member(_=Val,List), is_value(Val)),
-	forall(member(Label=_,List), string(Label)).
 
 /* --- is_value/1 --- */
 % Abstractions are values.
@@ -32,7 +28,9 @@ is_value(unit).
 is_value(tuple(List)) :- forall(member(Val,List), is_value(Val)).
 % Records - A record is a value if every item in it is a value
 %	(and labels are strings).
-is_value(record(List)) :- is_record_value(record(List)).
+is_value(record(List)) :-
+	forall(member(_=Val,List), is_value(Val)),
+	forall(member(Label=_,List), string(Label)).
 % Lists
 is_value(nil).
 is_value(cons(V1, V2)) :-

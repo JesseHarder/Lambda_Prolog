@@ -31,8 +31,7 @@ type('Tuple'([H|T])) :-
 % Records
 type('Record'([])).
 type('Record'([Label=Type|Tail])) :-
-    string(Label),
-    type(Type),
+    string(Label), type(Type),
     type('Record'(Tail)).
 % Variants
 type('Variant'([Label=Type])) :- string(Label), type(Type).
@@ -126,7 +125,7 @@ typeof(Env, let(X,Term1,Term2), Type2) :-
 % T-Tuple
 % The Types list in 'Tuple'() is the corresponding list of calling
 %   typeof on each of the elements in the List inside of tuple().
-%   maplist does exactly that.
+%   mep_typeof does exactly that.
 typeof(Env, tuple(List), 'Tuple'(Types)) :-
     is_list(List), length(List, L), L >= 0, % "Lists" is a non-empty list.
     map_typeof(Env,List,Types).
@@ -137,10 +136,10 @@ typeof(Env, proj(tuple(List), Index), Type) :-
     typeof(Env, Elm, Type).
 
 /***** Records *****/
-% T-Records
-% The Types list in 'Tuple'() is the corresponding list of calling
-%   typeof on each of the elements in the List inside of tuple().
-%   maplist does exactly that.
+% T-Record
+% The Types list in 'Record'() is the corresponding list of calling
+%   typeof on each of the elements in the List inside of record().
+%   map_typeof does exactly that.
 typeof(Env, record(List), 'Record'(Types)) :-
     is_list(List), length(List, L), L >= 0, % "Lists" is a non-empty list.
     record_parts(record(List), Labels, Vals),

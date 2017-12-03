@@ -179,7 +179,8 @@ eval(tail(Term), Result) :-
 eval(case(var(Label=Val), Conditions), Result) :-
 	string(Label),	% Sanity check.
 	is_value(Val),
-	member(var(CondLabel=CondVar)->CondTerm, Conditions),
+	member(var(CondLabel=CondVar)->CondTerm,
+		Conditions),
 	Label=CondLabel,
 	CondVar=Val,
 	eval_if_not_value(CondTerm, Result),!.
@@ -187,19 +188,18 @@ eval(case(var(Label=Val), Conditions), Result) :-
 eval(case(var(Label=Term), Conditions), Result) :-
 	eval(var(Label=Term), NewLabelTerm),
 	eval(case(NewLabelTerm, Conditions), Result),!.
-% E-Variant - NOTE: Isn't this a problematic evaluation rule because it can
-% 					never end witha value, based on the grammar?
+% E-Variant
 % The Small Step version.
-eval(var(Label=Term), Result) :-
-	(is_value(Term) ->
-		% If Term is a value, var(Label=Term) is the result.
-		Result = var(Label=Term);
-		% If not, do another level of evaluation.
-		eval(Term, NewTerm),
-		eval(var(Label=NewTerm),Result)),!.
+% eval(var(Label=Term), Result) :-
+% 	(is_value(Term) ->
+% 		% If Term is a value, var(Label=Term) is the result.
+% 		Result = var(Label=Term);
+% 		% If not, do another level of evaluation.
+% 		eval(Term, NewTerm),
+% 		eval(var(Label=NewTerm),Result)),!.
 % The Big Step Version.
-% eval(var(Label=Term), var(Label=Val)) :-
-% 	eval_if_not_value(Term,Val),!.
+eval(var(Label=Term), var(Label=Val)) :-
+	eval_if_not_value(Term,Val),!.
 
 
 /* --- Exceptions --- */
