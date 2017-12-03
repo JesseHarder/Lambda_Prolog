@@ -98,10 +98,6 @@ typeof(Env, iszero(X), 'Bool') :-
 
 /***** Abstraction *****/
 % T-AbsProlog
-%   In Prolog, It suffices to just say that the type of a lambda is
-%   VarType -> SubtermType, where VarType is the type of the variable and
-%   SubtermType is the type of the subterm. Prolog unification will force a
-%   type environment in which this is always true.
 typeof(Env, lam(Var:VarType,Subterm), Type) :-
     is_list(Subterm),   % Sanity Check
     NewEnv = [Var:VarType|Env],
