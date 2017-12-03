@@ -1,4 +1,5 @@
-:- [types, eval, values, type_tests,
+:- [types, eval, values,
+	type_tests, eval_tests,
 	lambda/lambdas, lambda/rec_var].
 
 % to give me screen clearing.

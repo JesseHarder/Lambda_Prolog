@@ -1,9 +1,9 @@
 :- [types, util/plists].
 /* Print Controls */
-should_log_between_test_types :- fail.
-should_log_between_tests :- fail.
-write_btt(T) :- (should_log_between_test_types -> write(T); true).
-write_bt(T) :- (should_log_between_tests -> write(T); true).
+should_log_between_type_test_types :- fail.
+should_log_between_type_tests :- fail.
+write_btt(T) :- (should_log_between_type_test_types -> write(T); true).
+write_bt(T) :- (should_log_between_type_tests -> write(T); true).
 
 /* ----- Unit Tests ----- */
 utest_t :-  typeof(unit, 'Unit'),
