@@ -96,7 +96,7 @@ typeof(Env, iszero(X), 'Bool') :-
 /***** Fix Operator *****/
 % T-Fix
 typeof(Env, fix(Term), Type) :-
-    typeof(Env, Term, (Type->Type)).
+    typeof(Env, Term, (Type->Type)),!.
 
 /***** Abstraction *****/
 % T-Abs
@@ -163,7 +163,7 @@ typeof(Env, proj(record(List), Label), Type) :-
 % T-Variant
 typeof(Env, var(Label=Term), 'Variant'(VariantList)) :-
     typeof(Env, Term, TermType),
-    member(Label=TermType, VariantList).
+    member(Label=TermType, VariantList),!.
 % T-Case - NOTE: This is more what was needed for Prolog to work to get the
 %        correct behavior rather than a direct translation.
 typeof(Env, case(var(Label=Term), Conditions), Type) :-
