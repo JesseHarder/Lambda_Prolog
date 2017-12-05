@@ -249,11 +249,11 @@ eval([Term1, Term2], Result) :-
 	eval([New1, Term2], Result),!.
 
 % E-APP2
-eval([Val,Term], Result) :-
+eval([Val, Term2], Result) :-
 	is_value(Val),
-	is_not_value(Term),
-	eval(Term, NewTerm),
-	eval([Val, NewTerm], Result),!.
+	is_not_value(Term2),
+	eval(Term2, New2),
+	eval([Val, New2], Result),!.
 
 % E-AppAbs
 eval([Abs, Val],Result) :-

@@ -13,7 +13,7 @@
 :- [util/plists,
     lambda/rec_var].
 
-/* ---------- typeof/1 - Listing Valid Types ----------
+/* ---------- type/1 - Listing Valid Types ----------
  * This section is like the "T::=..." section of our syntax.
  */
 
@@ -75,10 +75,10 @@ typeof(_, tru, 'Bool') :- !.
 % T-False
 typeof(_, fls, 'Bool') :- !.
 % T-If
-typeof(Env, ifte(Term1,Term2,Term3), Type) :-
-    typeof(Env,Term1, 'Bool'),
-    typeof(Env,Term2,Type),
-    typeof(Env,Term3,Type),!.
+typeof(Env, ifte(Term1, Term2, Term3), Type) :-
+    typeof(Env, Term1, 'Bool'),
+    typeof(Env, Term2, Type),
+    typeof(Env, Term3, Type),!.
 
 /***** Numbers *****/
  % T-Zero
