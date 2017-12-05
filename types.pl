@@ -117,7 +117,7 @@ typeof(Env, List, Type) :-
 
 /***** Let *****/
 % T-LetProlog
-typeof(Env, let(X,Term1,Term2), Type2) :-
+typeof(Env, let(X=Term1,Term2), Type2) :-
     var(X), X=Term1,
     typeof(Env, Term2, Type2),!.
 

@@ -80,15 +80,15 @@ eval(seq([Term1, Term2 | OtherTerms]), Result) :-
 /* --- Let --- */
 % let X=Term1 in Term2
 % E-LetV
-eval(let(X, Val, Term2), Result) :-
+eval(let(X=Val, Term2), Result) :-
 	var(X), is_value(Val),
 	X=Val,
 	eval(Term2, Result),!.
 % E-Let
-eval(let(X, Term1, Term2), Result) :-
+eval(let(X=Term1, Term2), Result) :-
 	var(X), is_not_value(Term1),
 	eval(Term1, New1),
-	eval(let(X, New1, Term2), Result),!.
+	eval(let(X=New1, Term2), Result),!.
 
 
 /* --- Tuples --- */

@@ -84,19 +84,19 @@ all_lambda_type_tests_pass :-
 /* ----- Let Tests ----- */
 % Abstraction
 lettest1_t :- typeof(
-	let(X,lam(Y:'Bool',[Y]),X),
+	let(X=lam(Y:'Bool',[Y]),X),
 	('Bool'->'Bool')),
 	write_bt("lettest1_t passed.\n"),!.
 lettest2_t :- typeof(
-	let(X,lam(Y:'Bool',[Y]),[X,tru]),
+	let(X=lam(Y:'Bool',[Y]),[X,tru]),
 	'Bool'),
 	write_bt("lettest2_t passed.\n"),!.
 lettest3_t :- typeof(
-	let(X,lam(Y:'Natural',[iszero(Y)]),[X,0]),
+	let(X=lam(Y:'Natural',[iszero(Y)]),[X,0]),
 	'Bool'),
 	write_bt("lettest3_t passed.\n"),!.
 lettest4_t :- typeof(
-	let(X, tru, ifte(X,0, succ(0))),
+	let(X=tru, ifte(X,0, succ(0))),
 	'Natural'),
 	write_bt("lettest4_t passed.\n"),!.
 

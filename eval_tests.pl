@@ -90,6 +90,19 @@ all_lambda_eval_tests_pass :-
 	write_btt("--- All Lambda Eval Tests Pass. ---\n"),!.
 /* ----- End Lambda Tests ----- */
 
+/* ----- Let Tests ----- */
+% E-AppAbs-2
+lettest1_e :- eval(let(X=0, iszero(X)), tru),
+	write_bt("lettest1_e passed.\n"),!.
+lettest2_e :- eval(let(Y=tru, ifte(Y, 0, succ(0))), 0),
+	write_bt("lettest2_e passed.\n"),!.
+
+all_let_eval_tests_pass :-
+	write_btt("--- Checking Let Eval Tests. ---\n"),
+	lettest1_e, lettest2_e,
+	write_btt("--- All Let Eval Tests Pass. ---\n"),!.
+/* ----- End Let Tests ----- */
+
 /* ----- Fix Tests ----- */
 % E-AppAbs-2
 fixtest1_e :- eval(fix(lam(X:'Bool',[X])), _),
@@ -105,6 +118,7 @@ all_eval_tests_pass :-
 	all_bool_eval_tests_pass,
 	all_nat_eval_tests_pass,
 	all_lambda_eval_tests_pass,
+	all_let_eval_tests_pass,
 	all_fix_eval_tests_pass.
 
 mytest([H|T]) :-
