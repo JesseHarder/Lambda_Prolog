@@ -141,10 +141,7 @@ eval(record(List), record(NewList)) :-
 eval(case(var(Label=Val), Conditions), Result) :-
 	string(Label),	% Sanity check.
 	is_value(Val),
-	member(var(CondLabel=CondVar)->CondTerm,
-		Conditions),
-	Label=CondLabel,
-	CondVar=Val,
+	member(var(Label=Val)->CondTerm, Conditions),
 	eval_if_not_value(CondTerm, Result),!.
 % E-Case
 eval(case(var(Label=Term), Conditions), Result) :-
