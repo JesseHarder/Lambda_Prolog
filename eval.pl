@@ -14,13 +14,15 @@
 % If the term to be evaluated is already a value, the result is the term.
 % If the term to be evaluated is not a value, the result is the evaluation of
 %	the term.
-eval_if_not_value(Term, Result) :-
-	(is_value(Term) ->
-		% If Term is a value, it is the result.
-		Result = Term;
-		% If not, the result of evaluating it is the result.
-		eval(Term, Result)),!.
+eval_if_not_value(Term, Result) :- eval(Term, Result).
+	% (is_value(Term) ->
+	% 	% If Term is a value, it is the result.
+	% 	Result = Term;
+	% 	% If not, the result of evaluating it is the result.
+	% 	eval(Term, Result)),!.
 
+/* --- Value --- */
+eval(Val, Val) :- is_value(Val).
 
 /* --- Booelean Evaluation --- */
 %E-IfTrue
