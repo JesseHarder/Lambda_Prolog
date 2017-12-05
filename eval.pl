@@ -50,7 +50,7 @@ eval(pred(Term), Result) :-
 	eval(Term, NewTerm),
 	eval(pred(NewTerm), Result),!.
 % E-IsZeroZero
-eval(iszero(0), tru).
+eval(iszero(0), tru) :- !.
 % E-IsZeroSucc
 eval(iszero(succ(X)), fls) :-
 	is_natural_value(X),!.

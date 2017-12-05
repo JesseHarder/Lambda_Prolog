@@ -1,9 +1,4 @@
-:- [eval, values, util/plists].
-/* Print Controls */
-should_log_between_eval_test_types.
-should_log_between_eval_tests.
-write_btt(T) :- (should_log_between_eval_test_types -> write(T); true).
-write_bt(T) :- (should_log_between_eval_tests -> write(T); true).
+:- [eval, values, util/plists, util/test_controls].
 
 /* ----- Bool Tests ----- */
 btest1_e :- eval(ifte(tru, tru, fls), tru),
