@@ -116,10 +116,11 @@ typeof(Env, List, Type) :-
     typeof(Env, LayeredList, Type), !.
 
 /***** Let *****/
-% T-LetProlog
-typeof(Env, let(X=Term1,Term2), Type2) :-
-    var(X), X=Term1,
-    typeof(Env, Term2, Type2),!.
+% T-Let
+typeof(Env, let(X=Term1, Term2), Type2) :-
+    typeof(Env, Term1, Type1),
+    NewEnv = [X:Type1|Env],
+    typeof(NewEnv, Term2, Type2),!.
 
 /***** Tuples *****/
 % T-Tuple
