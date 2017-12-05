@@ -67,13 +67,13 @@ typeof(Env, Var, Type) :-
     member(Var:Type, Env),!.
 
 /***** Unit type *****/
-typeof(_, unit, 'Unit'). % T-Unit
+typeof(_, unit, 'Unit') :- !. % T-Unit
 
 /***** Booleans *****/
 % T-True
-typeof(_, tru, 'Bool').
+typeof(_, tru, 'Bool') :- !.
 % T-False
-typeof(_, fls, 'Bool').
+typeof(_, fls, 'Bool') :- !.
 % T-If
 typeof(Env, ifte(Term1,Term2,Term3), Type) :-
     typeof(Env,Term1, 'Bool'),
@@ -82,7 +82,7 @@ typeof(Env, ifte(Term1,Term2,Term3), Type) :-
 
 /***** Numbers *****/
  % T-Zero
-typeof(_, 0, 'Natural').
+typeof(_, 0, 'Natural') :- !.
 % T-Succ
 typeof(Env, succ(X), 'Natural') :-
     typeof(Env, X, 'Natural').
