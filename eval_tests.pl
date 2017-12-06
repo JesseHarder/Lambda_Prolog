@@ -97,7 +97,7 @@ unittest1_e :-
 	write_bt("unittest1_e passed.\n"),!.
 unittest2_e :-
 	eval([lam(X:'Unit', X), unit], unit),
-	write_bt("unittest12e passed.\n"),!.
+	write_bt("unittest2_e passed.\n"),!.
 seqtest1_e :- eval(seq([iszero(0), iszero(succ(0))]), fls),
 	write_bt("seqtest1_e passed.\n"),!.
 seqtest2_e :- eval(seq([ifte(tru, fls, fls), ifte(fls, fls, tru)]), tru),
