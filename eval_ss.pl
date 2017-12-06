@@ -2,7 +2,7 @@
  */
 
 :- [values,
-	lambda/lambdas, lambda/rec_var, lambda/tuples,
+	lambda/lambdas, lambda/rec_var,
 	util/plists].
 
 /****** eval/2 Big-Step Full Evaluation ******/
@@ -82,9 +82,9 @@ eval_ss(proj(tuple(List), Index), Result) :-
 eval_ss(proj(tuple(List), Index), proj(NewTuple, Index)) :-
 	eval_ss(tuple(List), NewTuple),!.
 % E-Tuple - This is sort of the Big-Step version of this.
-eval_ss(tuple(List), NewTuple) :-
+eval_ss(tuple(List), tuple(NewList)) :-
 	is_not_value(tuple(List)),
-	eval_first_non_value(tuple(List), NewTuple).
+	eval_first_non_value(List, NewList).
 
 
 /* --- Records --- */

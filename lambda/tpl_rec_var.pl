@@ -1,5 +1,9 @@
-/* Utility functions for working with records. The representation of records is:
- * 	record(List)
+/* Utility functions for working with tuples, records, and variants.
+ * The respresentation of tuples is:
+ *	tuple(List)
+ * where the elements of List are Terms.
+ * The representation of records and variants is:
+ * 	record(List) and variant(List) 		(respectively)
  * where the elements in List are of the form
  *	Label=Term
  * where Label is a string and Term is some term in our language.
@@ -22,3 +26,5 @@ record_parts(record(List), Labels, Terms) :- list_split_eq(List,Labels,Terms).
 % The second term is a list of the labels in the variant in the order they appear.
 % The third term is a list of the terms in the variant in the order they appear.
 variant_parts('Variant'(List), Labels, Terms) :- list_split_eq(List,Labels,Terms).
+
+% eval_first_non_value(List, NewList).
