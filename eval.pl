@@ -53,7 +53,7 @@ eval(iszero(Term), Result) :-
 /* --- Sequences with Unit type ---*/
 % Sequence using lambda calculus.
 eval(seq([Term1, Term2]), Result) :-
-	apply(lam(_:'Unit', [Term2]), Term1, MidResult),
+	apply(lam(_:'Unit', Term2), Term1, MidResult),
 	eval(MidResult, Result),!.
 eval(seq([Term1, Term2 | OtherTerms]), Result) :-
 	length([Term1, Term2 | OtherTerms], Len), Len > 2,

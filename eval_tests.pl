@@ -90,6 +90,32 @@ all_lambda_eval_tests_pass :-
 	write_btt("--- All Lambda Eval Tests Pass. ---\n"),!.
 /* ----- End Lambda Tests ----- */
 
+/* ----- Unit Tests ----- */
+% E-AppAbs-2
+unittest1_e :-
+	eval([lam(_:'Unit', tru), unit], tru),
+	write_bt("unittest1_e passed.\n"),!.
+unittest2_e :-
+	eval([lam(X:'Unit', X), unit], unit),
+	write_bt("unittest12e passed.\n"),!.
+seqtest1_e :- eval(seq([iszero(0), iszero(succ(0))]), fls),
+	write_bt("seqtest1_e passed.\n"),!.
+seqtest2_e :- eval(seq([ifte(tru, fls, fls), ifte(fls, fls, tru)]), tru),
+	write_bt("seqtest2_e passed.\n"),!.
+seqtest3_e :-
+	eval(seq([iszero(succ(0)),
+			  ifte(tru, tru, fls),
+			  [lam(X:'Unit', X), unit]]),
+		 unit),
+	write_bt("seqtest3_e passed.\n"),!.
+
+all_unit_eval_tests_pass :-
+	write_btt("--- Checking Unit Eval Tests. ---\n"),
+	unittest1_e, unittest2_e,
+	seqtest1_e, seqtest2_e, seqtest3_e,
+	write_btt("--- All Unit Eval Tests Pass. ---\n"),!.
+/* ----- End Unit Tests ----- */
+
 /* ----- Let Tests ----- */
 % E-AppAbs-2
 lettest1_e :- eval(let(X=0, iszero(X)), tru),
@@ -118,5 +144,6 @@ all_eval_tests_pass :-
 	all_bool_eval_tests_pass,
 	all_nat_eval_tests_pass,
 	all_lambda_eval_tests_pass,
+	all_unit_eval_tests_pass,
 	all_let_eval_tests_pass.
 	% all_fix_eval_tests_pass.
