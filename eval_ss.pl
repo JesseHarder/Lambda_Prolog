@@ -234,3 +234,14 @@ eval_ss([Abs, Val], Result) :-
 eval_ss([Abs, Val|OtherTerms], [NewTerm|OtherTerms]) :-
 	length([Abs, Val|OtherTerms], Len), Len > 2,
 	eval_ss([Abs, Val], NewTerm),!.
+
+/***** Helper Functions *****/
+
+% Used for single step evaluation of Terms in a list of terms.
+% List contains values and at least one non-value term. The leftmost of these is NVT1.
+% NewList has all the same terms, but with NVT1 is evaluated one step.
+eval_first_non_value([Term|OtherTerms], [NewTerm|OtherTerms]) :-
+	eval_ss(Term, NewTerm).
+eval_first_non_value([Val|OtherTerms], [Val|NewOtherTerms]) :-
+	is_value(Val), % Sanity check.
+	eval_first_non_value(OtherTerms, NewOtherTerms).
