@@ -62,15 +62,13 @@ eval_ss(seq([Term1, Term2 | OtherTerms]), seq([NewTerm | OtherTerms])) :-
 /* --- Let --- */
 % let X=Term1 in Term2
 % E-LetV
-eval_ss(let(X=Val, Term2), Result) :-
+eval_ss(let(X=Val, Term2), Term2) :-
 	var(X), is_value(Val),
-	X=Val,
-	eval_ss(Term2, Result),!.
+	X=Val,!.
 % E-Let
-eval_ss(let(X=Term1, Term2), Result) :-
+eval_ss(let(X=Term1, Term2), let(X=New1, Term2)) :-
 	var(X), is_not_value(Term1),
-	eval_ss(Term1, New1),
-	eval_ss(let(X=New1, Term2), Result),!.
+	eval_ss(Term1, New1),!.
 
 
 /* --- Tuples --- */
