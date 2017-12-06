@@ -120,6 +120,3 @@ all_eval_tests_pass :-
 	all_lambda_eval_tests_pass,
 	all_let_eval_tests_pass.
 	% all_fix_eval_tests_pass.
-
-mytest([H|T]) :-
-	format('Head: ~w\nTail: ~w', [H,T]).
