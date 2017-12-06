@@ -1,4 +1,4 @@
-:- [eval_ss, values, util/plists, util/test_controls].
+:- [eval, values, util/plists, util/test_controls].
 
 /* ----- Bool Tests ----- */
 btest1_e :- eval(ifte(tru, tru, fls), tru),
