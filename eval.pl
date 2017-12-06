@@ -95,7 +95,7 @@ eval(proj(tuple(List), Index), Result) :-
 % E-Tuple - This is sort of the Big-Step version of this.
 eval(tuple(List), tuple(Vals)) :-
 	is_not_value(tuple(List)),
-	maplist(eval_if_not_value, List, Vals),!.
+	maplist(eval, List, Vals),!.
 
 
 /* --- Records --- */

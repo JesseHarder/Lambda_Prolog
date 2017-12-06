@@ -120,10 +120,19 @@ tpltest4_t :-  typeof(
 	tuple([lam(X:('Natural'->'Bool'), lam(Y:'Natural',[X, Y]))]),
 	'Tuple'([(('Natural'->'Bool')->'Natural'->'Bool')])),
 	write_bt("tpltest4_t passed.\n"),!.
+projtest1_t :-  typeof(proj(tuple([0, tru]), 1), 'Natural'),
+	write_bt("projtest1_t passed.\n"),!.
+projtest2_t :-  typeof(proj(tuple([0, tru]), 2), 'Bool'),
+	write_bt("projtest2_t passed.\n"),!.
+projtest3_t :-  typeof(proj(tuple([iszero(0), ifte(fls, 0, succ(0))]), 1), 'Bool'),
+	write_bt("projtest3_t passed.\n"),!.
+projtest4_t :-  typeof(proj(tuple([iszero(0), ifte(fls, 0, succ(0))]), 2), 'Natural'),
+	write_bt("projtest4_t passed.\n"),!.
 
 all_tuple_type_tests_pass :-
 	write_btt("--- Checking Tuple Type Tests. ---\n"),
 	tpltest1_t, tpltest2_t, tpltest3_t, tpltest4_t,
+	projtest1_t, projtest2_t, projtest3_t, projtest4_t,
 	write_btt("--- All Tuple Type Tests Pass. ---\n"),!.
 /* ----- End Tuple Tests ----- */
 /* ----- Record Tests ----- */

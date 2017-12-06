@@ -131,12 +131,36 @@ all_let_eval_tests_pass :-
 	write_btt("--- All Let Eval Tests Pass. ---\n"),!.
 /* ----- End Let Tests ----- */
 
+/* ----- Tuple Tests ----- */
+tpltest1_e :-  eval(tuple([tru,iszero(0)]), tuple([tru,tru])),
+	write_bt("tpltest1_e passed.\n"),!.
+tpltest2_e :-  eval(
+	tuple([tru,0,iszero(pred(succ(0))),ifte(tru, succ(0), 0)]),
+	tuple([tru,0,tru,succ(0)])),
+	write_bt("tpltest2_e passed.\n"),!.
+projtest1_e :-  eval(proj(tuple([0, tru]), 1), 0),
+	write_bt("projtest1_e passed.\n"),!.
+projtest2_e :-  eval(proj(tuple([0, tru]), 2), tru),
+	write_bt("projtest2_e passed.\n"),!.
+projtest3_e :-  eval(proj(tuple([iszero(0), ifte(fls, 0, succ(0))]), 1), tru),
+	write_bt("projtest3_e passed.\n"),!.
+projtest4_e :-  eval(proj(tuple([iszero(0), ifte(fls, 0, succ(0))]), 2), succ(0)),
+	write_bt("projtest4_e passed.\n"),!.
+
+
+all_tuple_eval_tests_pass :-
+	write_btt("--- Checking Tuple Eval Tests. ---\n"),
+	tpltest1_e, tpltest2_e,
+	projtest1_e, projtest2_e, projtest3_e, projtest4_e,
+	write_btt("--- All Tuple Eval Tests Pass. ---\n"),!.
+/* ----- End Tuple Tests ----- */
+
 /* ----- Fix Tests ----- */
 % E-AppAbs-2
 fixtest1_e :- eval(fix(lam(X:'Bool',X)), _),
 	write_bt("fixtest1_e passed.\n"),!.
 
-all_fix_eval_tests_pass :-
+all_fix_eval_eests_pass :-
 	write_btt("--- Checking Fix Eval Tests. ---\n"),
 	fixtest1_e,
 	write_btt("--- All Fix Eval Tests Pass. ---\n"),!.
