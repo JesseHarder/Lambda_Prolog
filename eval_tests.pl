@@ -138,22 +138,46 @@ tpltest2_e :-  eval(
 	tuple([tru,0,iszero(pred(succ(0))),ifte(tru, succ(0), 0)]),
 	tuple([tru,0,tru,succ(0)])),
 	write_bt("tpltest2_e passed.\n"),!.
-projtest1_e :-  eval(proj(tuple([0, tru]), 1), 0),
+tprjtest1_e :-  eval(proj(tuple([0, tru]), 1), 0),
 	write_bt("projtest1_e passed.\n"),!.
-projtest2_e :-  eval(proj(tuple([0, tru]), 2), tru),
+tprjtest2_e :-  eval(proj(tuple([0, tru]), 2), tru),
 	write_bt("projtest2_e passed.\n"),!.
-projtest3_e :-  eval(proj(tuple([iszero(0), ifte(fls, 0, succ(0))]), 1), tru),
+tprjtest3_e :-  eval(proj(tuple([iszero(0), ifte(fls, 0, succ(0))]), 1), tru),
 	write_bt("projtest3_e passed.\n"),!.
-projtest4_e :-  eval(proj(tuple([iszero(0), ifte(fls, 0, succ(0))]), 2), succ(0)),
+tprjtest4_e :-  eval(proj(tuple([iszero(0), ifte(fls, 0, succ(0))]), 2), succ(0)),
 	write_bt("projtest4_e passed.\n"),!.
 
 
 all_tuple_eval_tests_pass :-
 	write_btt("--- Checking Tuple Eval Tests. ---\n"),
 	tpltest1_e, tpltest2_e,
-	projtest1_e, projtest2_e, projtest3_e, projtest4_e,
+	rprjtest1_e, tprjtest2_e, tprjtest3_e, tprjtest4_e,
 	write_btt("--- All Tuple Eval Tests Pass. ---\n"),!.
 /* ----- End Tuple Tests ----- */
+
+/* ----- Record Tests ----- */
+rcdtest1_e :-  eval(record(["A"=tru,"B"=iszero(0)]), record(["A"=tru,"B"=tru])),
+	write_bt("rcdtest1_e passed.\n"),!.
+rcdtest2_e :-  eval(
+	record(["A"=tru,"B"=0,"C"=iszero(pred(succ(0))),"D"=ifte(tru, succ(0), 0)]),
+	record(["A"=tru,"B"=0,"C"=tru,"D"=succ(0)])),
+	write_bt("rcdtest2_e passed.\n"),!.
+rprjtest1_e :-  eval(proj(record(["A"=0, "B"=tru]), "A"), 0),
+	write_bt("projtest1_e passed.\n"),!.
+rprjtest2_e :-  eval(proj(record(["A"=0, "B"=tru]), "B"), tru),
+	write_bt("projtest2_e passed.\n"),!.
+rprjtest3_e :-  eval(proj(record(["A"=iszero(0), "B"=ifte(fls, 0, succ(0))]), "A"), tru),
+	write_bt("projtest3_e passed.\n"),!.
+rprjtest4_e :-  eval(proj(record(["A"=iszero(0), "B"=ifte(fls, 0, succ(0))]), "B"), succ(0)),
+	write_bt("projtest4_e passed.\n"),!.
+
+
+all_record_eval_tests_pass :-
+	write_btt("--- Checking Record Eval Tests. ---\n"),
+	rcdtest1_e, rcdtest2_e,
+	rprjtest1_e, rprjtest2_e, rprjtest3_e, rprjtest4_e,
+	write_btt("--- All Record Eval Tests Pass. ---\n"),!.
+/* ----- End Record Tests ----- */
 
 /* ----- Fix Tests ----- */
 % E-AppAbs-2
@@ -171,5 +195,7 @@ all_eval_tests_pass :-
 	all_nat_eval_tests_pass,
 	all_lambda_eval_tests_pass,
 	all_unit_eval_tests_pass,
-	all_let_eval_tests_pass.
+	all_let_eval_tests_pass,
+	all_tuple_eval_tests_pass,
+	all_record_eval_tests_pass.
 	% all_fix_eval_tests_pass.

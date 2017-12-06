@@ -113,7 +113,7 @@ eval(proj(record(List), Label), Result) :-
 eval(record(List), record(NewList)) :-
 	is_not_value(record(List)),
 	record_parts(record(List), Labels, Terms),
-	maplist(eval_if_not_value, Terms, Vals),
+	maplist(eval, Terms, Vals),
 	record_parts(record(NewList), Labels, Vals),!.
 
 

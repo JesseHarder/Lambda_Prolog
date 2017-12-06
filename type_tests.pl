@@ -120,19 +120,19 @@ tpltest4_t :-  typeof(
 	tuple([lam(X:('Natural'->'Bool'), lam(Y:'Natural',[X, Y]))]),
 	'Tuple'([(('Natural'->'Bool')->'Natural'->'Bool')])),
 	write_bt("tpltest4_t passed.\n"),!.
-projtest1_t :-  typeof(proj(tuple([0, tru]), 1), 'Natural'),
-	write_bt("projtest1_t passed.\n"),!.
-projtest2_t :-  typeof(proj(tuple([0, tru]), 2), 'Bool'),
-	write_bt("projtest2_t passed.\n"),!.
-projtest3_t :-  typeof(proj(tuple([iszero(0), ifte(fls, 0, succ(0))]), 1), 'Bool'),
-	write_bt("projtest3_t passed.\n"),!.
-projtest4_t :-  typeof(proj(tuple([iszero(0), ifte(fls, 0, succ(0))]), 2), 'Natural'),
-	write_bt("projtest4_t passed.\n"),!.
+tprjtest1_t :-  typeof(proj(tuple([0, tru]), 1), 'Natural'),
+	write_bt("tprjtest1_t passed.\n"),!.
+tprjtest2_t :-  typeof(proj(tuple([0, tru]), 2), 'Bool'),
+	write_bt("tprjtest2_t passed.\n"),!.
+tprjtest3_t :-  typeof(proj(tuple([iszero(0), ifte(fls, 0, succ(0))]), 1), 'Bool'),
+	write_bt("tprjtest3_t passed.\n"),!.
+tprjtest4_t :-  typeof(proj(tuple([iszero(0), ifte(fls, 0, succ(0))]), 2), 'Natural'),
+	write_bt("tprjtest4_t passed.\n"),!.
 
 all_tuple_type_tests_pass :-
 	write_btt("--- Checking Tuple Type Tests. ---\n"),
 	tpltest1_t, tpltest2_t, tpltest3_t, tpltest4_t,
-	projtest1_t, projtest2_t, projtest3_t, projtest4_t,
+	tprjtest1_t, tprjtest2_t, tprjtest3_t, tprjtest4_t,
 	write_btt("--- All Tuple Type Tests Pass. ---\n"),!.
 /* ----- End Tuple Tests ----- */
 /* ----- Record Tests ----- */
@@ -152,10 +152,19 @@ rcdtest4_t :-  typeof(
 	record(["A"=lam(X:('Natural'->'Bool'), lam(Y:'Natural',[X, Y]))]),
 	'Record'(["A"=(('Natural'->'Bool')->'Natural'->'Bool')])),
 	write_bt("rcdtest4_t passed.\n"),!.
+rprjtest1_t :-  typeof(proj(record(["A"=0, "B"=tru]), "A"), 'Natural'),
+	write_bt("projtest1_t passed.\n"),!.
+rprjtest2_t :-  typeof(proj(record(["A"=0, "B"=tru]), "B"), 'Bool'),
+	write_bt("projtest2_t passed.\n"),!.
+rprjtest3_t :-  typeof(proj(record(["A"=iszero(0), "B"=ifte(fls, 0, succ(0))]), "A"), 'Bool'),
+	write_bt("projtest3_t passed.\n"),!.
+rprjtest4_t :-  typeof(proj(record(["A"=iszero(0), "B"=ifte(fls, 0, succ(0))]), "B"), 'Natural'),
+	write_bt("projtest4_t passed.\n"),!.
 
 all_record_type_tests_pass :-
 	write_btt("--- Checking Record Type Tests. ---\n"),
 	rcdtest1_t, rcdtest2_t, rcdtest3_t, rcdtest4_t,
+	rprjtest1_t, rprjtest2_t, rprjtest3_t, rprjtest4_t,
 	write_btt("--- All Record Type Tests Pass. ---\n"),!.
 /* ----- End Records Tests ----- */
 /* ----- Variant Tests ----- */
