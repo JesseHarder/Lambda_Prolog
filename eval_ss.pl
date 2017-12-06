@@ -129,14 +129,12 @@ eval_ss(var(Label=Term), var(Label=NewTerm)) :-
 
 /* --- Lists --- */
 % E-Cons1
-eval_ss(cons(Term1, Term2), Result) :-
-	eval_ss(Term1, New1),
-	eval_ss(cons(New1, Term2), Result),!.
+eval_ss(cons(Term1, Term2), cons(New1, Term2)) :-
+	eval_ss(Term1, New1),!.
 % E-Cons2
-eval_ss(cons(Val1, Term2), Result) :-
+eval_ss(cons(Val1, Term2), cons(Val1, New2)) :-
 	is_value(Val1),
-	eval_ss(Term2, New2),
-	eval_ss(cons(Val1, New2), Result),!.
+	eval_ss(Term2, New2),!.
 % E-IsNilNil
 eval_ss(isnil(nil), tru).
 % E-IsNilCons
@@ -144,25 +142,22 @@ eval_ss(isnil(cons(V1, V2)), fls) :-
 	is_value(V1),
 	is_value(V2),!.
 % E-IsNil
-eval_ss(isnil(Term), Result) :-
-	eval_ss(Term, NewTerm),
-	eval_ss(isnil(NewTerm), Result),!.
+eval_ss(isnil(Term), isnil(NewTerm)) :-
+	eval_ss(Term, NewTerm),!.
 % E-HeadCons
 eval_ss(head(cons(V1, V2)), V1) :-
 	is_value(V1),
 	is_value(V2),!.
 % E-Head
-eval_ss(head(Term), Result) :-
-	eval_ss(Term, NewTerm),
-	eval_ss(head(NewTerm), Result),!.
+eval_ss(head(Term), head(NewTerm)) :-
+	eval_ss(Term, NewTerm),!.
 % E-TailCons
 eval_ss(tail(cons(V1, V2)), V2) :-
 	is_value(V1),
 	is_value(V2),!.
 % E-Tail
-eval_ss(tail(Term), Result) :-
-	eval_ss(Term, NewTerm),
-	eval_ss(tail(NewTerm), Result),!.
+eval_ss(tail(Term), tail(NewTerm)) :-
+	eval_ss(Term, NewTerm),!.
 
 
 /* --- Exceptions --- */
