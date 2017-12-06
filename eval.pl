@@ -9,32 +9,20 @@
 	lambda/lambdas, lambda/rec_var,
 	util/plists].
 
-
-% eval_if_not_value/2
-% If the term to be evaluated is already a value, the result is the term.
-% If the term to be evaluated is not a value, the result is the evaluation of
-%	the term.
-eval_if_not_value(Term, Result) :- eval(Term, Result).
-	% (is_value(Term) ->
-	% 	% If Term is a value, it is the result.
-	% 	Result = Term;
-	% 	% If not, the result of evaluating it is the result.
-	% 	eval(Term, Result)),!.
-
 /* --- Value --- */
 eval(Val, Val) :- is_value(Val).
 
 /* --- Booelean Evaluation --- */
 %E-IfTrue
 eval(ifte(tru, Term2, _) ,Result) :-
-	eval_if_not_value(Term2,Result),!.
+	eval(Term2,Result),!.
 %E-IfFalse
 eval(ifte(fls, _, Term3), Result) :-
-	eval_if_not_value(Term3, Result),!.
+	eval(Term3, Result),!.
 %E-If
 eval(ifte(Term1, Term2, Term3), Result) :-
 	eval(Term1, New1),
-	eval_if_not_value(ifte(New1, Term2, Term3), Result),!.
+	eval(ifte(New1, Term2, Term3), Result),!.
 
 
 /* --- Natural Number Evaluation --- */
@@ -46,7 +34,7 @@ eval(pred(succ(Term)), Term) :-
 % E-Succ
 eval(succ(Term), Result) :-
 	eval(Term, NewTerm),
-	eval_if_not_value(succ(NewTerm), Result),!.
+	eval(succ(NewTerm), Result),!.
 % E-Pred
 eval(pred(Term), Result) :-
 	eval(Term, NewTerm),
@@ -66,7 +54,7 @@ eval(iszero(Term), Result) :-
 % Sequence using lambda calculus.
 eval(seq([Term1, Term2]), Result) :-
 	apply(lam(_:'Unit', [Term2]), Term1, MidResult),
-	eval_if_not_value(MidResult, Result),!.
+	eval(MidResult, Result),!.
 eval(seq([Term1, Term2 | OtherTerms]), Result) :-
 	length([Term1, Term2 | OtherTerms], Len), Len > 2,
 	eval(seq([Term1, Term2]), MidResult),
@@ -144,7 +132,7 @@ eval(case(var(Label=Val), Conditions), Result) :-
 	string(Label),	% Sanity check.
 	is_value(Val),
 	member(var(Label=Val)->CondTerm, Conditions),
-	eval_if_not_value(CondTerm, Result),!.
+	eval(CondTerm, Result),!.
 % E-Case
 eval(case(var(Label=Term), Conditions), Result) :-
 	eval(var(Label=Term), NewLabelTerm),
@@ -160,19 +148,19 @@ eval(case(var(Label=Term), Conditions), Result) :-
 % 		eval(var(Label=NewTerm),Result)),!.
 % The Big Step Version.
 eval(var(Label=Term), var(Label=Val)) :-
-	eval_if_not_value(Term,Val),!.
+	eval(Term,Val),!.
 
 
 /* --- Lists --- */
 % E-Cons1
 eval(cons(Term1, Term2), Result) :-
 	eval(Term1, New1),
-	eval_if_not_value(cons(New1, Term2), Result),!.
+	eval(cons(New1, Term2), Result),!.
 % E-Cons2
 eval(cons(Val1, Term2), Result) :-
 	is_value(Val1),
 	eval(Term2, New2),
-	eval_if_not_value(cons(Val1, New2), Result),!.
+	eval(cons(Val1, New2), Result),!.
 % E-IsNilNil
 eval(isnil(nil), tru).
 % E-IsNilCons
@@ -182,7 +170,7 @@ eval(isnil(cons(V1, V2)), fls) :-
 % E-IsNil
 eval(isnil(Term), Result) :-
 	eval(Term, NewTerm),
-	eval_if_not_value(isnil(NewTerm), Result),!.
+	eval(isnil(NewTerm), Result),!.
 % E-HeadCons
 eval(head(cons(V1, V2)), V1) :-
 	is_value(V1),
@@ -213,7 +201,7 @@ eval(try(Val1, _), Val1) :-
 	is_value(Val1),!.
 % E-TryError
 eval(try(error, Term2), Result) :-
-	 eval_if_not_value(Term2, Result),!.
+	 eval(Term2, Result),!.
 % E-Try
 eval(try(Term1, Term2), Result) :-
 	 eval(Term1, New1),
@@ -259,10 +247,10 @@ eval([Abs, Val],Result) :-
 	is_lambda(Abs),
 	is_value(Val),
 	apply(Abs, Val, ApResult),
-	eval_if_not_value(ApResult, Result),!.
+	eval(ApResult, Result),!.
 
 eval([Abs, Val|OtherTerms], Result) :-
 	length([Abs, Val|OtherTerms], Len), Len > 2,
 	eval([Abs, Val], NewTerm),
 	eval([NewTerm|OtherTerms], MidResult),
-	eval_if_not_value(MidResult, Result),!.
+	eval(MidResult, Result),!.
