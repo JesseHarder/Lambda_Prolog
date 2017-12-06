@@ -122,10 +122,12 @@ lettest1_e :- eval(let(X=0, iszero(X)), tru),
 	write_bt("lettest1_e passed.\n"),!.
 lettest2_e :- eval(let(Y=tru, ifte(Y, 0, succ(0))), 0),
 	write_bt("lettest2_e passed.\n"),!.
+lettest3_e :- eval(let(Y=fls, [lam(X:'Natural', ifte(Y, 0, X)), succ(0)]), succ(0)),
+	write_bt("lettest3_e passed.\n"),!.
 
 all_let_eval_tests_pass :-
 	write_btt("--- Checking Let Eval Tests. ---\n"),
-	lettest1_e, lettest2_e,
+	lettest1_e, lettest2_e, lettest3_e,
 	write_btt("--- All Let Eval Tests Pass. ---\n"),!.
 /* ----- End Let Tests ----- */
 
