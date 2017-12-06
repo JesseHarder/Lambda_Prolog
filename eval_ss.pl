@@ -163,20 +163,18 @@ eval_ss(tail(Term), tail(NewTerm)) :-
 /* --- Exceptions --- */
 /* - Errors w/o values - */
 % E-AppError1
-eval_ss([error, _], error).
+eval_ss([error, _], error) :- !.
 % E-AppError2
-eval_ss([_, error], error).
+eval_ss([_, error], error) :- !.
 /* - Error Handling - */
 % E-TryV
 eval_ss(try(Val1, _), Val1) :-
 	is_value(Val1),!.
 % E-TryError
-eval_ss(try(error, Term2), Result) :-
-	 eval_ss(Term2, Result),!.
+eval_ss(try(error, Term2), Term2) :- !.
 % E-Try
-eval_ss(try(Term1, Term2), Result) :-
-	 eval_ss(Term1, New1),
-	 eval_ss(try(New1, Term2), Result),!.
+eval_ss(try(Term1, Term2), try(New1, Term2)) :-
+	 eval_ss(Term1, New1),!.
 /* - Raising Exceptions - */
 % E-AppRaise1
 eval_ss([raise(Val1), _], raise(Val1)) :-
@@ -186,17 +184,14 @@ eval_ss([Val1, raise(Val2)], raise(Val2)) :-
 	is_value(Val1),
 	is_value(Val2),!.
 % E-Raise - Sort of Big Step version.
-eval_ss(raise(Term), Result) :-
-	eval_ss(Term, NewTerm),
-	(is_value(NewTerm) ->
-		Result = raise(NewTerm);
-		eval_ss(raise(NewTerm), Result)),!.
+eval_ss(raise(Term), raise(NewTerm)) :-
+	eval_ss(Term, NewTerm),!.
 % E-RaiseRaise
-eval_ss(raise(raise(Val)), raise(Val)) :- is_value(Val),!.
+eval_ss(raise(raise(Val)), raise(Val)) :-
+	is_value(Val),!.
 % E-TryRaise
-eval_ss(try(raise(Val), TryTerm), Result) :-
-	is_value(Val),
-	eval_ss([TryTerm, Val], Result),!.
+eval_ss(try(raise(Val), TryTerm), [TryTerm, Val]) :-
+	is_value(Val),!.
 
 /* --- Basic Lambda Calculus Evaluation --- */
 % E-APP1
