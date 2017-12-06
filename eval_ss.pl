@@ -89,21 +89,19 @@ eval_ss(tuple(List), tuple(NewList)) :-
 
 /* --- Records --- */
 % E-ProjRecord
-eval_ss(proj(record(List), Label),Result) :-
+eval_ss(proj(record(List), Label), Result) :-
 	is_value(record(List)),
 	is_list(List), string(Label), % Sanity Check
 	member(Label=Result, List),!.
 % E-Proj
-eval_ss(proj(record(List), Label), Result) :-
-	is_not_value(record(List)),	% Sanity check.
-	eval_ss(record(List), NewRecord),
-	eval_ss(proj(NewRecord, Label), Result),!.
+eval_ss(proj(record(List), Label), proj(NewRecord, Label)) :-
+	eval_ss(record(List), NewRecord),!.
 % E-Rcd
 eval_ss(record(List), record(NewList)) :-
 	is_not_value(record(List)),
 	record_parts(record(List), Labels, Terms),
-	maplist(eval_if_not_value, Terms, Vals),
-	record_parts(record(NewList), Labels, Vals),!.
+	eval_first_non_value(Terms, NewTerms),
+	record_parts(record(NewList), Labels, NewTerms),!.
 
 
 /* --- Variant Types: Case ---
