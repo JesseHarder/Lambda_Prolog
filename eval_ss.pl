@@ -221,28 +221,19 @@ eval_ss(try(raise(Val), TryTerm), Result) :-
 
 /* --- Basic Lambda Calculus Evaluation --- */
 % E-APP1
-eval_ss([Term1, Term2], Result) :-
-	is_not_value(Term1),
-	% is_not_value(Term2),
-	eval_ss(Term1, New1),
-	eval_ss([New1, Term2], Result),!.
+eval_ss([Term1, Term2], [New1, Term2]) :-
+	eval_ss(Term1, New1),!.
 
 % E-APP2
-eval_ss([Val, Term2], Result) :-
-	is_value(Val),
-	is_not_value(Term2),
-	eval_ss(Term2, New2),
-	eval_ss([Val, New2], Result),!.
+eval_ss([Val, Term2], [Val, New2]) :-
+	eval_ss(Term2, New2),!.
 
 % E-AppAbs
-eval_ss([Abs, Val],Result) :-
+eval_ss([Abs, Val], Result) :-
 	is_lambda(Abs),
 	is_value(Val),
-	apply(Abs, Val, ApResult),
-	eval_ss(ApResult, Result),!.
+	apply(Abs, Val, Result),!.
 
-eval_ss([Abs, Val|OtherTerms], Result) :-
+eval_ss([Abs, Val|OtherTerms], [NewTerm|OtherTerms]) :-
 	length([Abs, Val|OtherTerms], Len), Len > 2,
-	eval_ss([Abs, Val], NewTerm),
-	eval_ss([NewTerm|OtherTerms], MidResult),
-	eval_ss(MidResult, Result),!.
+	eval_ss([Abs, Val], NewTerm),!.
