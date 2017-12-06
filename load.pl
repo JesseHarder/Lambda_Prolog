@@ -1,4 +1,4 @@
-:- [types, eval, values,
+:- [types, eval_ss, values,
 	type_tests, eval_tests,
 	lambda/lambdas, lambda/rec_var].
 
