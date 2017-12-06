@@ -179,6 +179,38 @@ all_record_eval_tests_pass :-
 	write_btt("--- All Record Eval Tests Pass. ---\n"),!.
 /* ----- End Record Tests ----- */
 
+/* ----- Variant Tests ----- */
+vrnttest1_e :-
+	eval(case(var("A"=tru),
+				[var("A"=X)->ifte(X,0,succ(0)),
+				 var("B"=Y)->[lam(Z:'Natural',iszero(Z)), Y]]),
+			0),
+	write_bt("vrnttest1_e passed.\n"),!.
+vrnttest2_e :-
+	\+ eval(case(var("B"=tru),
+				[var("A"=X)->ifte(X,0,succ(0)),
+				 var("B"=Y)->[lam(Z:'Natural',iszero(Z)), Y]]),
+			_),
+	write_bt("vrnttest2_e passed.\n"),!.
+vrnttest3_e :-
+	eval(case(var("B"=0),
+				[var("A"=X)->ifte(X,0,succ(0)),
+				 var("B"=Y)->[lam(Z:'Natural',iszero(Z)), Y]]),
+			tru),
+	write_bt("vrnttest3_e passed.\n"),!.
+vrnttest4_e :-
+	eval(case(var("B"=0),
+				[var("A"=X)->ifte(X,0,succ(0)),
+				 var("B"=Y)->lam(_:'Natural',iszero(Y))]),
+			lam(_:'Natural',iszero(0))),
+	write_bt("vrnttest4_e passed.\n"),!.
+
+all_variant_eval_tests_pass :-
+	write_btt("--- Checking Variant Eval Tests. ---\n"),
+	vrnttest1_t, vrnttest2_t, vrnttest3_e, vrnttest4_e,
+	write_btt("--- All Variant Eval Tests Pass. ---\n"),!.
+/* ----- End Variant Tests ----- */
+
 /* ----- Fix Tests ----- */
 % E-AppAbs-2
 fixtest1_e :- eval(fix(lam(X:'Bool',X)), _),
@@ -197,5 +229,6 @@ all_eval_tests_pass :-
 	all_unit_eval_tests_pass,
 	all_let_eval_tests_pass,
 	all_tuple_eval_tests_pass,
-	all_record_eval_tests_pass.
+	all_record_eval_tests_pass,
+	all_variant_eval_tests_pass.
 	% all_fix_eval_tests_pass.

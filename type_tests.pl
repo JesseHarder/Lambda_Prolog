@@ -9,6 +9,7 @@ all_unit_tests_pass :-
 	utest_t,
 	write_btt("--- All Unit Type Tests Pass. ---\n"),!.
 /* ----- End Unit Tests ----- */
+
 /* ----- Bool Tests ----- */
 btest1_t :- typeof(tru, 'Bool'),
 	write_bt("btest1_t passed.\n"),!.
@@ -26,6 +27,7 @@ all_bool_type_tests_pass :-
 	btest1_t, btest2_t, btest3_t, btest4_t,
 	write_btt("--- All Boolean Type Tests Pass. ---\n"),!.
 /* ----- End Bool Tests ----- */
+
 /* ----- Natural Tests ----- */
 ntest1_t :- typeof(0, 'Natural'),
 	write_bt("ntest1_t passed.\n"),!.
@@ -48,6 +50,7 @@ all_nat_type_tests_pass :-
 	ntest6_t, ntest7_t,
 	write_btt("--- All Naturals Type Tests Pass. ---\n"),!.
 /* ----- End Bool Tests ----- */
+
 /* ----- Lambda Tests ----- */
 % Abstraction
 abstest1_t :- typeof(lam(X:'Bool', X), ('Bool'->'Bool')),
@@ -81,6 +84,7 @@ all_lambda_type_tests_pass :-
 	apptest1_t, apptest2_t, apptest3_t,
 	write_btt("--- All Lambda Type Tests Pass. ---\n"),!.
 /* ----- End Lambda Tests ----- */
+
 /* ----- Let Tests ----- */
 % Abstraction
 lettest1_t :- typeof(
@@ -105,6 +109,7 @@ all_let_type_tests_pass :-
 	lettest1_t, lettest2_t, lettest3_t, lettest4_t,
 	write_btt("--- All Let Type Tests Pass. ---\n"),!.
 /* ----- End Let Tests ----- */
+
 /* ----- Tuple Tests ----- */
 tpltest1_t :-  typeof(tuple([tru,0]), 'Tuple'(['Bool', 'Natural'])),
 	write_bt("tpltest1_t passed.\n"),!.
@@ -135,6 +140,7 @@ all_tuple_type_tests_pass :-
 	tprjtest1_t, tprjtest2_t, tprjtest3_t, tprjtest4_t,
 	write_btt("--- All Tuple Type Tests Pass. ---\n"),!.
 /* ----- End Tuple Tests ----- */
+
 /* ----- Record Tests ----- */
 rcdtest1_t :-  typeof(
 	record(["A"=tru,"B"=0]),
@@ -167,37 +173,46 @@ all_record_type_tests_pass :-
 	rprjtest1_t, rprjtest2_t, rprjtest3_t, rprjtest4_t,
 	write_btt("--- All Record Type Tests Pass. ---\n"),!.
 /* ----- End Records Tests ----- */
+
 /* ----- Variant Tests ----- */
-vrnttest1_t :-  typeof(vrnt("Hi"=0), 'Variant'(["Hi"='Natural'|_])),
+vrnttest1_t :-  typeof(var("Hi"=0), 'Variant'(["Hi"='Natural'|_])),
 	write_bt("vrnttest1_t passed.\n"),!.
 vrnttest2_t :-
-	typeof(vrnt("Hi"=record(["A"=tru,"B"=0])),
+	typeof(var("Hi"=record(["A"=tru,"B"=0])),
 		'Variant'(["Hi"='Record'(["A"='Bool', "B"='Natural'])|_])),
 	write_bt("vrnttest2_t passed.\n"),!.
 vrnttest3_t :-
 	typeof(case(var("A"=tru),
 				[var("A"=X)->ifte(X,0,succ(0)),
-				 var("B"=Y)->lam(Y,iszero(Y))]),
+				 var("B"=Y)->[lam(Z:'Natural',iszero(Z)), Y]]),
 			'Natural'),
 	write_bt("vrnttest3_t passed.\n"),!.
 vrnttest4_t :-
 	\+ typeof(case(var("B"=tru),
 				[var("A"=X)->ifte(X,0,succ(0)),
-				 var("B"=Y)->lam(Y:'Bool',iszero(Y))]),
+				 var("B"=Y)->[lam(Z:'Natural',iszero(Z)), Y]]),
 			_),
 	write_bt("vrnttest4_t passed.\n"),!.
 vrnttest5_t :-
 	typeof(case(var("B"=0),
 				[var("A"=X)->ifte(X,0,succ(0)),
-				 var("B"=Y)->lam(Y:'Natural',iszero(Y))]),
-			_),
+				 var("B"=Y)->[lam(Z:'Natural',iszero(Z)), Y]]),
+			'Bool'),
 	write_bt("vrnttest5_t passed.\n"),!.
+vrnttest6_t :-
+	typeof(case(var("B"=0),
+				[var("A"=X)->ifte(X,0,succ(0)),
+				 var("B"=Y)->lam(_:'Natural',iszero(Y))]),
+			('Natural'->'Bool')),
+	write_bt("vrnttest6_t passed.\n"),!.
 
-all_vrntiant_type_tests_pass :-
+all_variant_type_tests_pass :-
 	write_btt("--- Checking Variant Type Tests. ---\n"),
-	vrnttest1_t, vrnttest2_t, vrnttest3_t, vrnttest4_t, vrnttest5_t,
+	vrnttest1_t, vrnttest2_t, vrnttest3_t, vrnttest4_t,
+	vrnttest5_t, vrnttest6_t,
 	write_btt("--- All Variant Type Tests Pass. ---\n"),!.
 /* ----- End Variant Tests ----- */
+
 /* ----- List Tests ----- */
 niltest_t :-  typeof(nil, 'List'(_)),
 	write_bt("niltest_t passed.\n"),!.
@@ -254,6 +269,7 @@ all_list_type_tests_pass :-
 	tailtest1_t,tailtest2_t,tailtest3_t,tailtest4_t,tailtest5_t,
 	write_btt("--- All List Type Tests Pass. ---\n"),!.
 /* ----- End List Tests ----- */
+
 /* ----- Exception Tests ----- */
 exntest1_t :- typeof(raise(0), _),
 	write_bt("exntest1_t passed.\n"),!.
@@ -281,5 +297,6 @@ all_type_tests_pass :-
 	all_let_type_tests_pass,
 	all_tuple_type_tests_pass,
 	all_record_type_tests_pass,
+	all_variant_type_tests_pass,
 	all_list_type_tests_pass,
 	all_exception_type_tests_pass,!.
