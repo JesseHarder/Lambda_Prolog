@@ -47,12 +47,10 @@ eval_ss(iszero(Term), iszero(NewTerm)) :-
 /* --- Sequences with Unit type ---*/
 % Sequence using lambda calculus.
 eval_ss(seq([Term1, Term2]), Result) :-
-	apply(lam(_:'Unit', [Term2]), Term1, MidResult),
-	eval_ss(MidResult, Result),!.
+	apply(lam(_:'Unit', [Term2]), Term1, Result),!.
 eval_ss(seq([Term1, Term2 | OtherTerms]), Result) :-
 	length([Term1, Term2 | OtherTerms], Len), Len > 2,
-	eval_ss(seq([Term1, Term2]), MidResult),
-	eval_ss(seq([MidResult | OtherTerms]), Result),!.
+	eval_ss(seq([Term1, Term2]), Result),!.
 % The non-lambda, way.
 % eval_ss(seq([Term]), Result) :-
 % 	eval_ss(Term, Result),!.
