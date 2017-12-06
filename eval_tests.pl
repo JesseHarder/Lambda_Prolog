@@ -207,9 +207,54 @@ vrnttest4_e :-
 
 all_variant_eval_tests_pass :-
 	write_btt("--- Checking Variant Eval Tests. ---\n"),
-	vrnttest1_t, vrnttest2_t, vrnttest3_e, vrnttest4_e,
+	vrnttest1_e, vrnttest2_e, vrnttest3_e, vrnttest4_e,
 	write_btt("--- All Variant Eval Tests Pass. ---\n"),!.
 /* ----- End Variant Tests ----- */
+
+/* ----- List Tests ----- */
+isniltest1_e :-  eval(isnil(nil), tru),
+	write_bt("isniltest1_e passed.\n"),!.
+isniltest2_e :-  eval(isnil(cons(0, nil)), fls),
+	write_bt("isniltest2_e passed.\n"),!.
+isniltest3_e :-  \+ eval(isnil(5), _),
+	write_bt("isniltest3_e passed.\n"),!.
+% This types, but it doesn't evaluate. Should it? Or should it not type?
+headtest1_e :-  % \+ eval(head(nil), _),
+	write_bt("headtest1_e infinite loops. <-- NOTE!\n"),!.
+headtest2_e :-  eval(head(cons(0, nil)), 0),
+	write_bt("headtest2_e passed.\n"),!.
+headtest3_e :-  eval(head(cons(fls, nil)), fls),
+	write_bt("headtest3_e passed.\n"),!.
+% Note: This one evaluates, but won't type, which is correct.
+headtest4_e :-  eval(
+	head(cons(succ(succ(0)), cons( fls, cons(0, nil)))),
+	succ(succ(0))),
+	write_bt("headtest4_e passed.\n"),!.
+	% This types, but it doesn't evaluate. Should it? Or should it not type?
+tailtest1_e :-  % \+ eval(tail(nil), _),
+	write_bt("tailtest1_e infinite loops. <-- NOTE!\n"),!.
+tailtest2_e :-
+	eval(tail(cons(0, nil)), nil),
+		write_bt("tailtest2_e passed.\n"),!.
+tailtest3_e :-
+	eval(tail(cons(fls, nil)), nil),
+		write_bt("tailtest3_e passed.\n"),!.
+tailtest4_e :-
+	eval(tail(cons(tru, (cons(fls, nil)))), cons(fls, nil)),
+		write_bt("tailtest4_e passed.\n"),!.
+% Note: This one evaluates, but won't type, which is correct.
+tailtest5_e :-  eval(
+	tail(cons(succ(succ(0)), cons( fls, cons(0, nil)))),
+	cons( fls, cons(0, nil))),
+	write_bt("tailtest5_e passed.\n"),!.
+
+all_list_eval_tests_pass :-
+	write_btt("--- Checking List Eval Tests. ---\n"),
+	isniltest1_e,isniltest2_e,isniltest3_e,
+	headtest1_e,headtest2_e,headtest3_e,headtest4_e,
+	tailtest1_e,tailtest2_e,tailtest3_e,tailtest4_e,tailtest5_e,
+	write_btt("--- All List Eval Tests Pass. ---\n"),!.
+/* ----- End List Tests ----- */
 
 /* ----- Fix Tests ----- */
 % E-AppAbs-2
@@ -230,5 +275,6 @@ all_eval_tests_pass :-
 	all_let_eval_tests_pass,
 	all_tuple_eval_tests_pass,
 	all_record_eval_tests_pass,
-	all_variant_eval_tests_pass.
+	all_variant_eval_tests_pass,
+	all_list_eval_tests_pass.
 	% all_fix_eval_tests_pass.
