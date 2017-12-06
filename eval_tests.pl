@@ -256,6 +256,31 @@ all_list_eval_tests_pass :-
 	write_btt("--- All List Eval Tests Pass. ---\n"),!.
 /* ----- End List Tests ----- */
 
+/* ----- Exception Tests ----- */
+errtest1_e :- eval([error, 0], error),
+	write_bt("exntest1_e passed.\n"),!.
+errtest2_e :- eval([lam(X:'Bool', X), error], error),
+	write_bt("exntest2_e passed.\n"),!.
+errtest3_e :- eval(try(0, fls), 0),
+	write_bt("exntest3_e passed.\n"),!.
+errtest4_e :- eval(try([error, 0], iszero(0)), tru),
+	write_bt("exntest4_e passed.\n"),!.
+raisetest1_e :- eval([raise(0), 0], raise(0)),
+	write_bt("raisetest1_e passed.\n"),!.
+raisetest2_e :- eval([raise(raise(0)), 0], raise(0)),
+	write_bt("raisetest2_e passed.\n"),!.
+raisetest3_e :- eval([lam(X:'Bool', X), raise(0)], raise(0)),
+	write_bt("raisetest3_e passed.\n"),!.
+raisetest4_e :- eval(try([raise(0), 0], lam(X:'Natural', iszero(X))), tru),
+	write_bt("raisetest4_e passed.\n"),!.
+
+all_exception_eval_tests_pass :-
+	write_btt("--- Checking Exception Eval Tests. ---\n"),
+	errtest1_e, errtest2_e, errtest3_e, errtest4_e,
+	raisetest1_e, raisetest2_e, raisetest3_e, raisetest4_e,
+	write_btt("--- All Exception Eval Tests Pass. ---\n"),!.
+/* ----- End Exception Tests ----- */
+
 /* ----- Fix Tests ----- */
 % E-AppAbs-2
 fixtest1_e :- eval(fix(lam(X:'Bool',X)), _),
@@ -276,5 +301,6 @@ all_eval_tests_pass :-
 	all_tuple_eval_tests_pass,
 	all_record_eval_tests_pass,
 	all_variant_eval_tests_pass,
-	all_list_eval_tests_pass.
+	all_list_eval_tests_pass,
+	all_exception_eval_tests_pass.
 	% all_fix_eval_tests_pass.

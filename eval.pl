@@ -138,15 +138,6 @@ eval(case(var(Label=Term), Conditions), Result) :-
 	eval(var(Label=Term), NewLabelTerm),
 	eval(case(NewLabelTerm, Conditions), Result),!.
 % E-Variant
-% The Small Step version.
-% eval(var(Label=Term), Result) :-
-% 	(is_value(Term) ->
-% 		% If Term is a value, var(Label=Term) is the result.
-% 		Result = var(Label=Term);
-% 		% If not, do another level of evaluation.
-% 		eval(Term, NewTerm),
-% 		eval(var(Label=NewTerm),Result)),!.
-% The Big Step Version.
 eval(var(Label=Term), var(Label=Val)) :-
 	eval(Term,Val),!.
 
@@ -215,11 +206,9 @@ eval([Val1, raise(Val2)], raise(Val2)) :-
 	is_value(Val1),
 	is_value(Val2),!.
 % E-Raise - Sort of Big Step version.
-eval(raise(Term), Result) :-
-	eval(Term, NewTerm),
-	(is_value(NewTerm) ->
-		Result = raise(NewTerm);
-		eval(raise(NewTerm), Result)),!.
+eval(raise(Term), raise(Val)) :-
+	is_not_value(Term),
+	eval(Term, Val),!.
 % E-RaiseRaise
 eval(raise(raise(Val)), raise(Val)) :- is_value(Val),!.
 % E-TryRaise
