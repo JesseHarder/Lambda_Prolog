@@ -15,12 +15,11 @@ eval(Term, Val) :-
 
 /* --- Booelean Evaluation --- */
 %E-IfTrue
-eval_ss(ifte(tru, Term2, _), Term2).
-%E-IfFalse
-eval_ss(ifte(fls, _, Term3), Term3).
+eval_ss(ifte(tru, Term2, _), Term2) :- !.
+eval_ss(ifte(fls, _, Term3), Term3) :- !.
 %E-If
 eval_ss(ifte(Term1, Term2, Term3), ifte(New1, Term2, Term3)) :-
-	eval_ss(Term1, New1).
+	eval_ss(Term1, New1),!.
 
 
 /* --- Natural Number Evaluation --- */
@@ -30,22 +29,19 @@ eval_ss(pred(0), 0) :- !.
 eval_ss(pred(succ(Term)), Term) :-
 	is_natural_value(Term),!.
 % E-Succ
-eval_ss(succ(Term), Result) :-
-	eval_ss(Term, NewTerm),
-	eval_ss(succ(NewTerm), Result),!.
+eval_ss(succ(Term),succ(NewTerm)) :-
+	eval_ss(Term, NewTerm),!.
 % E-Pred
-eval_ss(pred(Term), Result) :-
-	eval_ss(Term, NewTerm),
-	eval_ss(pred(NewTerm), Result),!.
+eval_ss(pred(Term), pred(NewTerm)) :-
+	eval_ss(Term, NewTerm),!.
 % E-IsZeroZero
 eval_ss(iszero(0), tru) :- !.
 % E-IsZeroSucc
 eval_ss(iszero(succ(X)), fls) :-
 	is_natural_value(X),!.
 % E-IsZero
-eval_ss(iszero(Term), Result) :-
-	eval_ss(Term, NewTerm),
-	eval_ss(iszero(NewTerm),Result),!.
+eval_ss(iszero(Term), iszero(NewTerm)) :-
+	eval_ss(Term, NewTerm),!.
 
 
 /* --- Sequences with Unit type ---*/
