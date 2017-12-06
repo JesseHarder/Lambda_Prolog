@@ -52,33 +52,33 @@ all_nat_eval_tests_pass :-
 
 /* ----- Lambda Tests ----- */
 % E-AppAbs-2
-lamtest1_e :- eval([lam(X:'Bool',[X]), tru], tru),
+lamtest1_e :- eval([lam(X:'Bool',X), tru], tru),
 	write_bt("lamtest1_e passed.\n"),!.
-lamtest2_e :- eval([lam(X:'Natural',[X]), 0], 0),
+lamtest2_e :- eval([lam(X:'Natural',X), 0], 0),
 	write_bt("lamtest2_e passed.\n"),!.
 lamtest3_e :-
 	eval(
-		[lam(X:('Natural'->'Natural'),[X]),
-		lam(Y:'Natural', [Y])],
-	lam(Y:'Natural', [Y])),
+		[lam(X:('Natural'->'Natural'),X),
+		lam(Y:'Natural', Y)],
+	lam(Y:'Natural', Y)),
 	write_bt("lamtest3_e passed.\n"),!.
 % E-AppAbs-3
 lamtest4_e :-
 	eval(
-		[lam(X:('Natural'->'Natural'),[X]),
-		lam(Y:'Natural', [Y]),
+		[lam(X:('Natural'->'Natural'),X),
+		lam(Y:'Natural', Y),
 		succ(0)],
 	succ(0)),
 	write_bt("lamtest4_e passed.\n"),!.
 % E-App2
-lamtest5_e :- eval([lam(X:'Bool',[X]), iszero(0)], tru),
+lamtest5_e :- eval([lam(X:'Bool',X), iszero(0)], tru),
 	write_bt("lamtest5_e passed.\n"),!.
 % E-App1
 lamtest6_e :-
 	eval([ifte(
 		tru,
-		lam(X:'Natural',[X]),
-		lam(Y:'Natural',[succ(Y)])),
+		lam(X:'Natural',X),
+		lam(Y:'Natural',succ(Y))),
 	0],
 	0),
 	write_bt("lamtest6_e passed.\n"),!.
@@ -105,7 +105,7 @@ all_let_eval_tests_pass :-
 
 /* ----- Fix Tests ----- */
 % E-AppAbs-2
-fixtest1_e :- eval(fix(lam(X:'Bool',[X])), _),
+fixtest1_e :- eval(fix(lam(X:'Bool',X)), _),
 	write_bt("fixtest1_e passed.\n"),!.
 
 all_fix_eval_tests_pass :-
