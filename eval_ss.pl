@@ -115,27 +115,16 @@ eval_ss(record(List), record(NewList)) :-
  *		C is the term in which B will be replaced by the case statement.
  */
 % E-CaseVariant
-eval_ss(case(var(Label=Val), Conditions), Result) :-
+eval_ss(case(var(Label=Val), Conditions), CondTerm) :-
 	string(Label),	% Sanity check.
 	is_value(Val),
-	member(var(Label=Val)->CondTerm, Conditions),
-	eval_ss(CondTerm, Result),!.
+	member(var(Label=Val)->CondTerm, Conditions),!.
 % E-Case
-eval_ss(case(var(Label=Term), Conditions), Result) :-
-	eval_ss(var(Label=Term), NewLabelTerm),
-	eval_ss(case(NewLabelTerm, Conditions), Result),!.
+eval_ss(case(var(Label=Term), Conditions), case(NewLabelTerm, Conditions)) :-
+	eval_ss(var(Label=Term), NewLabelTerm),!.
 % E-Variant
-% The Small Step version.
-% eval_ss(var(Label=Term), Result) :-
-% 	(is_value(Term) ->
-% 		% If Term is a value, var(Label=Term) is the result.
-% 		Result = var(Label=Term);
-% 		% If not, do another level of evaluation.
-% 		eval_ss(Term, NewTerm),
-% 		eval_ss(var(Label=NewTerm),Result)),!.
-% The Big Step Version.
-eval_ss(var(Label=Term), var(Label=Val)) :-
-	eval_ss(Term,Val),!.
+eval_ss(var(Label=Term), var(Label=NewTerm)) :-
+	eval_ss(Term,NewTerm),!.
 
 
 /* --- Lists --- */
