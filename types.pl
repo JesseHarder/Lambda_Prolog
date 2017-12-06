@@ -94,13 +94,10 @@ typeof(Env, iszero(X), 'Bool') :-
     typeof(Env, X, 'Natural'),!.
 
 /***** Abstraction *****/
-% T-AbsProlog
-typeof(Env, lam(Var:VarType,Subterm), Type) :-
-    is_list(Subterm),   % Sanity Check
+% T-Abs
+typeof(Env, lam(Var:VarType, Subterm), Type) :-
     NewEnv = [Var:VarType|Env],
-    (Subterm = [InnerTerm] ->           % If the lambda has just one subterm,
-        typeof(NewEnv,InnerTerm,SubtermType),!;  % its type the type of the subterm.
-        typeof(NewEnv,Subterm,SubtermType)),!,   % Else, the subterm type is that of the application.
+    typeof(NewEnv, Subterm, SubtermType),
     Type = (VarType->SubtermType), !.
 
 % T-AppBase

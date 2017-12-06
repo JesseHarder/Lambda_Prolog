@@ -50,27 +50,27 @@ all_nat_type_tests_pass :-
 /* ----- End Bool Tests ----- */
 /* ----- Lambda Tests ----- */
 % Abstraction
-abstest1_t :- typeof(lam(X:'Bool', [X]), ('Bool'->'Bool')),
+abstest1_t :- typeof(lam(X:'Bool', X), ('Bool'->'Bool')),
 	write_bt("abstest1_t passed.\n"),!.
 abstest2_t :- typeof(
-	lam(X:'Bool', [lam(_:'Natural',[X])]),
+	lam(X:'Bool', lam(_:'Natural',X)),
 	('Bool'->'Natural'->'Natural')),
 	write_bt("abstest2_t passed.\n"),!.
 abstest3_t :- typeof(
-	lam(X:('Natural'->'Bool'), [lam(Y:'Natural',[X, Y])]),
+	lam(X:('Natural'->'Bool'), lam(Y:'Natural',[X, Y])),
 	(('Natural'->'Bool')->'Natural'->'Bool')),
 	write_bt("abstest3_t passed.\n"),!.
 % Application
-apptest1_t :- typeof([lam(X:'Bool', [X]), tru], 'Bool'),
+apptest1_t :- typeof([lam(X:'Bool', X), tru], 'Bool'),
 	write_bt("apptest1_t passed.\n"),!.
 apptest2_t :- typeof(
-	[lam(X:('Natural'->'Bool'), [X]),
-	lam(Y:'Natural', [iszero(Y)])],
+	[lam(X:('Natural'->'Bool'), X),
+	lam(Y:'Natural', iszero(Y))],
 	('Natural'->'Bool')),
 	write_bt("apptest2_t passed.\n"),!.
 apptest3_t :- typeof(
-	[	lam(X:('Bool'->'Bool'), [lam(Z:'Bool',[X, Z])]),
-		lam(Y:'Bool', [Y]),
+	[	lam(X:('Bool'->'Bool'), lam(Z:'Bool',[X, Z])),
+		lam(Y:'Bool', Y),
 		tru],
 	'Bool'),
 	write_bt("apptest3_t passed.\n"),!.
@@ -84,15 +84,15 @@ all_lambda_type_tests_pass :-
 /* ----- Let Tests ----- */
 % Abstraction
 lettest1_t :- typeof(
-	let(X=lam(Y:'Bool',[Y]),X),
+	let(X=lam(Y:'Bool',Y),X),
 	('Bool'->'Bool')),
 	write_bt("lettest1_t passed.\n"),!.
 lettest2_t :- typeof(
-	let(X=lam(Y:'Bool',[Y]),[X,tru]),
+	let(X=lam(Y:'Bool',Y),[X,tru]),
 	'Bool'),
 	write_bt("lettest2_t passed.\n"),!.
 lettest3_t :- typeof(
-	let(X=lam(Y:'Natural',[iszero(Y)]),[X,0]),
+	let(X=lam(Y:'Natural',iszero(Y)),[X,0]),
 	'Bool'),
 	write_bt("lettest3_t passed.\n"),!.
 lettest4_t :- typeof(
@@ -117,7 +117,7 @@ tpltest3_t :-  typeof(
 	'Tuple'([])),
 	write_bt("tpltest3_t passed.\n"),!.
 tpltest4_t :-  typeof(
-	tuple([lam(X:('Natural'->'Bool'), [lam(Y:'Natural',[X, Y])])]),
+	tuple([lam(X:('Natural'->'Bool'), lam(Y:'Natural',[X, Y]))]),
 	'Tuple'([(('Natural'->'Bool')->'Natural'->'Bool')])),
 	write_bt("tpltest4_t passed.\n"),!.
 
@@ -140,7 +140,7 @@ rcdtest3_t :-  typeof(
 	'Record'([])),
 	write_bt("rcdtest3_t passed.\n"),!.
 rcdtest4_t :-  typeof(
-	record(["A"=lam(X:('Natural'->'Bool'), [lam(Y:'Natural',[X, Y])])]),
+	record(["A"=lam(X:('Natural'->'Bool'), lam(Y:'Natural',[X, Y]))]),
 	'Record'(["A"=(('Natural'->'Bool')->'Natural'->'Bool')])),
 	write_bt("rcdtest4_t passed.\n"),!.
 
@@ -159,19 +159,19 @@ vrnttest2_t :-
 vrnttest3_t :-
 	typeof(case(var("A"=tru),
 				[var("A"=X)->ifte(X,0,succ(0)),
-				 var("B"=Y)->lam(Y,[iszero(Y)])]),
+				 var("B"=Y)->lam(Y,iszero(Y))]),
 			'Natural'),
 	write_bt("vrnttest3_t passed.\n"),!.
 vrnttest4_t :-
 	\+ typeof(case(var("B"=tru),
 				[var("A"=X)->ifte(X,0,succ(0)),
-				 var("B"=Y)->lam(Y:'Bool',[iszero(Y)])]),
+				 var("B"=Y)->lam(Y:'Bool',iszero(Y))]),
 			_),
 	write_bt("vrnttest4_t passed.\n"),!.
 vrnttest5_t :-
 	typeof(case(var("B"=0),
 				[var("A"=X)->ifte(X,0,succ(0)),
-				 var("B"=Y)->lam(Y:'Natural',[iszero(Y)])]),
+				 var("B"=Y)->lam(Y:'Natural',iszero(Y))]),
 			_),
 	write_bt("vrnttest5_t passed.\n"),!.
 
@@ -241,11 +241,11 @@ exntest1_t :- typeof(raise(0), _),
 	write_bt("exntest1_t passed.\n"),!.
 exntest2_t :- \+ typeof(raise(tru), _),
 	write_bt("exntest2_t passed.\n"),!.
-exntest3_t :- typeof(try(raise(0), lam(X:'Natural',[X])), 'Natural'),
+exntest3_t :- typeof(try(raise(0), lam(X:'Natural',X)), 'Natural'),
 	write_bt("exntest3_t passed.\n"),!.
-exntest4_t :- \+ typeof(try(raise(tru), lam(X:'Natural',[X])), _),
+exntest4_t :- \+ typeof(try(raise(tru), lam(X:'Natural',X)), _),
 	write_bt("exntest4_t passed.\n"),!.
-exntest5_t :- \+ typeof(try(raise(tru), lam(X:'Bool',[X])), _),
+exntest5_t :- \+ typeof(try(raise(tru), lam(X:'Bool',X)), _),
 	write_bt("exntest5_t passed.\n"),!.
 
 all_exception_type_tests_pass :-
@@ -260,6 +260,7 @@ all_type_tests_pass :-
 	all_bool_type_tests_pass,
 	all_nat_type_tests_pass,
 	all_lambda_type_tests_pass,
+	all_let_type_tests_pass,
 	all_tuple_type_tests_pass,
 	all_record_type_tests_pass,
 	all_list_type_tests_pass,
