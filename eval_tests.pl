@@ -89,9 +89,9 @@ lamtest7_e :-
 	0),
 	write_bt("lamtest7_e passed.\n"),!.
 lamtest8_e :-
-	\+ eval([lam(y, lam(y, pred(y))), 0], _),
+	\+ eval([lam(y:'Natural', lam(y:'Natural', pred(y))), 0], _),
 	write_bt("lamtest8_e passes by failing.\n"),
-	write("Unclear if this is correct or an alpha-sub failure.\n"),!.
+	write("NOTE! Unclear if this is correct or an alpha-sub failure. NOTE!\n"),!.
 
 
 
