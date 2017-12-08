@@ -63,7 +63,7 @@ typeof(Term, Type) :- typeof([], Term, Type).
 % IMPORTANT: The placement of this rule above all other typeof/3
 %   rules is key to preventing infinite loops when guessing variable types.
 typeof(Env, Var, Type) :-
-    var(Var),
+    atom(Var),
     member(Var:Type, Env),!.
 
 /***** Unit type *****/

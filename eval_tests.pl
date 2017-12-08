@@ -82,11 +82,23 @@ lamtest6_e :-
 	0],
 	0),
 	write_bt("lamtest6_e passed.\n"),!.
+lamtest7_e :-
+	eval(
+		[lam(y:'Natural', pred(y)),
+		succ(0)],
+	0),
+	write_bt("lamtest7_e passed.\n"),!.
+lamtest8_e :-
+	\+ eval([lam(y, lam(y, pred(y))), 0], _),
+	write_bt("lamtest8_e passes by failing.\n"),
+	write("Unclear if this is correct or an alpha-sub failure.\n"),!.
+
+
 
 all_lambda_eval_tests_pass :-
 	write_btt("--- Checking Lambda Eval Tests. ---\n"),
 	lamtest1_e, lamtest2_e, lamtest3_e, lamtest4_e,
-	lamtest5_e, lamtest6_e,
+	lamtest5_e, lamtest6_e, lamtest7_e, lamtest8_e,
 	write_btt("--- All Lambda Eval Tests Pass. ---\n"),!.
 /* ----- End Lambda Tests ----- */
 
