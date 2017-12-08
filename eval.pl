@@ -46,6 +46,7 @@ eval(iszero(succ(X)), fls) :-
 	is_natural_value(X),!.
 % E-IsZero
 eval(iszero(Term), Result) :-
+	is_not_value(Term),
 	eval(Term, NewTerm),
 	eval(iszero(NewTerm),Result),!.
 
@@ -125,14 +126,16 @@ eval(record(List), record(NewList)) :-
 eval(case(var(Label=Val), Conditions), Result) :-
 	string(Label),	% Sanity check.
 	is_value(Val),
-	member(var(Label=Val)->CondTerm, Conditions),
-	eval(CondTerm, Result),!.
+	member(var(Label=Var)->CondTerm, Conditions),
+	substitute(Var, Val, CondTerm, NewTerm),
+	eval(NewTerm, Result),!.
 % E-Case
 eval(case(var(Label=Term), Conditions), Result) :-
 	eval(var(Label=Term), NewLabelTerm),
 	eval(case(NewLabelTerm, Conditions), Result),!.
 % E-Variant
 eval(var(Label=Term), var(Label=Val)) :-
+	is_not_value(Term),
 	eval(Term,Val),!.
 
 

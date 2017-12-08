@@ -111,10 +111,11 @@ eval_ss(record(List), record(NewList)) :-
  *		C is the term in which B will be replaced by the case statement.
  */
 % E-CaseVariant
-eval_ss(case(var(Label=Val), Conditions), CondTerm) :-
+eval_ss(case(var(Label=Val), Conditions), Result) :-
 	string(Label),	% Sanity check.
 	is_value(Val),
-	member(var(Label=Val)->CondTerm, Conditions),!.
+	member(var(Label=Var)->CondTerm, Conditions),
+	substitute(Var, Val, CondTerm, Result),!.
 % E-Case
 eval_ss(case(var(Label=Term), Conditions), case(NewLabelTerm, Conditions)) :-
 	eval_ss(var(Label=Term), NewLabelTerm),!.

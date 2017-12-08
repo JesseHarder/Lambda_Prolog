@@ -1,4 +1,4 @@
-:- [eval_ss, values, util/plists, util/test_controls].
+:- [eval, values, util/plists, util/test_controls].
 
 /* ----- Bool Tests ----- */
 btest1_e :- eval(ifte(tru, tru, fls), tru),
@@ -182,26 +182,26 @@ all_record_eval_tests_pass :-
 /* ----- Variant Tests ----- */
 vrnttest1_e :-
 	eval(case(var("A"=tru),
-				[var("A"=X)->ifte(X,0,succ(0)),
-				 var("B"=Y)->[lam(z:'Natural',iszero(z)), Y]]),
+				[var("A"=x)->ifte(x,0,succ(0)),
+				 var("B"=y)->[lam(z:'Natural',iszero(z)), y]]),
 			0),
 	write_bt("vrnttest1_e passed.\n"),!.
 vrnttest2_e :-
 	\+ eval(case(var("B"=tru),
-				[var("A"=X)->ifte(X,0,succ(0)),
-				 var("B"=Y)->[lam(z:'Natural',iszero(z)), Y]]),
+				[var("A"=x)->ifte(x,0,succ(0)),
+				 var("B"=y)->[lam(z:'Natural', iszero(z)), y]]),
 			_),
 	write_bt("vrnttest2_e passed.\n"),!.
 vrnttest3_e :-
 	eval(case(var("B"=0),
-				[var("A"=X)->ifte(X,0,succ(0)),
-				 var("B"=Y)->[lam(z:'Natural',iszero(z)), Y]]),
+				[var("A"=x)->ifte(x,0,succ(0)),
+				 var("B"=y)->[lam(z:'Natural',iszero(z)), y]]),
 			tru),
 	write_bt("vrnttest3_e passed.\n"),!.
 vrnttest4_e :-
 	eval(case(var("B"=0),
-				[var("A"=X)->ifte(X,0,succ(0)),
-				 var("B"=Y)->lam(x:'Natural',iszero(Y))]),
+				[var("A"=x)->ifte(x,0,succ(0)),
+				 var("B"=y)->lam(x:'Natural',iszero(y))]),
 			lam(x:'Natural',iszero(0))),
 	write_bt("vrnttest4_e passed.\n"),!.
 
@@ -300,8 +300,7 @@ all_eval_tests_pass :-
 	all_let_eval_tests_pass,
 	all_tuple_eval_tests_pass,
 	all_record_eval_tests_pass,
-	write("VARIANT TESTS REMOVED UNTIL SUBSTITUTION IS ADDED."),
-	% all_variant_eval_tests_pass,
+	all_variant_eval_tests_pass,
 	all_list_eval_tests_pass,
 	all_exception_eval_tests_pass.
 	% all_fix_eval_tests_pass.
