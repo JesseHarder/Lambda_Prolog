@@ -22,3 +22,18 @@ env_list_len(_,[],0).
 env_list_len(Env,[Env|Tail],Len) :-
 	LenMin is Len-1,
 	env_list_len(Env, Tail, LenMin).
+
+/* --- Variable Substitution --- */
+% Used in version of abstraction and application which does not use Prolog
+% variable for lambda calculus variables.
+% To be read "NewTerm is the result of replacing all instances of Var in Term
+%	with Val."
+substitutue(Var,Val,Term,NewTerm) :-
+	Term=Var, NewTerm=Val,!.
+substitutue(Var,Val,Term,Newterm) :-
+    Term =.. [F|As], maplist(substitutue(Var,Val),As,Rs), Newterm =.. [F|Rs], !.
+substitutue(_,_,U,U).
+
+% Replace apply.
+% apply(lam(X,SubTerm), Term, Result) :-
+% 	replace(X,Term,SubTerm,Result).
