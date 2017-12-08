@@ -53,30 +53,24 @@ eval(iszero(Term), Result) :-
 /* --- Sequences with Unit type ---*/
 % Sequence using lambda calculus.
 eval(seq([Term1, Term2]), Result) :-
-	apply(lam(_:'Unit', Term2), Term1, MidResult),
+	apply(lam(reserved_sequence_atom_name:'Unit', Term2), Term1, MidResult),
 	eval(MidResult, Result),!.
 eval(seq([Term1, Term2 | OtherTerms]), Result) :-
 	length([Term1, Term2 | OtherTerms], Len), Len > 2,
 	eval(seq([Term1, Term2]), MidResult),
 	eval(seq([MidResult | OtherTerms]), Result),!.
-% The non-lambda, way.
-% eval(seq([Term]), Result) :-
-% 	eval(Term, Result),!.
-% eval(seq([FirstTerm|OtherTerms]), Result) :-
-% 	eval(FirstTerm, _),
-% 	eval(seq(OtherTerms), Result),!.
 
 
 /* --- Let --- */
 % let X=Term1 in Term2
 % E-LetV
 eval(let(X=Val, Term2), Result) :-
-	var(X), is_value(Val),
-	X=Val,
-	eval(Term2, Result),!.
+	atom(X), is_value(Val),
+	substitute(X, Val, Term2, New2),
+	eval(New2, Result),!.
 % E-Let
 eval(let(X=Term1, Term2), Result) :-
-	var(X), is_not_value(Term1),
+	atom(X), is_not_value(Term1),
 	eval(Term1, New1),
 	eval(let(X=New1, Term2), Result),!.
 

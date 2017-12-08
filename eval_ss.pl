@@ -47,29 +47,23 @@ eval_ss(iszero(Term), iszero(NewTerm)) :-
 
 
 /* --- Sequences with Unit type ---*/
-% Sequence using lambda calculus.
+% TODO: Figure out how to avoid problems if user uses variable named reserved_sequence_atom_name.
 eval_ss(seq([Term1, Term2]), Result) :-
-	apply(lam(_:'Unit', Term2), Term1, Result),!.
+	apply(lam(reserved_sequence_atom_name:'Unit', Term2), Term1, Result),!.
 eval_ss(seq([Term1, Term2 | OtherTerms]), seq([NewTerm | OtherTerms])) :-
 	length([Term1, Term2 | OtherTerms], Len), Len > 2,
 	eval_ss(seq([Term1, Term2]), NewTerm),!.
-% The non-lambda, way.
-% eval_ss(seq([Term]), Result) :-
-% 	eval_ss(Term, Result),!.
-% eval_ss(seq([FirstTerm|OtherTerms]), Result) :-
-% 	eval_ss(FirstTerm, _),
-% 	eval_ss(seq(OtherTerms), Result),!.
 
 
 /* --- Let --- */
 % let X=Term1 in Term2
 % E-LetV
-eval_ss(let(X=Val, Term2), Term2) :-
-	var(X), is_value(Val),
-	X=Val,!.
+eval_ss(let(X=Val, Term2), New2) :-
+	atom(X), is_value(Val),
+	substitute(X, Val, Term2, New2),!.
 % E-Let
 eval_ss(let(X=Term1, Term2), let(X=New1, Term2)) :-
-	var(X), is_not_value(Term1),
+	atom(X), is_not_value(Term1),
 	eval_ss(Term1, New1),!.
 
 
