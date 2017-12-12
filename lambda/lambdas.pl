@@ -29,17 +29,17 @@ env_list_len(Env,[Env|Tail],Len) :-
 % To be read "NewTerm is the result of replacing all instances of Var in Term
 %	with Val."
 % Handling typed abstractions.
-substitute(Var, Val, lam(X:T, Term), lam(Y:T, NewTerm)) :-
-	substitute(Var, Val, lam(X, Term), lam(Y, NewTerm)).
-% [x->y]x -> y
-substitute(Var,Val,Var,Val) :- !.
+substitute(X, S, lam(X:T, Term), lam(Y:T, NewTerm)) :-
+	substitute(X, S, lam(X, Term), lam(Y, NewTerm)).
+% [x->s]x -> s
+substitute(X,S,X,S) :- !.
 % [x->s](λy.t1) -> λy.t1 when x = y.
-substitute(Var, _, lam(Var, Term), lam(Var, Term)).
-substitute(Var, Val, TermList, NewList) :-
+substitute(X, _, lam(X, Term), lam(X, Term)).
+substitute(X, S, TermList, NewList) :-
 	is_list(TermList),
-	maplist(substitute(Var,Val), TermList, NewList),!.
-substitute(Var,Val,Term,Newterm) :-
-    Term =.. [F|As], maplist(substitute(Var,Val),As,Rs), Newterm =.. [F|Rs], !.
+	maplist(substitute(X, S), TermList, NewList),!.
+substitute(X, S, Term, Newterm) :-
+    Term =.. [F|As], maplist(substitute(X, S), As, Rs), Newterm =.. [F|Rs], !.
 substitute(_,_,U,U).
 
 % Replace apply.
