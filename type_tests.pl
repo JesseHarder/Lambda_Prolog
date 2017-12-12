@@ -29,11 +29,11 @@ all_bool_type_tests_pass :-
 /* ----- End Bool Tests ----- */
 
 /* ----- Natural Tests ----- */
-ntest1_t :- typeof(0, 'Natural'),
+ntest1_t :- typeof(0, 'Nat'),
 	write_bt("ntest1_t passed.\n"),!.
-ntest2_t :- typeof(succ(0), 'Natural'),
+ntest2_t :- typeof(succ(0), 'Nat'),
 	write_bt("ntest2_t passed.\n"),!.
-ntest3_t :- typeof(pred(succ(0)), 'Natural'),
+ntest3_t :- typeof(pred(succ(0)), 'Nat'),
 	write_bt("ntest3_t passed.\n"),!.
 ntest4_t :- typeof(iszero(0), 'Bool'),
 	write_bt("ntest4_t passed.\n"),!.
@@ -41,7 +41,7 @@ ntest5_t :- typeof(iszero(succ(0)), 'Bool'),
 	write_bt("ntest5_t passed.\n"),!.
 ntest6_t :- typeof(iszero(pred(succ(0))), 'Bool'),
 	write_bt("ntest6_t passed.\n"),!.
-ntest7_t :- typeof(ifte(tru, 0, succ(0)), 'Natural'),
+ntest7_t :- typeof(ifte(tru, 0, succ(0)), 'Nat'),
 	write_bt("ntest7_t passed.\n"),!.
 
 all_nat_type_tests_pass :-
@@ -56,20 +56,20 @@ all_nat_type_tests_pass :-
 abstest1_t :- typeof(lam(x:'Bool', x), ('Bool'->'Bool')),
 	write_bt("abstest1_t passed.\n"),!.
 abstest2_t :- typeof(
-	lam(x:'Bool', lam(_:'Natural',x)),
-	('Bool'->'Natural'->'Natural')),
+	lam(x:'Bool', lam(_:'Nat',x)),
+	('Bool'->'Nat'->'Nat')),
 	write_bt("abstest2_t passed.\n"),!.
 abstest3_t :- typeof(
-	lam(x:('Natural'->'Bool'), lam(y:'Natural',[x, y])),
-	(('Natural'->'Bool')->'Natural'->'Bool')),
+	lam(x:('Nat'->'Bool'), lam(y:'Nat',[x, y])),
+	(('Nat'->'Bool')->'Nat'->'Bool')),
 	write_bt("abstest3_t passed.\n"),!.
 % Application
 apptest1_t :- typeof([lam(x:'Bool', x), tru], 'Bool'),
 	write_bt("apptest1_t passed.\n"),!.
 apptest2_t :- typeof(
-	[lam(x:('Natural'->'Bool'), x),
-	lam(y:'Natural', iszero(y))],
-	('Natural'->'Bool')),
+	[lam(x:('Nat'->'Bool'), x),
+	lam(y:'Nat', iszero(y))],
+	('Nat'->'Bool')),
 	write_bt("apptest2_t passed.\n"),!.
 apptest3_t :- typeof(
 	[	lam(x:('Bool'->'Bool'), lam(z:'Bool',[x, z])),
@@ -96,12 +96,12 @@ lettest2_t :- typeof(
 	'Bool'),
 	write_bt("lettest2_t passed.\n"),!.
 lettest3_t :- typeof(
-	let(x=lam(y:'Natural',iszero(y)),[x,0]),
+	let(x=lam(y:'Nat',iszero(y)),[x,0]),
 	'Bool'),
 	write_bt("lettest3_t passed.\n"),!.
 lettest4_t :- typeof(
 	let(x=tru, ifte(x,0, succ(0))),
-	'Natural'),
+	'Nat'),
 	write_bt("lettest4_t passed.\n"),!.
 
 all_let_type_tests_pass :-
@@ -111,27 +111,27 @@ all_let_type_tests_pass :-
 /* ----- End Let Tests ----- */
 
 /* ----- Tuple Tests ----- */
-tpltest1_t :-  typeof(tuple([tru,0]), 'Tuple'(['Bool', 'Natural'])),
+tpltest1_t :-  typeof(tuple([tru,0]), 'Tuple'(['Bool', 'Nat'])),
 	write_bt("tpltest1_t passed.\n"),!.
 tpltest2_t :-  typeof(
 	tuple([tru,0,iszero(pred(succ(0))),ifte(tru, succ(0), 0)]),
-	'Tuple'(['Bool', 'Natural','Bool','Natural'])),
+	'Tuple'(['Bool', 'Nat','Bool','Nat'])),
 	write_bt("tpltest2_t passed.\n"),!.
 tpltest3_t :-  typeof(
 	tuple([]),
 	'Tuple'([])),
 	write_bt("tpltest3_t passed.\n"),!.
 tpltest4_t :-  typeof(
-	tuple([lam(x:('Natural'->'Bool'), lam(y:'Natural',[x, y]))]),
-	'Tuple'([(('Natural'->'Bool')->'Natural'->'Bool')])),
+	tuple([lam(x:('Nat'->'Bool'), lam(y:'Nat',[x, y]))]),
+	'Tuple'([(('Nat'->'Bool')->'Nat'->'Bool')])),
 	write_bt("tpltest4_t passed.\n"),!.
-tprjtest1_t :-  typeof(proj(tuple([0, tru]), 1), 'Natural'),
+tprjtest1_t :-  typeof(proj(tuple([0, tru]), 1), 'Nat'),
 	write_bt("tprjtest1_t passed.\n"),!.
 tprjtest2_t :-  typeof(proj(tuple([0, tru]), 2), 'Bool'),
 	write_bt("tprjtest2_t passed.\n"),!.
 tprjtest3_t :-  typeof(proj(tuple([iszero(0), ifte(fls, 0, succ(0))]), 1), 'Bool'),
 	write_bt("tprjtest3_t passed.\n"),!.
-tprjtest4_t :-  typeof(proj(tuple([iszero(0), ifte(fls, 0, succ(0))]), 2), 'Natural'),
+tprjtest4_t :-  typeof(proj(tuple([iszero(0), ifte(fls, 0, succ(0))]), 2), 'Nat'),
 	write_bt("tprjtest4_t passed.\n"),!.
 
 all_tuple_type_tests_pass :-
@@ -144,27 +144,27 @@ all_tuple_type_tests_pass :-
 /* ----- Record Tests ----- */
 rcdtest1_t :-  typeof(
 	record(["A"=tru,"B"=0]),
-	'Record'(["A"='Bool', "B"='Natural'])),
+	'Record'(["A"='Bool', "B"='Nat'])),
 	write_bt("rcdtest1_t passed.\n"),!.
 rcdtest2_t :-  typeof(
 	record(["A"=tru,"B"=0,"C"=iszero(pred(succ(0))),"D"=ifte(tru, succ(0), 0)]),
-	'Record'(["A"='Bool', "B"='Natural',"C"='Bool',"D"='Natural'])),
+	'Record'(["A"='Bool', "B"='Nat',"C"='Bool',"D"='Nat'])),
 	write_bt("rcdtest2_t passed.\n"),!.
 rcdtest3_t :-  typeof(
 	record([]),
 	'Record'([])),
 	write_bt("rcdtest3_t passed.\n"),!.
 rcdtest4_t :-  typeof(
-	record(["A"=lam(x:('Natural'->'Bool'), lam(y:'Natural',[x, y]))]),
-	'Record'(["A"=(('Natural'->'Bool')->'Natural'->'Bool')])),
+	record(["A"=lam(x:('Nat'->'Bool'), lam(y:'Nat',[x, y]))]),
+	'Record'(["A"=(('Nat'->'Bool')->'Nat'->'Bool')])),
 	write_bt("rcdtest4_t passed.\n"),!.
-rprjtest1_t :-  typeof(proj(record(["A"=0, "B"=tru]), "A"), 'Natural'),
+rprjtest1_t :-  typeof(proj(record(["A"=0, "B"=tru]), "A"), 'Nat'),
 	write_bt("projtest1_t passed.\n"),!.
 rprjtest2_t :-  typeof(proj(record(["A"=0, "B"=tru]), "B"), 'Bool'),
 	write_bt("projtest2_t passed.\n"),!.
 rprjtest3_t :-  typeof(proj(record(["A"=iszero(0), "B"=ifte(fls, 0, succ(0))]), "A"), 'Bool'),
 	write_bt("projtest3_t passed.\n"),!.
-rprjtest4_t :-  typeof(proj(record(["A"=iszero(0), "B"=ifte(fls, 0, succ(0))]), "B"), 'Natural'),
+rprjtest4_t :-  typeof(proj(record(["A"=iszero(0), "B"=ifte(fls, 0, succ(0))]), "B"), 'Nat'),
 	write_bt("projtest4_t passed.\n"),!.
 
 all_record_type_tests_pass :-
@@ -175,35 +175,35 @@ all_record_type_tests_pass :-
 /* ----- End Records Tests ----- */
 
 /* ----- Variant Tests ----- */
-vrnttest1_t :-  typeof(var("Hi"=0), 'Variant'(["Hi"='Natural'|_])),
+vrnttest1_t :-  typeof(var("Hi"=0), 'Variant'(["Hi"='Nat'|_])),
 	write_bt("vrnttest1_t passed.\n"),!.
 vrnttest2_t :-
 	typeof(var("Hi"=record(["A"=tru,"B"=0])),
-		'Variant'(["Hi"='Record'(["A"='Bool', "B"='Natural'])|_])),
+		'Variant'(["Hi"='Record'(["A"='Bool', "B"='Nat'])|_])),
 	write_bt("vrnttest2_t passed.\n"),!.
 vrnttest3_t :-
 	typeof(case(var("A"=tru),
 				[var("A"=x)->ifte(x,0,succ(0)),
-				 var("B"=y)->[lam(z:'Natural',iszero(z)), y]]),
-			'Natural'),
+				 var("B"=y)->[lam(z:'Nat',iszero(z)), y]]),
+			'Nat'),
 	write_bt("vrnttest3_t passed.\n"),!.
 vrnttest4_t :-
 	\+ typeof(case(var("B"=tru),
 				[var("A"=x)->ifte(x,0,succ(0)),
-				 var("B"=y)->[lam(z:'Natural',iszero(z)), y]]),
+				 var("B"=y)->[lam(z:'Nat',iszero(z)), y]]),
 			_),
 	write_bt("vrnttest4_t passed.\n"),!.
 vrnttest5_t :-
 	typeof(case(var("B"=0),
 				[var("A"=x)->ifte(x,0,succ(0)),
-				 var("B"=y)->[lam(z:'Natural',iszero(z)), y]]),
+				 var("B"=y)->[lam(z:'Nat',iszero(z)), y]]),
 			'Bool'),
 	write_bt("vrnttest5_t passed.\n"),!.
 vrnttest6_t :-
 	typeof(case(var("B"=0),
 				[var("A"=x)->ifte(x,0,succ(0)),
-				 var("B"=y)->lam(_:'Natural',iszero(y))]),
-			('Natural'->'Bool')),
+				 var("B"=y)->lam(_:'Nat',iszero(y))]),
+			('Nat'->'Bool')),
 	write_bt("vrnttest6_t passed.\n"),!.
 
 all_variant_type_tests_pass :-
@@ -218,11 +218,11 @@ niltest_t :-  typeof(nil, 'List'(_)),
 	write_bt("niltest_t passed.\n"),!.
 constest1_t :-  typeof(cons(tru, nil), 'List'('Bool')),
 	write_bt("constest1_t passed.\n"),!.
-constest2_t :-  typeof(cons(0, nil), 'List'('Natural')),
+constest2_t :-  typeof(cons(0, nil), 'List'('Nat')),
 	write_bt("constest2_t passed.\n"),!.
 constest3_t :-  typeof(
 	cons(succ(succ(0)), cons( succ(0), cons(0, nil))),
-	'List'('Natural')),
+	'List'('Nat')),
 	write_bt("constest3_t passed.\n"),!.
 constest4_t :-  \+ typeof(
 	cons(succ(succ(0)), cons( fls, cons(0, nil))),
@@ -236,7 +236,7 @@ isniltest3_t :-  \+ typeof(isnil(5), _),
 	write_bt("isniltest3_t passed.\n"),!.
 headtest1_t :-  typeof(head(nil), _),
 	write_bt("headtest1_t passed.\n"),!.
-headtest2_t :-  typeof(head(cons(0, nil)), 'Natural'),
+headtest2_t :-  typeof(head(cons(0, nil)), 'Nat'),
 	write_bt("headtest2_t passed.\n"),!.
 headtest3_t :-  typeof(head(cons(fls, nil)), 'Bool'),
 	write_bt("headtest3_t passed.\n"),!.
@@ -247,7 +247,7 @@ headtest4_t :-  \+ typeof(
 tailtest1_t :-  typeof(tail(nil), 'List'(_)),
 	write_bt("tailtest1_t passed.\n"),!.
 tailtest2_t :-
-	typeof(tail(cons(0, nil)), 'List'('Natural')),
+	typeof(tail(cons(0, nil)), 'List'('Nat')),
 		write_bt("tailtest2_t passed.\n"),!.
 tailtest3_t :-
 	typeof(tail(cons(fls, nil)), 'List'('Bool')),
@@ -275,16 +275,16 @@ exntest1_t :- typeof(raise(0), _),
 	write_bt("exntest1_t passed.\n"),!.
 exntest2_t :- \+ typeof(raise(tru), _),
 	write_bt("exntest2_t passed.\n"),!.
-exntest3_t :- typeof(try(raise(0), lam(x:'Natural',x)), 'Natural'),
+exntest3_t :- typeof(try(raise(0), lam(x:'Nat',x)), 'Nat'),
 	write_bt("exntest3_t passed.\n"),!.
-exntest4_t :- \+ typeof(try(raise(tru), lam(x:'Natural',x)), _),
+exntest4_t :- \+ typeof(try(raise(tru), lam(x:'Nat',x)), _),
 	write_bt("exntest4_t passed.\n"),!.
 exntest5_t :- \+ typeof(try(raise(tru), lam(x:'Bool',x)), _),
 	write_bt("exntest5_t passed.\n"),!.
 
 all_exception_type_tests_pass :-
 	write_btt("--- Checking Exception Type Tests. ---\n"),
-	write_btt("NOTE: These tests were written for when T_Exn is 'Natural'.\n"),
+	write_btt("NOTE: These tests were written for when T_Exn is 'Nat'.\n"),
 	exntest1_t, exntest2_t, exntest3_t, exntest4_t, exntest5_t,
 	write_btt("--- All Exception Type Tests Pass. ---\n"),!.
 /* ----- End Exception Tests ----- */

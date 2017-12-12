@@ -54,19 +54,19 @@ all_nat_eval_tests_pass :-
 % E-AppAbs-2
 lamtest1_e :- eval([lam(x:'Bool',x), tru], tru),
 	write_bt("lamtest1_e passed.\n"),!.
-lamtest2_e :- eval([lam(x:'Natural',x), 0], 0),
+lamtest2_e :- eval([lam(x:'Nat',x), 0], 0),
 	write_bt("lamtest2_e passed.\n"),!.
 lamtest3_e :-
 	eval(
-		[lam(x:('Natural'->'Natural'),x),
-		lam(y:'Natural', y)],
-	lam(y:'Natural', y)),
+		[lam(x:('Nat'->'Nat'),x),
+		lam(y:'Nat', y)],
+	lam(y:'Nat', y)),
 	write_bt("lamtest3_e passed.\n"),!.
 % E-AppAbs-3
 lamtest4_e :-
 	eval(
-		[lam(x:('Natural'->'Natural'),x),
-		lam(y:'Natural', y),
+		[lam(x:('Nat'->'Nat'),x),
+		lam(y:'Nat', y),
 		succ(0)],
 	succ(0)),
 	write_bt("lamtest4_e passed.\n"),!.
@@ -77,20 +77,20 @@ lamtest5_e :- eval([lam(x:'Bool',x), iszero(0)], tru),
 lamtest6_e :-
 	eval([ifte(
 		tru,
-		lam(x:'Natural',x),
-		lam(y:'Natural',succ(y))),
+		lam(x:'Nat',x),
+		lam(y:'Nat',succ(y))),
 	0],
 	0),
 	write_bt("lamtest6_e passed.\n"),!.
 lamtest7_e :-
 	eval(
-		[lam(y:'Natural', pred(y)),
+		[lam(y:'Nat', pred(y)),
 		succ(0)],
 	0),
 	write_bt("lamtest7_e passed.\n"),!.
 lamtest8_e :-
-	eval([lam(y:('Natural'->'Natural'->'Natural'), lam(y:'Natural', y)), 0],
-		lam(y:'Natural', (y))),
+	eval([lam(y:('Nat'->'Nat'->'Nat'), lam(y:'Nat', y)), 0],
+		lam(y:'Nat', (y))),
 	write_bt("lamtest8_e passes.\n"),!.
 
 
@@ -134,7 +134,7 @@ lettest1_e :- eval(let(x=0, iszero(x)), tru),
 	write_bt("lettest1_e passed.\n"),!.
 lettest2_e :- eval(let(y=tru, ifte(y, 0, succ(0))), 0),
 	write_bt("lettest2_e passed.\n"),!.
-lettest3_e :- eval(let(y=fls, [lam(x:'Natural', ifte(y, 0, x)), succ(0)]), succ(0)),
+lettest3_e :- eval(let(y=fls, [lam(x:'Nat', ifte(y, 0, x)), succ(0)]), succ(0)),
 	write_bt("lettest3_e passed.\n"),!.
 
 all_let_eval_tests_pass :-
@@ -195,26 +195,26 @@ all_record_eval_tests_pass :-
 vrnttest1_e :-
 	eval(case(var("A"=tru),
 				[var("A"=x)->ifte(x,0,succ(0)),
-				 var("B"=y)->[lam(z:'Natural',iszero(z)), y]]),
+				 var("B"=y)->[lam(z:'Nat',iszero(z)), y]]),
 			0),
 	write_bt("vrnttest1_e passed.\n"),!.
 vrnttest2_e :-
 	\+ eval(case(var("B"=tru),
 				[var("A"=x)->ifte(x,0,succ(0)),
-				 var("B"=y)->[lam(z:'Natural', iszero(z)), y]]),
+				 var("B"=y)->[lam(z:'Nat', iszero(z)), y]]),
 			_),
 	write_bt("vrnttest2_e passed.\n"),!.
 vrnttest3_e :-
 	eval(case(var("B"=0),
 				[var("A"=x)->ifte(x,0,succ(0)),
-				 var("B"=y)->[lam(z:'Natural',iszero(z)), y]]),
+				 var("B"=y)->[lam(z:'Nat',iszero(z)), y]]),
 			tru),
 	write_bt("vrnttest3_e passed.\n"),!.
 vrnttest4_e :-
 	eval(case(var("B"=0),
 				[var("A"=x)->ifte(x,0,succ(0)),
-				 var("B"=y)->lam(x:'Natural',iszero(y))]),
-			lam(x:'Natural',iszero(0))),
+				 var("B"=y)->lam(x:'Nat',iszero(y))]),
+			lam(x:'Nat',iszero(0))),
 	write_bt("vrnttest4_e passed.\n"),!.
 
 all_variant_eval_tests_pass :-
@@ -283,7 +283,7 @@ raisetest2_e :- eval([raise(raise(0)), 0], raise(0)),
 	write_bt("raisetest2_e passed.\n"),!.
 raisetest3_e :- eval([lam(x:'Bool', x), raise(0)], raise(0)),
 	write_bt("raisetest3_e passed.\n"),!.
-raisetest4_e :- eval(try([raise(0), 0], lam(x:'Natural', iszero(x))), tru),
+raisetest4_e :- eval(try([raise(0), 0], lam(x:'Nat', iszero(x))), tru),
 	write_bt("raisetest4_e passed.\n"),!.
 
 all_exception_eval_tests_pass :-
