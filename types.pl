@@ -64,64 +64,64 @@ typeof(Term, Type) :- typeof([], Term, Type).
 %   rules is key to preventing infinite loops when guessing variable types.
 typeof(Env, Var, Type) :-
     atom(Var),
-    member(Var:Type, Env),!.
+    member(Var:Type, Env).
 
 /***** Unit type *****/
-typeof(_, unit, 'Unit') :- !. % T-Unit
+typeof(_, unit, 'Unit'). % T-Unit
 
 /***** Booleans *****/
 % T-True
-typeof(_, tru, 'Bool') :- !.
+typeof(_, tru, 'Bool').
 % T-False
-typeof(_, fls, 'Bool') :- !.
+typeof(_, fls, 'Bool').
 % T-If
 typeof(Env, ifte(Term1, Term2, Term3), Type) :-
     typeof(Env, Term1, 'Bool'),
     typeof(Env, Term2, Type),
-    typeof(Env, Term3, Type),!.
+    typeof(Env, Term3, Type).
 
 /***** Numbers *****/
  % T-Zero
-typeof(_, 0, 'Nat') :- !.
+typeof(_, 0, 'Natural').
 % T-Succ
-typeof(Env, succ(X), 'Nat') :-
-    typeof(Env, X, 'Nat'),!.
+typeof(Env, succ(X), 'Natural') :-
+    typeof(Env, X, 'Natural').
 % T-Pred
-typeof(Env, pred(X), 'Nat') :-
-    typeof(Env, X, 'Nat'),!.
+typeof(Env, pred(X), 'Natural') :-
+    typeof(Env, X, 'Natural').
 % T-IsZero
 typeof(Env, iszero(X), 'Bool') :-
-    typeof(Env, X, 'Nat'),!.
+    typeof(Env, X, 'Natural').
 
 /***** Fix Operator *****/
 % T-Fix
 typeof(Env, fix(Term), Type) :-
-    typeof(Env, Term, (Type->Type)),!.
+    typeof(Env, Term, (Type->Type)).
 
 /***** Abstraction *****/
 % T-Abs
 typeof(Env, lam(Var:VarType, Subterm), Type) :-
     NewEnv = [Var:VarType|Env],
     typeof(NewEnv, Subterm, SubtermType),
-    Type = (VarType->SubtermType), !.
+    Type = (VarType->SubtermType).
 % T-AppBase
 %   An application returns the return type of the first term, which should be
 %   an abstraction, if the second term has the abstractions parameter type.
 typeof(Env, [Term1,Term2],ReturnType) :-
     typeof(Env, Term1, (ParamType->ReturnType)),
-    typeof(Env, Term2, ParamType), !.
+    typeof(Env, Term2, ParamType).
 % T-AppRecurse
 typeof(Env, List, Type) :-
     is_list(List), length(List, Len), Len > 2,
     list_layer_left(List, LayeredList),
-    typeof(Env, LayeredList, Type), !.
+    typeof(Env, LayeredList, Type).
 
 /***** Let *****/
 % T-Let
 typeof(Env, let(X=Term1, Term2), Type2) :-
     typeof(Env, Term1, Type1),
     NewEnv = [X:Type1|Env],
-    typeof(NewEnv, Term2, Type2),!.
+    typeof(NewEnv, Term2, Type2).
 
 /***** Tuples *****/
 % T-Tuple
@@ -130,12 +130,12 @@ typeof(Env, let(X=Term1, Term2), Type2) :-
 %   mep_typeof does exactly that.
 typeof(Env, tuple(List), 'Tuple'(Types)) :-
     is_list(List), length(List, L), L >= 0, % "Lists" is a non-empty list.
-    map_typeof(Env,List,Types),!.
+    map_typeof(Env,List,Types).
 % T-ProjTupl
 typeof(Env, proj(tuple(List), Index), Type) :-
     typeof(Env, tuple(List), 'Tuple'(_)),
     ith_elm(Index, List, Elm),
-    typeof(Env, Elm, Type),!.
+    typeof(Env, Elm, Type).
 
 /***** Records *****/
 % T-Record
@@ -146,12 +146,12 @@ typeof(Env, record(List), 'Record'(Types)) :-
     is_list(List), length(List, L), L >= 0, % "Lists" is a non-empty list.
     record_parts(record(List), Labels, Vals),
     map_typeof(Env,Vals,ValTypes),
-    record_parts(record(Types), Labels, ValTypes),!.
+    record_parts(record(Types), Labels, ValTypes).
 % T-ProjRcd
 typeof(Env, proj(record(List), Label), Type) :-
     typeof(Env, record(List), 'Record'(_)),
     member(Label=Term, List),
-    typeof(Env, Term, Type),!.
+    typeof(Env, Term, Type).
 
 /***** Variants *****
  * NOTE: T-Vairant might cause problems if used incorrectly.
@@ -170,49 +170,49 @@ typeof(Env, case(var(Label=Term), Conditions), Type) :-
     member(var(Label=Var)->CondTerm, Conditions),
     typeof(Term, TermType),
     NewEnv=[Var:TermType|Env],
-	typeof(NewEnv, CondTerm, Type),!.
+	typeof(NewEnv, CondTerm, Type).
 
 
 /***** Lists *****/
 % TODO: Check with Cormac about why Lists needed explicit typing in the book.
 % T-Nil
-typeof(_, nil,'List'(T)) :- type(T),!. % Empty list can be list of any type.
+typeof(_, nil,'List'(T)) :- type(T). % Empty list can be list of any type.
 % T-Cons
 typeof(Env, cons(Head, Tail), 'List'(HType)) :-
     typeof(Env, Head, HType),
-    typeof(Env, Tail, 'List'(HType)),!.
+    typeof(Env, Tail, 'List'(HType)).
 % T-IsNil
 typeof(Env, isnil(Term), 'Bool') :-
-    typeof(Env, Term, 'List'(_)),!.
+    typeof(Env, Term, 'List'(_)).
 % T-Head
 typeof(Env, head(Term), Type) :-
-    typeof(Env, Term, 'List'(Type)),!.
+    typeof(Env, Term, 'List'(Type)).
 % T-Tail
 typeof(Env, tail(Term), 'List'(Type)) :-
-    typeof(Env, Term, 'List'(Type)),!.
+    typeof(Env, Term, 'List'(Type)).
 
 /***** Exceptions *****/
 % -- The following is completmented out because you can't have it and
 %       the raise() version at the same time.
 % T-Error - An error can be of any type.
-% typeof(_, error, Type) :- type(Type),!.
+% typeof(_, error, Type) :- type(Type).
 % % T-Try (Error)
 % typeof(Env, try(Term1, Term2), Type) :-
 %     typeof(Env, Term2, Type),    % Best to check T2's type first,
-%     typeof(Env, Term1, Type),!.    % as T1 might be error.
+%     typeof(Env, Term1, Type).    % as T1 might be error.
 % T-Raise
 typeof(Env, raise(Term1), Type) :-
     type_exn(T_Exn), typeof(Env, Term1, T_Exn),
-    type(Type),!.
+    type(Type).
 % T-Try (Rasie)
 typeof(Env, try(Term1, Term2), Type) :-
     type_exn(T_Exn),
     typeof(Env, Term2, (T_Exn->Type)),    % Best to check T2's type first,
-    typeof(Env, Term1, Type),!.               % as T1 might be raise.
+    typeof(Env, Term1, Type).               % as T1 might be raise.
 
 
 /* ---------- Helper Functions ---------- */
 map_typeof(Env, Vals, Types) :-
     length(Vals, Length),
     env_list_len(Env, EnvList, Length),
-    maplist(typeof, EnvList, Vals,Types),!.
+    maplist(typeof, EnvList, Vals,Types).
