@@ -28,6 +28,7 @@ env_list_len(Env,[Env|Tail],Len) :-
 % variable for lambda calculus variables.
 % To be read "NewTerm is the result of replacing all instances of Var in Term
 %	with Val."
+% This code was based off of a solution found here: https://stackoverflow.com/questions/20021844/prolog-replace-an-atom-by-other-atom-in-compound-terms
 % TODO: Handle case: % [x->s](λy.t1) -> λy.t1 when y is in FV(s).
 
 % Handling typed abstractions.
