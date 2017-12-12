@@ -28,6 +28,8 @@ env_list_len(Env,[Env|Tail],Len) :-
 % variable for lambda calculus variables.
 % To be read "NewTerm is the result of replacing all instances of Var in Term
 %	with Val."
+% TODO: Handle case: % [x->s](λy.t1) -> λy.t1 when y is in FV(s).
+
 % Handling typed abstractions.
 substitute(X, S, lam(X:T, Term), lam(Y:T, NewTerm)) :-
 	substitute(X, S, lam(X, Term), lam(Y, NewTerm)).
