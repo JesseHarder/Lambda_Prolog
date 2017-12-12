@@ -18,6 +18,7 @@ eval(Term, Val) :-
 /* --- Booelean Evaluation --- */
 %E-IfTrue
 eval_ss(ifte(tru, Term2, _), Term2) :- !.
+%E-IfFalse
 eval_ss(ifte(fls, _, Term3), Term3) :- !.
 %E-If
 eval_ss(ifte(Term1, Term2, Term3), ifte(New1, Term2, Term3)) :-
