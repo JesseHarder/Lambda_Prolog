@@ -169,7 +169,6 @@ typeof(Env, case(var(Label=Term), Conditions), Type) :-
 	typeof(NewEnv, CondTerm, Type),!.
 
 
-
 /***** Lists *****/
 % TODO: Check with Cormac about why Lists needed explicit typing in the book.
 % T-Nil
