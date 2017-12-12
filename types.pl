@@ -163,10 +163,10 @@ typeof(Env, var(Label=Term), 'Variant'(VariantList)) :-
 %        correct behavior rather than a direct translation.
 typeof(Env, case(var(Label=Term), Conditions), Type) :-
     is_list(Conditions),
-    member(var(CondLabel=CondVar)->CondTerm, Conditions),
-	Label=CondLabel,
-	CondVar=Term,
-	typeof(Env, CondTerm, Type),!.
+    member(var(Label=Var)->CondTerm, Conditions),
+    typeof(Term, TermType),
+    NewEnv=[Var:TermType|Env],
+	typeof(NewEnv, CondTerm, Type),!.
 
 
 
