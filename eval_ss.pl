@@ -13,7 +13,6 @@ eval(raise(Val), raise(Val)) :- is_value(Val).
 eval(Term, Val) :-
 	eval_ss(Term, TermPrime),
 	eval(TermPrime, Val).
-
 /****** eval/2 Big-Step Full Evaluation ******/
 
 /* --- Booelean Evaluation --- */
