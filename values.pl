@@ -8,7 +8,7 @@
 :- [lambda/lambdas].
 
 /* --- Healper Predicates --- */
-% Natural Numbers
+% Natural Values
 is_natural_value(0).
 is_natural_value(succ(X)) :- is_natural_value(X).
 % Is Not Value.

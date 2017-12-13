@@ -7,7 +7,7 @@
 ith_elm(1, [Head|_], Head).
 ith_elm(I, [_|Tail], Elm) :-
 	I > 1, J is I-1,
-	ith_elm(Tail, J, Elm).
+	ith_elm(J, Tail, Elm).
 
 /* Function to restructure lists as follows:
  *	[a,b,c,d,e] becomes [[[[a,b],c],d],e]

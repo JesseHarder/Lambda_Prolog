@@ -22,7 +22,7 @@ type('Unit').
 % Booleans
 type('Bool').
 % Natural Numbers
-type('Natural').
+type('Nat').
 % Tuples
 type('Tuple'([])).
 type('Tuple'([H|T])) :-
@@ -47,7 +47,7 @@ type('List'(T)) :- type(T).
 type((T1->T2)) :- type(T1),type(T2).
 
 % Denoting what type rasie exceptions will pass.
-type_exn('Natural').
+type_exn('Nat').
 
 /* ---------- typeof/2 ---------- */
 /* This is now used only to kickstart the process, allowing the user to note
@@ -63,7 +63,7 @@ typeof(Term, Type) :- typeof([], Term, Type).
 % IMPORTANT: The placement of this rule above all other typeof/3
 %   rules is key to preventing infinite loops when guessing variable types.
 typeof(Env, Var, Type) :-
-    var(Var),
+    atom(Var),
     member(Var:Type, Env),!.
 
 /***** Unit type *****/
@@ -82,16 +82,16 @@ typeof(Env, ifte(Term1, Term2, Term3), Type) :-
 
 /***** Numbers *****/
  % T-Zero
-typeof(_, 0, 'Natural') :- !.
+typeof(_, 0, 'Nat') :- !.
 % T-Succ
-typeof(Env, succ(X), 'Natural') :-
-    typeof(Env, X, 'Natural'),!.
+typeof(Env, succ(X), 'Nat') :-
+    typeof(Env, X, 'Nat'),!.
 % T-Pred
-typeof(Env, pred(X), 'Natural') :-
-    typeof(Env, X, 'Natural'),!.
+typeof(Env, pred(X), 'Nat') :-
+    typeof(Env, X, 'Nat'),!.
 % T-IsZero
 typeof(Env, iszero(X), 'Bool') :-
-    typeof(Env, X, 'Natural'),!.
+    typeof(Env, X, 'Nat'),!.
 
 /***** Fix Operator *****/
 % T-Fix
@@ -168,11 +168,10 @@ typeof(Env, var(Label=Term), 'Variant'(VariantList)) :-
 %        correct behavior rather than a direct translation.
 typeof(Env, case(var(Label=Term), Conditions), Type) :-
     is_list(Conditions),
-    member(var(CondLabel=CondVar)->CondTerm, Conditions),
-	Label=CondLabel,
-	CondVar=Term,
-	typeof(Env, CondTerm, Type),!.
-
+    member(var(Label=Var)->CondTerm, Conditions),
+    typeof(Term, TermType),
+    NewEnv=[Var:TermType|Env],
+	typeof(NewEnv, CondTerm, Type),!.
 
 
 /***** Lists *****/

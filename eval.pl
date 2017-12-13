@@ -46,6 +46,7 @@ eval(iszero(succ(X)), fls) :-
 	is_natural_value(X),!.
 % E-IsZero
 eval(iszero(Term), Result) :-
+	is_not_value(Term),
 	eval(Term, NewTerm),
 	eval(iszero(NewTerm),Result),!.
 
@@ -53,30 +54,24 @@ eval(iszero(Term), Result) :-
 /* --- Sequences with Unit type ---*/
 % Sequence using lambda calculus.
 eval(seq([Term1, Term2]), Result) :-
-	apply(lam(_:'Unit', Term2), Term1, MidResult),
+	apply(lam(reserved_sequence_atom_name:'Unit', Term2), Term1, MidResult),
 	eval(MidResult, Result),!.
 eval(seq([Term1, Term2 | OtherTerms]), Result) :-
 	length([Term1, Term2 | OtherTerms], Len), Len > 2,
 	eval(seq([Term1, Term2]), MidResult),
 	eval(seq([MidResult | OtherTerms]), Result),!.
-% The non-lambda, way.
-% eval(seq([Term]), Result) :-
-% 	eval(Term, Result),!.
-% eval(seq([FirstTerm|OtherTerms]), Result) :-
-% 	eval(FirstTerm, _),
-% 	eval(seq(OtherTerms), Result),!.
 
 
 /* --- Let --- */
 % let X=Term1 in Term2
 % E-LetV
 eval(let(X=Val, Term2), Result) :-
-	var(X), is_value(Val),
-	X=Val,
-	eval(Term2, Result),!.
+	atom(X), is_value(Val),
+	substitute(X, Val, Term2, New2),
+	eval(New2, Result),!.
 % E-Let
 eval(let(X=Term1, Term2), Result) :-
-	var(X), is_not_value(Term1),
+	atom(X), is_not_value(Term1),
 	eval(Term1, New1),
 	eval(let(X=New1, Term2), Result),!.
 
@@ -95,7 +90,7 @@ eval(proj(tuple(List), Index), Result) :-
 % E-Tuple - This is sort of the Big-Step version of this.
 eval(tuple(List), tuple(Vals)) :-
 	is_not_value(tuple(List)),
-	maplist(eval_if_not_value, List, Vals),!.
+	maplist(eval, List, Vals),!.
 
 
 /* --- Records --- */
@@ -113,7 +108,7 @@ eval(proj(record(List), Label), Result) :-
 eval(record(List), record(NewList)) :-
 	is_not_value(record(List)),
 	record_parts(record(List), Labels, Terms),
-	maplist(eval_if_not_value, Terms, Vals),
+	maplist(eval, Terms, Vals),
 	record_parts(record(NewList), Labels, Vals),!.
 
 
@@ -131,23 +126,16 @@ eval(record(List), record(NewList)) :-
 eval(case(var(Label=Val), Conditions), Result) :-
 	string(Label),	% Sanity check.
 	is_value(Val),
-	member(var(Label=Val)->CondTerm, Conditions),
-	eval(CondTerm, Result),!.
+	member(var(Label=Var)->CondTerm, Conditions),
+	substitute(Var, Val, CondTerm, NewTerm),
+	eval(NewTerm, Result),!.
 % E-Case
 eval(case(var(Label=Term), Conditions), Result) :-
 	eval(var(Label=Term), NewLabelTerm),
 	eval(case(NewLabelTerm, Conditions), Result),!.
 % E-Variant
-% The Small Step version.
-% eval(var(Label=Term), Result) :-
-% 	(is_value(Term) ->
-% 		% If Term is a value, var(Label=Term) is the result.
-% 		Result = var(Label=Term);
-% 		% If not, do another level of evaluation.
-% 		eval(Term, NewTerm),
-% 		eval(var(Label=NewTerm),Result)),!.
-% The Big Step Version.
 eval(var(Label=Term), var(Label=Val)) :-
+	is_not_value(Term),
 	eval(Term,Val),!.
 
 
@@ -215,11 +203,9 @@ eval([Val1, raise(Val2)], raise(Val2)) :-
 	is_value(Val1),
 	is_value(Val2),!.
 % E-Raise - Sort of Big Step version.
-eval(raise(Term), Result) :-
-	eval(Term, NewTerm),
-	(is_value(NewTerm) ->
-		Result = raise(NewTerm);
-		eval(raise(NewTerm), Result)),!.
+eval(raise(Term), raise(Val)) :-
+	is_not_value(Term),
+	eval(Term, Val),!.
 % E-RaiseRaise
 eval(raise(raise(Val)), raise(Val)) :- is_value(Val),!.
 % E-TryRaise

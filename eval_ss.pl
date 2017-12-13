@@ -7,15 +7,18 @@
 
 /****** eval/2 Big-Step Full Evaluation ******/
 eval(Val, Val) :- is_value(Val).
+eval(error, error).
+eval(raise(Val), raise(Val)) :- is_value(Val).
+% Run single-step version until you reach a value (or error).
 eval(Term, Val) :-
 	eval_ss(Term, TermPrime),
 	eval(TermPrime, Val).
-
 /****** eval/2 Big-Step Full Evaluation ******/
 
 /* --- Booelean Evaluation --- */
 %E-IfTrue
 eval_ss(ifte(tru, Term2, _), Term2) :- !.
+%E-IfFalse
 eval_ss(ifte(fls, _, Term3), Term3) :- !.
 %E-If
 eval_ss(ifte(Term1, Term2, Term3), ifte(New1, Term2, Term3)) :-
@@ -45,34 +48,24 @@ eval_ss(iszero(Term), iszero(NewTerm)) :-
 
 
 /* --- Sequences with Unit type ---*/
-% Sequence using lambda calculus.
+% TODO: Figure out how to avoid problems if user uses variable named reserved_sequence_atom_name.
 eval_ss(seq([Term1, Term2]), Result) :-
-	apply(lam(_:'Unit', [Term2]), Term1, MidResult),
-	eval_ss(MidResult, Result),!.
-eval_ss(seq([Term1, Term2 | OtherTerms]), Result) :-
+	apply(lam(reserved_sequence_atom_name:'Unit', Term2), Term1, Result),!.
+eval_ss(seq([Term1, Term2 | OtherTerms]), seq([NewTerm | OtherTerms])) :-
 	length([Term1, Term2 | OtherTerms], Len), Len > 2,
-	eval_ss(seq([Term1, Term2]), MidResult),
-	eval_ss(seq([MidResult | OtherTerms]), Result),!.
-% The non-lambda, way.
-% eval_ss(seq([Term]), Result) :-
-% 	eval_ss(Term, Result),!.
-% eval_ss(seq([FirstTerm|OtherTerms]), Result) :-
-% 	eval_ss(FirstTerm, _),
-% 	eval_ss(seq(OtherTerms), Result),!.
+	eval_ss(seq([Term1, Term2]), NewTerm),!.
 
 
 /* --- Let --- */
 % let X=Term1 in Term2
 % E-LetV
-eval_ss(let(X=Val, Term2), Result) :-
-	var(X), is_value(Val),
-	X=Val,
-	eval_ss(Term2, Result),!.
+eval_ss(let(X=Val, Term2), New2) :-
+	atom(X), is_value(Val),
+	substitute(X, Val, Term2, New2),!.
 % E-Let
-eval_ss(let(X=Term1, Term2), Result) :-
-	var(X), is_not_value(Term1),
-	eval_ss(Term1, New1),
-	eval_ss(let(X=New1, Term2), Result),!.
+eval_ss(let(X=Term1, Term2), let(X=New1, Term2)) :-
+	atom(X), is_not_value(Term1),
+	eval_ss(Term1, New1),!.
 
 
 /* --- Tuples --- */
@@ -83,32 +76,29 @@ eval_ss(proj(tuple(List), Index), Result) :-
 	is_list(List), length(List, Len), Index >= 1, Index =< Len,
 	ith_elm(Index, List, Result),!.
 % E-Proj
-eval_ss(proj(tuple(List), Index), Result) :-
-	eval_ss(tuple(List), NewTuple),
-	eval_ss(proj(NewTuple, Index), Result),!.
+eval_ss(proj(tuple(List), Index), proj(NewTuple, Index)) :-
+	eval_ss(tuple(List), NewTuple),!.
 % E-Tuple - This is sort of the Big-Step version of this.
-eval_ss(tuple(List), tuple(Vals)) :-
+eval_ss(tuple(List), tuple(NewList)) :-
 	is_not_value(tuple(List)),
-	maplist(eval_if_not_value, List, Vals),!.
+	eval_first_non_value(List, NewList).
 
 
 /* --- Records --- */
 % E-ProjRecord
-eval_ss(proj(record(List), Label),Result) :-
+eval_ss(proj(record(List), Label), Result) :-
 	is_value(record(List)),
 	is_list(List), string(Label), % Sanity Check
 	member(Label=Result, List),!.
 % E-Proj
-eval_ss(proj(record(List), Label), Result) :-
-	is_not_value(record(List)),	% Sanity check.
-	eval_ss(record(List), NewRecord),
-	eval_ss(proj(NewRecord, Label), Result),!.
+eval_ss(proj(record(List), Label), proj(NewRecord, Label)) :-
+	eval_ss(record(List), NewRecord),!.
 % E-Rcd
 eval_ss(record(List), record(NewList)) :-
 	is_not_value(record(List)),
 	record_parts(record(List), Labels, Terms),
-	maplist(eval_if_not_value, Terms, Vals),
-	record_parts(record(NewList), Labels, Vals),!.
+	eval_first_non_value(Terms, NewTerms),
+	record_parts(record(NewList), Labels, NewTerms),!.
 
 
 /* --- Variant Types: Case ---
@@ -125,36 +115,24 @@ eval_ss(record(List), record(NewList)) :-
 eval_ss(case(var(Label=Val), Conditions), Result) :-
 	string(Label),	% Sanity check.
 	is_value(Val),
-	member(var(Label=Val)->CondTerm, Conditions),
-	eval_ss(CondTerm, Result),!.
+	member(var(Label=Var)->CondTerm, Conditions),
+	substitute(Var, Val, CondTerm, Result),!.
 % E-Case
-eval_ss(case(var(Label=Term), Conditions), Result) :-
-	eval_ss(var(Label=Term), NewLabelTerm),
-	eval_ss(case(NewLabelTerm, Conditions), Result),!.
+eval_ss(case(var(Label=Term), Conditions), case(NewLabelTerm, Conditions)) :-
+	eval_ss(var(Label=Term), NewLabelTerm),!.
 % E-Variant
-% The Small Step version.
-% eval_ss(var(Label=Term), Result) :-
-% 	(is_value(Term) ->
-% 		% If Term is a value, var(Label=Term) is the result.
-% 		Result = var(Label=Term);
-% 		% If not, do another level of evaluation.
-% 		eval_ss(Term, NewTerm),
-% 		eval_ss(var(Label=NewTerm),Result)),!.
-% The Big Step Version.
-eval_ss(var(Label=Term), var(Label=Val)) :-
-	eval_ss(Term,Val),!.
+eval_ss(var(Label=Term), var(Label=NewTerm)) :-
+	eval_ss(Term,NewTerm),!.
 
 
 /* --- Lists --- */
 % E-Cons1
-eval_ss(cons(Term1, Term2), Result) :-
-	eval_ss(Term1, New1),
-	eval_ss(cons(New1, Term2), Result),!.
+eval_ss(cons(Term1, Term2), cons(New1, Term2)) :-
+	eval_ss(Term1, New1),!.
 % E-Cons2
-eval_ss(cons(Val1, Term2), Result) :-
+eval_ss(cons(Val1, Term2), cons(Val1, New2)) :-
 	is_value(Val1),
-	eval_ss(Term2, New2),
-	eval_ss(cons(Val1, New2), Result),!.
+	eval_ss(Term2, New2),!.
 % E-IsNilNil
 eval_ss(isnil(nil), tru).
 % E-IsNilCons
@@ -162,44 +140,39 @@ eval_ss(isnil(cons(V1, V2)), fls) :-
 	is_value(V1),
 	is_value(V2),!.
 % E-IsNil
-eval_ss(isnil(Term), Result) :-
-	eval_ss(Term, NewTerm),
-	eval_ss(isnil(NewTerm), Result),!.
+eval_ss(isnil(Term), isnil(NewTerm)) :-
+	eval_ss(Term, NewTerm),!.
 % E-HeadCons
 eval_ss(head(cons(V1, V2)), V1) :-
 	is_value(V1),
 	is_value(V2),!.
 % E-Head
-eval_ss(head(Term), Result) :-
-	eval_ss(Term, NewTerm),
-	eval_ss(head(NewTerm), Result),!.
+eval_ss(head(Term), head(NewTerm)) :-
+	eval_ss(Term, NewTerm),!.
 % E-TailCons
 eval_ss(tail(cons(V1, V2)), V2) :-
 	is_value(V1),
 	is_value(V2),!.
 % E-Tail
-eval_ss(tail(Term), Result) :-
-	eval_ss(Term, NewTerm),
-	eval_ss(tail(NewTerm), Result),!.
+eval_ss(tail(Term), tail(NewTerm)) :-
+	eval_ss(Term, NewTerm),!.
 
 
 /* --- Exceptions --- */
 /* - Errors w/o values - */
 % E-AppError1
-eval_ss([error, _], error).
+eval_ss([error, _], error) :- !.
 % E-AppError2
-eval_ss([_, error], error).
+eval_ss([_, error], error) :- !.
 /* - Error Handling - */
 % E-TryV
 eval_ss(try(Val1, _), Val1) :-
 	is_value(Val1),!.
 % E-TryError
-eval_ss(try(error, Term2), Result) :-
-	 eval_ss(Term2, Result),!.
+eval_ss(try(error, Term2), Term2) :- !.
 % E-Try
-eval_ss(try(Term1, Term2), Result) :-
-	 eval_ss(Term1, New1),
-	 eval_ss(try(New1, Term2), Result),!.
+eval_ss(try(Term1, Term2), try(New1, Term2)) :-
+	 eval_ss(Term1, New1),!.
 /* - Raising Exceptions - */
 % E-AppRaise1
 eval_ss([raise(Val1), _], raise(Val1)) :-
@@ -209,42 +182,41 @@ eval_ss([Val1, raise(Val2)], raise(Val2)) :-
 	is_value(Val1),
 	is_value(Val2),!.
 % E-Raise - Sort of Big Step version.
-eval_ss(raise(Term), Result) :-
-	eval_ss(Term, NewTerm),
-	(is_value(NewTerm) ->
-		Result = raise(NewTerm);
-		eval_ss(raise(NewTerm), Result)),!.
+eval_ss(raise(Term), raise(NewTerm)) :-
+	eval_ss(Term, NewTerm),!.
 % E-RaiseRaise
-eval_ss(raise(raise(Val)), raise(Val)) :- is_value(Val),!.
+eval_ss(raise(raise(Val)), raise(Val)) :-
+	is_value(Val),!.
 % E-TryRaise
-eval_ss(try(raise(Val), TryTerm), Result) :-
-	is_value(Val),
-	eval_ss([TryTerm, Val], Result),!.
+eval_ss(try(raise(Val), TryTerm), [TryTerm, Val]) :-
+	is_value(Val),!.
 
 /* --- Basic Lambda Calculus Evaluation --- */
 % E-APP1
-eval_ss([Term1, Term2], Result) :-
-	is_not_value(Term1),
-	% is_not_value(Term2),
-	eval_ss(Term1, New1),
-	eval_ss([New1, Term2], Result),!.
+eval_ss([Term1, Term2], [New1, Term2]) :-
+	eval_ss(Term1, New1),!.
 
 % E-APP2
-eval_ss([Val, Term2], Result) :-
-	is_value(Val),
-	is_not_value(Term2),
-	eval_ss(Term2, New2),
-	eval_ss([Val, New2], Result),!.
+eval_ss([Val, Term2], [Val, New2]) :-
+	eval_ss(Term2, New2),!.
 
 % E-AppAbs
-eval_ss([Abs, Val],Result) :-
+eval_ss([Abs, Val], Result) :-
 	is_lambda(Abs),
 	is_value(Val),
-	apply(Abs, Val, ApResult),
-	eval_ss(ApResult, Result),!.
+	apply(Abs, Val, Result),!.
 
-eval_ss([Abs, Val|OtherTerms], Result) :-
+eval_ss([Abs, Val|OtherTerms], [NewTerm|OtherTerms]) :-
 	length([Abs, Val|OtherTerms], Len), Len > 2,
-	eval_ss([Abs, Val], NewTerm),
-	eval_ss([NewTerm|OtherTerms], MidResult),
-	eval_ss(MidResult, Result),!.
+	eval_ss([Abs, Val], NewTerm),!.
+
+/***** Helper Functions *****/
+
+% Used for single step evaluation of Terms in a list of terms.
+% List contains values and at least one non-value term. The leftmost of these is NVT1.
+% NewList has all the same terms, but with NVT1 is evaluated one step.
+eval_first_non_value([Term|OtherTerms], [NewTerm|OtherTerms]) :-
+	eval_ss(Term, NewTerm).
+eval_first_non_value([Val|OtherTerms], [Val|NewOtherTerms]) :-
+	is_value(Val), % Sanity check.
+	eval_first_non_value(OtherTerms, NewOtherTerms).

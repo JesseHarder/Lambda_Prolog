@@ -1,5 +1,7 @@
-/* Utility functions for working with records. The representation of records is:
- * 	record(List)
+/* Utility functions for working with records and variants.
+ * where the elements of List are Terms.
+ * The representation of records and variants is:
+ * 	record(List) and variant(List) 		(respectively)
  * where the elements in List are of the form
  *	Label=Term
  * where Label is a string and Term is some term in our language.
