@@ -191,6 +191,21 @@ eval_ss(raise(raise(Val)), raise(Val)) :-
 eval_ss(try(raise(Val), TryTerm), [TryTerm, Val]) :-
 	is_value(Val),!.
 
+
+/* --- Fix Operator --- */
+% NOTE: The following does not work for mor than one itteration of fix. It
+%	works the first time because you can bind X to something that includes X.
+%	But once bound, you can't rebind it to something else.
+% IDEA: Change first lam(X:T, Term) in apply() to lam(_:T, Term).
+% E-FixBeta
+eval_ss(fix(lam(X:T, Term)), Result) :-
+	is_lambda(lam(X:T, Term)),
+	substitute(X, fix(lam(X:T, Term)), Term, Result).
+% E-Fix
+eval_ss(fix(Term), fix(NewTerm)) :-
+	eval(Term, NewTerm).
+
+
 /* --- Basic Lambda Calculus Evaluation --- */
 % E-APP1
 eval_ss([Term1, Term2], [New1, Term2]) :-

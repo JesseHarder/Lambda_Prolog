@@ -220,8 +220,8 @@ eval(try(raise(Val), TryTerm), Result) :-
 % IDEA: Change first lam(X:T, Term) in apply() to lam(_:T, Term).
 % E-FixBeta
 eval(fix(lam(X:T, Term)), Result) :-
-	var(X), type(T),
-	apply(lam(_:T, Term), fix(lam(X:T, Term)), Result),!.
+	is_lambda(lam(X:T, Term)),
+	apply(lam(fix_var:T, Term), fix(lam(X:T, Term)), Result),!.
 % E-Fix
 eval(fix(Term), Result) :-
 	eval(Term, NewTerm),

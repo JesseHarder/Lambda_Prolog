@@ -294,15 +294,15 @@ all_exception_eval_tests_pass :-
 /* ----- End Exception Tests ----- */
 
 /* ----- Fix Tests ----- */
-fixtest1_e :- eval(fix(lam(x:'Bool',[x])), _),
+fixtest1_e :- eval(fix(lam(x:'Bool',x)), _),
 	write_bt("fixtest1_e passed.\n"),!.
 
 fix_iseven_test(Result) :-
 	eval(
 		let(ff,
 		 	lam(ie:('Natural'->'Bool'),
-		 		[lam(x:'Natural',
-					[ifte(
+		 		lam(x:'Natural',
+					ifte(
 						iszero(x),
 						tru,
 						ifte(
@@ -311,8 +311,8 @@ fix_iseven_test(Result) :-
 							[ie, pred(pred(x))]
 							)
 						)
-					])
-				]),
+					)
+				),
 			let(iseven,
 				fix(ff),
 				[iseven, 7],
