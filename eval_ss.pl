@@ -9,6 +9,7 @@
 eval(Val, Val) :- is_value(Val).
 eval(error, error).
 eval(raise(Val), raise(Val)) :- is_value(Val).
+% Run single-step version until you reach a value (or error).
 eval(Term, Val) :-
 	eval_ss(Term, TermPrime),
 	eval(TermPrime, Val).
