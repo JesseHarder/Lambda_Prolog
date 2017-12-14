@@ -73,7 +73,7 @@ eval_ss(proj(tuple(List), Index), Result) :-
 	is_value(tuple(List)),
 	% Check that List is a non-empty list.
 	is_list(List), length(List, Len),
-	% Check appropriate bounds
+	% Check for appropriate bounds
 	Index >= 1, Index =< Len,
 	ith_elm(Index, List, Result).
 % E-Proj

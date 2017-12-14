@@ -130,7 +130,7 @@ typeof(Env, let(X=Term1, Term2), Type2) :-
 %   mep_typeof does exactly that.
 typeof(Env, tuple(List), 'Tuple'(Types)) :-
     is_list(List), length(List, L), L >= 0, % "Lists" is a non-empty list.
-    map_typeof(Env,List,Types).
+    maplist(typeof(Env),List,Types).
 % T-ProjTupl
 typeof(Env, proj(tuple(List), Index), Type) :-
     typeof(Env, tuple(List), 'Tuple'(_)),
@@ -141,11 +141,11 @@ typeof(Env, proj(tuple(List), Index), Type) :-
 % T-Record
 % The Types list in 'Record'() is the corresponding list of calling
 %   typeof on each of the elements in the List inside of record().
-%   map_typeof does exactly that.
+%   maplist/3 does exactly that.
 typeof(Env, record(List), 'Record'(Types)) :-
     is_list(List), length(List, L), L >= 0, % "Lists" is a non-empty list.
     record_parts(record(List), Labels, Vals),
-    map_typeof(Env,Vals,ValTypes),
+    maplist(typeof(Env), Vals, ValTypes),
     record_parts(record(Types), Labels, ValTypes).
 % T-ProjRcd
 typeof(Env, proj(record(List), Label), Type) :-
@@ -174,9 +174,8 @@ typeof(Env, case(var(Label=Term), Conditions), Type) :-
 
 
 /***** Lists *****/
-% TODO: Check with Cormac about why Lists needed explicit typing in the book.
 % T-Nil
-typeof(_, nil,'List'(T)) :- type(T). % Empty list can be list of any type.
+typeof(_, nil,'List'(T)) :- type(T).
 % T-Cons
 typeof(Env, cons(Head, Tail), 'List'(HType)) :-
     typeof(Env, Head, HType),
@@ -209,10 +208,3 @@ typeof(Env, try(Term1, Term2), Type) :-
     type_exn(T_Exn),
     typeof(Env, Term2, (T_Exn->Type)),    % Best to check T2's type first,
     typeof(Env, Term1, Type).               % as T1 might be raise.
-
-
-/* ---------- Helper Functions ---------- */
-map_typeof(Env, Vals, Types) :-
-    length(Vals, Length),
-    env_list_len(Env, EnvList, Length),
-    maplist(typeof, EnvList, Vals,Types).
