@@ -75,7 +75,7 @@ eval_ss(proj(tuple(List), Index), Result) :-
 	is_list(List), length(List, Len),
 	% Check for appropriate bounds
 	Index >= 1, Index =< Len,
-	ith_elm(Index, List, Result).
+	nth1(Index, List, Result).
 % E-Proj
 eval_ss(proj(tuple(List), Index), proj(NewTuple, Index)) :-
 	eval_ss(tuple(List), NewTuple).

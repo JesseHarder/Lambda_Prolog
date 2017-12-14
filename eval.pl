@@ -82,7 +82,7 @@ eval(proj(tuple(List), Index), Result) :-
 	is_value(tuple(List)),
 	% Check that List is a non-empty list.
 	is_list(List), length(List, Len), Index >= 1, Index =< Len,
-	ith_elm(Index, List, Result).
+	nth1(Index, List, Result).
 % E-Proj
 eval(proj(tuple(List), Index), Result) :-
 	eval(tuple(List), NewTuple),

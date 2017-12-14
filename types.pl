@@ -134,7 +134,7 @@ typeof(Env, tuple(List), 'Tuple'(Types)) :-
 % T-ProjTupl
 typeof(Env, proj(tuple(List), Index), Type) :-
     typeof(Env, tuple(List), 'Tuple'(_)),
-    ith_elm(Index, List, Elm),
+    nth1(Index, List, Elm),
     typeof(Env, Elm, Type).
 
 /***** Records *****/
