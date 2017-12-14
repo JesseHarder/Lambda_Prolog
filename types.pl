@@ -157,14 +157,14 @@ typeof(Env, proj(record(List), Label), Type) :-
  * NOTE: T-Vairant might cause problems if used incorrectly.
  * This is because it could potentially generate infinite different type
  * results for a vairant term.
+ * So far, I have not run into a case where it does.
  */
 
 % T-Variant
 typeof(Env, var(Label=Term), 'Variant'(VariantList)) :-
     typeof(Env, Term, TermType),
     member(Label=TermType, VariantList).
-% T-Case - NOTE: This is more what was needed for Prolog to work to get the
-%        correct behavior rather than a direct translation.
+% T-Case translation.
 typeof(Env, case(var(Label=Term), Conditions), Type) :-
     is_list(Conditions),
     member(var(Label=Var)->CondTerm, Conditions),
