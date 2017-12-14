@@ -17,7 +17,3 @@ ith_elm(I, [_|Tail], Elm) :-
 list_layer_left([A,B], [A,B]).
 list_layer_left([A,B|Tail], Result) :-
     list_layer_left([[A,B]|Tail], Result).
-
-/* Resolves if X is an element in the list given as second term. */
-is_in(X, [X|_]).
-is_in(X, [_|Tail]) :- is_in(X,Tail).
