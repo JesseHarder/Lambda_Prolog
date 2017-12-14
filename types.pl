@@ -104,7 +104,6 @@ typeof(Env, lam(Var:VarType, Subterm), Type) :-
     NewEnv = [Var:VarType|Env],
     typeof(NewEnv, Subterm, SubtermType),
     Type = (VarType->SubtermType), !.
-
 % T-AppBase
 %   An application returns the return type of the first term, which should be
 %   an abstraction, if the second term has the abstractions parameter type.
