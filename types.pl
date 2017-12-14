@@ -82,16 +82,16 @@ typeof(Env, ifte(Term1, Term2, Term3), Type) :-
 
 /***** Numbers *****/
  % T-Zero
-typeof(_, 0, 'Natural').
+typeof(_, 0, 'Nat').
 % T-Succ
-typeof(Env, succ(X), 'Natural') :-
-    typeof(Env, X, 'Natural').
+typeof(Env, succ(X), 'Nat') :-
+    typeof(Env, X, 'Nat').
 % T-Pred
-typeof(Env, pred(X), 'Natural') :-
-    typeof(Env, X, 'Natural').
+typeof(Env, pred(X), 'Nat') :-
+    typeof(Env, X, 'Nat').
 % T-IsZero
 typeof(Env, iszero(X), 'Bool') :-
-    typeof(Env, X, 'Natural').
+    typeof(Env, X, 'Nat').
 
 /***** Fix Operator *****/
 % T-Fix
