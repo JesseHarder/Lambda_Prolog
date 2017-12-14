@@ -77,7 +77,7 @@ eval_ss(proj(tuple(List), Index), Result) :-
 % E-Proj
 eval_ss(proj(tuple(List), Index), proj(NewTuple, Index)) :-
 	eval_ss(tuple(List), NewTuple).
-% E-Tuple - This is sort of the Big-Step version of this.
+% E-Tuple
 eval_ss(tuple(List), tuple(NewList)) :-
 	is_not_value(tuple(List)),
 	eval_first_non_value(List, NewList).
