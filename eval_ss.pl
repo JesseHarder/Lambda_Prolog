@@ -48,9 +48,8 @@ eval_ss(iszero(Term), iszero(NewTerm)) :-
 
 
 /* --- Sequences with Unit type ---*/
-% TODO: Figure out how to avoid problems if user uses variable named reserved_sequence_atom_name.
 eval_ss(seq([Term1, Term2]), Result) :-
-	apply(lam(reserved_sequence_atom_name:'Unit', Term2), Term1, Result),!.
+	apply(lam(x:'Unit', Term2), Term1, Result),!.
 eval_ss(seq([Term1, Term2 | OtherTerms]), seq([NewTerm | OtherTerms])) :-
 	length([Term1, Term2 | OtherTerms], Len), Len > 2,
 	eval_ss(seq([Term1, Term2]), NewTerm),!.
