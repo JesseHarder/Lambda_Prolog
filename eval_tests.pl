@@ -337,5 +337,5 @@ all_eval_tests_pass :-
 	all_record_eval_tests_pass,
 	all_variant_eval_tests_pass,
 	all_list_eval_tests_pass,
+	% all_fix_eval_tests_pass,
 	all_exception_eval_tests_pass.
-	% all_fix_eval_tests_pass.
