@@ -192,8 +192,8 @@ typeof(Env, tail(Term), 'List'(Type)) :-
 
 /***** Exceptions *****/
 % -- The following is completmented out because you can't have it and
-%       the raise() version at the same time.
-% T-Error - An error can be of any type.
+      % the raise() version at the same time.
+% % T-Error - An error can be of any type.
 % typeof(_, error, Type) :- type(Type).
 % % T-Try (Error)
 % typeof(Env, try(Term1, Term2), Type) :-
